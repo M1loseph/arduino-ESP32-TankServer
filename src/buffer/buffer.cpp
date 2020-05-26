@@ -5,7 +5,9 @@ bool CommandBuffer::PushBack(char c)
 {
     if (m_CurrentLength < BUFFER_LENGTH)
     {
-        if(c == ' ') c = '\0';
+        // remove spaces -> change them to NULL_CHAR
+        if (c == ' ')
+            c = NULL_CHAR;
         m_Buffer[m_CurrentLength++] = c;
         LOG(m_Buffer[m_CurrentLength - 1]);
         return true;
@@ -15,7 +17,7 @@ bool CommandBuffer::PushBack(char c)
 
 void CommandBuffer::Clear()
 {
-    memset(m_Buffer, '\0', BUFFER_LENGTH);
+    memset(m_Buffer, NULL_CHAR, BUFFER_LENGTH);
     m_CurrentLength = 0;
     LOG_NL("Cleared memory");
 }
@@ -30,26 +32,27 @@ Number CommandBuffer::FindNumber(int wordIndex) const
             if (word != wordIndex)
             {
                 // jump over NULLs
-                while (index < Length() && m_Buffer[index] == '\0')
+                while (index < Length() && m_Buffer[index] == NULL_CHAR)
                     ++index;
 
                 // jump over normal string
-                while (index < Length() && m_Buffer[index] != '\0')
+                while (index < Length() && m_Buffer[index] != NULL_CHAR)
                     ++index;
             }
             else
             {
                 // jump over NULLs
-                while (index < Length() && m_Buffer[index] == '\0')
+                while (index < Length() && m_Buffer[index] == NULL_CHAR)
                     ++index;
 
                 // make sure we are not at the end
-                if (m_Buffer[index] != '\0')
+                if (m_Buffer[index] != NULL_CHAR)
                 {
                     const char *numberPtr = m_Buffer + index;
                     bool validNumber = true;
 
-                    while (index < Length() && m_Buffer[index] != '\0' && validNumber)
+                    // check if all char are digits
+                    while (index < Length() && m_Buffer[index] != NULL_CHAR && validNumber)
                     {
                         if (!isdigit(m_Buffer[index]))
                             validNumber = false;
@@ -57,7 +60,10 @@ Number CommandBuffer::FindNumber(int wordIndex) const
                         ++index;
                     }
 
-                    if ((*numberPtr) != '\0' && m_Buffer[index] == '\0' && validNumber)
+                    // number had to have at least one digit
+                    // it has to end with null (index 100 doesnt count)
+                    // it has to be numeric
+                    if ((*numberPtr) != NULL_CHAR && m_Buffer[index] == NULL_CHAR && validNumber)
                         return {atoi(numberPtr), true};
                 }
             }
@@ -69,7 +75,7 @@ Number CommandBuffer::FindNumber(int wordIndex) const
 const char *CommandBuffer::Command() const
 {
     for (int i = 0; i < Length(); i++)
-        if (m_Buffer[i] != '\0')
+        if (m_Buffer[i] != NULL_CHAR)
             return m_Buffer + i;
 
     return nullptr;

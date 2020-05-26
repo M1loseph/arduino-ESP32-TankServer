@@ -13,7 +13,7 @@ void TestAddingAndRemoving()
 
     b.Clear();
 
-    char fullNulls[BUFFER_LENGTH] = {'\0'};
+    char fullNulls[CommandBuffer::BUFFER_LENGTH] = {'\0'};
     TEST_ASSERT_EQUAL_CHAR_ARRAY(fullNulls, b.C_Ptr(), 100);
 }
 

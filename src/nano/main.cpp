@@ -1,5 +1,6 @@
 // main file, don't compile with unit tests
 #ifndef UNIT_TEST
+#ifdef NANO
 
 #include <Arduino.h>
 #include <SoftwareSerial.h>
@@ -218,4 +219,6 @@ void loop()
   Blink();
 }
 
+
+#endif // NANOA
 #endif // UNIT_TEST

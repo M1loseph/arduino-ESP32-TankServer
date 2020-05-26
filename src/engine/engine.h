@@ -3,7 +3,26 @@
 
 using uchar = unsigned char;
 
-class Engine
+class StaticEngine
+{
+public:
+  explicit StaticEngine(uchar forward, uchar backward);
+  ~StaticEngine() = default;
+
+  // not declared as virtual to save computation time
+  void Forward();
+  void Backward();
+  void Stop();
+
+  static void TurnLeft(StaticEngine &left, StaticEngine &right);
+  static void TurnRight(StaticEngine &left, StaticEngine &right);
+
+protected:
+  uchar m_ForwardPin;
+  uchar m_BackwardPin;
+};
+
+class Engine : public StaticEngine
 {
 public:
   explicit Engine(uchar forward, uchar backward, uchar speed, uchar defSpeed);
@@ -15,14 +34,9 @@ public:
   void ChangeSpeed(uchar newSpeed);
 
 private:
-  uchar m_ForwardPin;
-  uchar m_BackwardPin;
   uchar m_SpeedPin;
   uchar m_CurrentSpeed;
 };
 
-void TurnLeft(Engine& left, Engine& right);
-void TurnRight(Engine& left, Engine& right);
-void TurnLeftWhileDriving(Engine& left, Engine& right);
 
 #endif // __ENGINE_H

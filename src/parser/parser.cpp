@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "parser.h"
 
-int Parser::ReadToBuffer()
+int Parser::ReadSerial()
 {
     if (Serial.available())
     {
@@ -56,7 +56,7 @@ void Parser::AddEvents(const char *Command, void (*callbacFun)(const CommandBuff
     }
 }
 
-Buffer &Parser::GetBuff()
+CommandBuffer &Parser::GetBuff()
 {
     return m_Buffer;
 }

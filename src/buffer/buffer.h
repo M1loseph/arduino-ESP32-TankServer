@@ -3,10 +3,8 @@
 
 #include "debug.h"
 
-#define BUFFER_LENGTH 100
-#define NOT_FOUND -1
-
-struct Number {
+struct Number
+{
     int number;
     bool success;
 };
@@ -28,10 +26,14 @@ public:
     // pointer to the beggining of the buffer
     const char *C_Ptr() const;
 
+    static constexpr char NULL_CHAR = '\0';
+    static constexpr size_t BUFFER_LENGTH = 100;
+    static constexpr int NOT_FOUND = -1;
+
 private:
     int m_CurrentLength = 0;
     // one additional index that is ALWAYS null (to make sure atoi and friends dont mess up)
-    char m_Buffer[BUFFER_LENGTH + 1] = {'\0'}; 
+    char m_Buffer[BUFFER_LENGTH + 1] = {NULL_CHAR};
 };
 
 #endif

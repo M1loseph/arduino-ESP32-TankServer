@@ -1,5 +1,5 @@
-#ifndef __PARSER_H
-#define __PARSER_H
+#ifndef __PARSER_H__
+#define __PARSER_H__
 
 #include "buffer/buffer.h"
 
@@ -7,6 +7,7 @@ class Parser
 {
 public:
     // Returns how many characters have benn read
+    int ReadSerial();
     void ExecuteMessege();
     void AddEvents(const char *command, void (*callbacFun)(const CommandBuffer &buffer));
     CommandBuffer &GetBuff();
@@ -21,7 +22,5 @@ private:
     void (*m_Functions[MAX_EVENTS])(const CommandBuffer &buffer);
     const char *m_Events[MAX_EVENTS];
 };
-
-int ReadSerial(Parser &parser);
 
 #endif // __PARSER_H

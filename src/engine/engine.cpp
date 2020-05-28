@@ -40,7 +40,7 @@ void StaticEngine::TurnRight(StaticEngine &left, StaticEngine &right)
   right.Backward();
 }
 
-Engine::Engine(uchar forward, uchar backward, uchar speed, uchar defSpeed) : StaticEngine(forward, backward),
+Engine::Engine(uchar forward, uchar backward, uchar speed, uint defSpeed) : StaticEngine(forward, backward),
                                                                              m_SpeedPin(speed),
                                                                              m_CurrentSpeed(defSpeed)
 {
@@ -66,7 +66,7 @@ void Engine::Stop()
   StaticEngine::Stop();
 }
 
-void Engine::ChangeSpeed(uchar newSpeed)
+void Engine::ChangeSpeed(uint newSpeed)
 {
   m_CurrentSpeed = newSpeed;
   analogWrite(m_SpeedPin, m_CurrentSpeed);

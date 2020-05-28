@@ -1,5 +1,5 @@
-#ifndef __BUFFER_H
-#define __BUFFER_H
+#ifndef __BUFFER_H__
+#define __BUFFER_H__
 
 #include "debug.h"
 
@@ -31,7 +31,7 @@ public:
     static constexpr int NOT_FOUND = -1;
 
 private:
-    int m_CurrentLength = 0;
+    size_t m_CurrentLength = 0;
     // one additional index that is ALWAYS null (to make sure atoi and friends dont mess up)
     char m_Buffer[BUFFER_LENGTH + 1] = {NULL_CHAR};
 };

@@ -1,7 +1,8 @@
-#ifndef __ENGINE_H
-#define __ENGINE_H
+#ifndef __ENGINE_H__
+#define __ENGINE_H__
 
-using uchar = unsigned char;
+typedef unsigned char uchar;
+typedef unsigned int uint;
 
 class StaticEngine
 {
@@ -10,9 +11,9 @@ public:
   ~StaticEngine() = default;
 
   // not declared as virtual to save computation time
-  void Forward();
-  void Backward();
-  void Stop();
+  virtual void Forward();
+  virtual void Backward();
+  virtual void Stop();
 
   static void TurnLeft(StaticEngine &left, StaticEngine &right);
   static void TurnRight(StaticEngine &left, StaticEngine &right);
@@ -25,17 +26,17 @@ protected:
 class Engine : public StaticEngine
 {
 public:
-  explicit Engine(uchar forward, uchar backward, uchar speed, uchar defSpeed);
+  explicit Engine(uchar forward, uchar backward, uchar speed, uint defSpeed);
   ~Engine() = default;
 
-  void Forward();
-  void Backward();
-  void Stop();
-  void ChangeSpeed(uchar newSpeed);
+  void Forward() override;
+  void Backward() override;
+  void Stop() override;
+  void ChangeSpeed(uint newSpeed);
 
 private:
   uchar m_SpeedPin;
-  uchar m_CurrentSpeed;
+  uint m_CurrentSpeed;
 };
 
 

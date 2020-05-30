@@ -18,29 +18,30 @@
 
 // https://www.youtube.com/watch?v=7h2bE2vNoaY
 
-constexpr int RIGHT_FRONT = D0;
-constexpr int RIGHT_BACK = D1;
-constexpr int LEFT_FRONT = D3;
-constexpr int LEFT_BACK = D2;
+constexpr int PIN_RIGHT_FRONT = D0;
+constexpr int PIN_RIGHT_BACK = D1;
+constexpr int PIN_LEFT_FRONT = D3;
+constexpr int PIN_LEFT_BACK = D2;
 
-constexpr int RIGHT_SPEED = D4;
-constexpr int LEFT_SPEED = D5;
+constexpr int PIN_TANK_SPEED = D4;
 
 constexpr uint DEF_SPEED = 500;
 
-constexpr int TURRET_FRONT = D6;
-constexpr int TURRET_BACK = D7;
-constexpr int TURRET_SPEED = 10;
+constexpr int PIN_TURRET_FRONT = D6;
+constexpr int PIN_TURRET_BACK = D7;
+constexpr int PIN_TURRET_SPEED = 10;
 
-constexpr uint TURRET_DEF_SPEED = 400;
+constexpr int PIN_GUN_VERTICAL = D5;
+
+constexpr uint TURRET_DEF_SPEED = 300;
 
 // ================
 // VARIABLES
 // ================
 
-Engine left(LEFT_FRONT, LEFT_BACK, LEFT_SPEED, DEF_SPEED);
-Engine right(RIGHT_FRONT, RIGHT_BACK, RIGHT_SPEED, DEF_SPEED);
-Engine turret(TURRET_FRONT, TURRET_BACK, TURRET_SPEED, TURRET_DEF_SPEED);
+Engine left(PIN_LEFT_FRONT, PIN_LEFT_BACK, PIN_TANK_SPEED, DEF_SPEED);
+Engine right(PIN_RIGHT_FRONT, PIN_RIGHT_BACK, PIN_TANK_SPEED, DEF_SPEED);
+Engine turret(PIN_TURRET_FRONT, PIN_TURRET_BACK, PIN_TURRET_SPEED, TURRET_DEF_SPEED);
 Parser parser;
 
 WiFiClient espClient;
@@ -52,15 +53,15 @@ PubSubClient client(espClient);
 
 static void InitEnginePins()
 {
-  pinMode(RIGHT_FRONT, OUTPUT);
-  pinMode(RIGHT_BACK, OUTPUT);
-  pinMode(RIGHT_SPEED, OUTPUT);
-  pinMode(LEFT_FRONT, OUTPUT);
-  pinMode(LEFT_BACK, OUTPUT);
-  pinMode(LEFT_SPEED, OUTPUT);
-  pinMode(TURRET_FRONT, OUTPUT);
-  pinMode(TURRET_BACK, OUTPUT);
-  pinMode(TURRET_SPEED, OUTPUT);
+  pinMode(PIN_RIGHT_FRONT, OUTPUT);
+  pinMode(PIN_RIGHT_BACK, OUTPUT);
+  pinMode(PIN_TANK_SPEED, OUTPUT);
+  pinMode(PIN_LEFT_FRONT, OUTPUT);
+  pinMode(PIN_LEFT_BACK, OUTPUT);
+  pinMode(PIN_TURRET_FRONT, OUTPUT);
+  pinMode(PIN_TURRET_BACK, OUTPUT);
+  pinMode(PIN_TURRET_SPEED, OUTPUT);
+  pinMode(PIN_GUN_VERTICAL, OUTPUT);
 }
 
 // ==============
@@ -96,22 +97,29 @@ void SpeedFun(const CommandBuffer &buffer)
 
 auto ForwardFun = [](const CommandBuffer &b) { left.Forward(); right.Forward(); };
 auto BackwardFun = [](const CommandBuffer &b) {left.Backward(); right.Backward(); };
+auto StopFun = [](const CommandBuffer &b) {left.Stop(); right.Stop(); };
+
 auto LeftFun = [](const CommandBuffer &b) { Engine::TurnLeft(left, right); };
 auto RightFun = [](const CommandBuffer &b) { Engine::TurnRight(left, right); };
-auto StopFun = [](const CommandBuffer &b) {left.Stop(); right.Stop(); };
-auto TurretForwardFun = [](const CommandBuffer &b) { turret.Forward(); };
-auto TurretBackwardFun = [](const CommandBuffer &b) { turret.Backward(); };
+
 auto TurretStopFun = [](const CommandBuffer &b) { turret.Stop(); };
+auto TurretRightFun = [](const CommandBuffer &b) { turret.Forward(); };
+auto TurretLeftFun = [](const CommandBuffer &b) { turret.Backward(); };
+
+auto GunMoveFun = [](const CommandBuffer &b) { digitalWrite(PIN_GUN_VERTICAL, LOW); };
+auto GunStopFun = [](const CommandBuffer &b) { digitalWrite(PIN_GUN_VERTICAL, HIGH); };
+
 
 void callback(const char *topic, byte *payload, unsigned int length)
 {
-#if DEBUG
-  client.publish(Network::SUBSCRIBE_TOPIC, (char *)payload, length);
-#endif
   for (size_t i = 0; i < length; i++)
     parser.GetBuff().PushBack(payload[i]);
 
   parser.ExecuteMessege();
+
+#if DEBUG
+  client.publish(Network::SUBSCRIBE_TOPIC, (char *)payload, length);
+#endif
 }
 
 void reconnect()
@@ -128,6 +136,8 @@ void reconnect()
 void setup()
 {
   InitEnginePins();
+  // stop gun from moving
+  digitalWrite(PIN_GUN_VERTICAL, HIGH);
   client.setServer(Network::MQTT_SERVER, Network::PORT);
   client.setCallback(callback);
   Serial.begin(115200);
@@ -136,15 +146,20 @@ void setup()
   while (WiFi.status() != WL_CONNECTED)
     delay(500);
   LOG_NL("Connected to wifi");
-  parser.AddEvents(Command::FORWARD, ForwardFun);
-  parser.AddEvents(Command::BACKWARD, BackwardFun);
-  parser.AddEvents(Command::LEFT, LeftFun);
-  parser.AddEvents(Command::RIGHT, RightFun);
-  parser.AddEvents(Command::STOP, StopFun);
-  parser.AddEvents(Command::SPEED, SpeedFun);
-  parser.AddEvents(Command::TURRET_FORWARD, TurretForwardFun);
-  parser.AddEvents(Command::TURRET_BACKWARD, TurretBackwardFun);
+  // Tank
+  parser.AddEvents(Command::TANK_FORWARD, ForwardFun);
+  parser.AddEvents(Command::TANK_BACKWARD, BackwardFun);
+  parser.AddEvents(Command::TANK_LEFT, LeftFun);
+  parser.AddEvents(Command::TANK_RIGHT, RightFun);
+  parser.AddEvents(Command::TANK_STOP, StopFun);
+  parser.AddEvents(Command::TANK_SPEED, SpeedFun);
+  // Turret
+  parser.AddEvents(Command::TURRET_FORWARD, TurretRightFun);
+  parser.AddEvents(Command::TURRET_BACKWARD, TurretLeftFun);
   parser.AddEvents(Command::TURRET_STOP, TurretStopFun);
+  // Gun
+  parser.AddEvents(Command::GUN_MOVE, GunMoveFun);
+  parser.AddEvents(Command::GUN_STOP, GunStopFun);
 }
 
 void loop()

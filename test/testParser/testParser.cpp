@@ -2,7 +2,7 @@
 #include <unity.h>
 #include "parser/parser.h"
 #include "buffer/buffer.h"
-#include "nodemcu/commands.h"
+#include "commands.h"
 
 size_t zmienna = 0;
 
@@ -17,25 +17,18 @@ void testCommandFound()
 {
     Parser parser;
     const char *events[9] = {
-        Command::FORWARD,
-        Command::BACKWARD,
-        Command::LEFT,
-        Command::RIGHT,
-        Command::STOP,
-        Command::SPEED,
-        Command::TURRET_FORWARD,
-        Command::TURRET_BACKWARD,
-        Command::TURRET_STOP};
+        Command::Mcu::TANK_FORWARD,
+        Command::Mcu::TURRET_BACKWARD,
+        Command::Mcu::TANK_LEFT,
+        Command::Mcu::TANK_RIGHT,
+        Command::Mcu::TANK_STOP,
+        Command::Mcu::TANK_SPEED,
+        Command::Mcu::TURRET_FORWARD,
+        Command::Mcu::TURRET_BACKWARD,
+        Command::Mcu::TURRET_STOP};
 
-    parser.AddEvents(Command::FORWARD, Forward);
-    parser.AddEvents(Command::BACKWARD, Forward);
-    parser.AddEvents(Command::LEFT, Forward);
-    parser.AddEvents(Command::RIGHT, Forward);
-    parser.AddEvents(Command::STOP, Forward);
-    parser.AddEvents(Command::SPEED, Forward);
-    parser.AddEvents(Command::TURRET_FORWARD, Forward);
-    parser.AddEvents(Command::TURRET_BACKWARD, Forward);
-    parser.AddEvents(Command::TURRET_STOP, Forward);
+    for(size_t i = 0; i < 9; i++)
+        parser.AddEvents(events[i], Forward);
 
     for (int i = 0; i < 1000; i++)
     {

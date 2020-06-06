@@ -22,66 +22,66 @@ void CommandBuffer::Clear()
     LOG_NL("Cleared memory");
 }
 
-Number CommandBuffer::FindNumber(int wordIndex) const
+Number CommandBuffer::FindNumber(size_t numberIndex) const
 {
-    if (0 <= wordIndex)
+    const char *numberPtr = Word(numberIndex);
+
+    if (numberPtr)
     {
-        int index = 0;
-        for (int word = 0; word <= wordIndex && index < Length(); word++)
-        {
-            if (word != wordIndex)
-            {
-                // jump over NULLs
-                while (index < Length() && m_Buffer[index] == NULL_CHAR)
-                    ++index;
+        // index of the ptr that has been returned
+        size_t index = numberPtr - m_Buffer;
 
-                // jump over normal string
-                while (index < Length() && m_Buffer[index] != NULL_CHAR)
-                    ++index;
-            }
+        bool validNumber = true;
+        // check if all char are digits
+        while (index < Length() && m_Buffer[index] != NULL_CHAR && validNumber)
+            // as long we read digits -> keep going
+            if (!isdigit(m_Buffer[index]))
+                validNumber = false;
             else
-            {
-                // jump over NULLs
-                while (index < Length() && m_Buffer[index] == NULL_CHAR)
-                    ++index;
+                ++index;
 
-                // make sure we are not at the end
-                if (m_Buffer[index] != NULL_CHAR)
-                {
-                    const char *numberPtr = m_Buffer + index;
-                    bool validNumber = true;
-
-                    // check if all char are digits
-                    while (index < Length() && m_Buffer[index] != NULL_CHAR && validNumber)
-                    {
-                        if (!isdigit(m_Buffer[index]))
-                            validNumber = false;
-
-                        ++index;
-                    }
-
-                    // number had to have at least one digit
-                    // it has to end with null (index 100 doesnt count)
-                    // it has to be numeric
-                    if ((*numberPtr) != NULL_CHAR && m_Buffer[index] == NULL_CHAR && validNumber)
-                        return {atoi(numberPtr), true};
-                }
-            }
-        }
+        // number had to have at least one digit
+        // it has to end with null (index 100 doesnt count)
+        // it has to be numeric
+        if ((*numberPtr) != NULL_CHAR && m_Buffer[index] == NULL_CHAR && validNumber)
+            return {atoi(numberPtr), true};
     }
     return {NOT_FOUND, false};
 }
 
-const char *CommandBuffer::Command() const
+const char *CommandBuffer::Word(size_t wordIndex) const
 {
-    for (int i = 0; i < Length(); i++)
-        if (m_Buffer[i] != NULL_CHAR)
-            return m_Buffer + i;
+    size_t i = 0;
+    for (size_t word = 0; word < wordIndex && i < Length(); word++)
+    {
+        // jump over NULLs
+        while (i < Length() && m_Buffer[i] == NULL_CHAR)
+            ++i;
+
+        // jump over normal string
+        while (i < Length() && m_Buffer[i] != NULL_CHAR)
+            ++i;
+    }
+
+    // jump over NULLs
+    while (i < Length() && m_Buffer[i] == NULL_CHAR)
+        ++i;
+
+    // make sure we are not at the end
+    if (m_Buffer[i] != NULL_CHAR)
+    {
+        return m_Buffer + i;
+    }
 
     return nullptr;
 }
 
-int CommandBuffer::Length() const
+const char *CommandBuffer::Command() const
+{
+    return Word(0U);
+}
+
+size_t CommandBuffer::Length() const
 {
     return m_CurrentLength;
 }

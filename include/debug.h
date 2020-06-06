@@ -1,12 +1,8 @@
 // bunch of macros
-#ifndef __DEBUG
-#define __DEBUG
+#ifndef __DEBUG_H__
+#define __DEBUG_H__
 
-// 0 - no debug
-// 1 - debug messages over serial com
-#define DEBUG_LEVEL 0
-
-#if DEBUG_LEVEL
+#if SMART_TANK_DEBUG
 
 #define LOG_NL(messege) Serial.println(messege)
 #define LOG(messege) Serial.print(messege)
@@ -16,6 +12,6 @@
 #define LOG_NL(messege)
 #define LOG(messege)
 
-#endif // DEBUG_LEVEL
+#endif // SMART_TANK_DEBUG
 
 #endif // __DEBUG

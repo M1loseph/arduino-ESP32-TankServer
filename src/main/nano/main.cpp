@@ -128,7 +128,7 @@ void readMP3FromBuffer(const CommandBuffer &buffer)
     LOG(n2.number);
     LOG(" ");
     LOG(n3.number);
-    MP3command(n1.number, n2.number, n3.number);
+    MP3command(n1.value, n2.value, n3.value);
   }
   else
   {
@@ -150,10 +150,10 @@ void SpeedFun(const CommandBuffer &buffer)
 
   if (number.success)
   {
-    if (number.number >= 0 && number.number <= 255)
+    if (number.value >= 0 && number.value <= 255)
     {
-      left.ChangeSpeed((uchar)number.number);
-      right.ChangeSpeed((uchar)number.number);
+      left.ChangeSpeed((uchar)number.value);
+      right.ChangeSpeed((uchar)number.value);
       LOG_NL(number.number);
     }
     else
@@ -214,7 +214,7 @@ void setup()
 
 void loop()
 {
-  if (parser.ReadToBuffer())
+  if (parser.ReadSerial())
     parser.ExecuteMessege();
   Blink();
 }

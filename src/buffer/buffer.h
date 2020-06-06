@@ -5,9 +5,11 @@
 
 struct Number
 {
-    int number;
+    int value;
     bool success;
 };
+
+typedef unsigned int size_t;
 
 class CommandBuffer
 {
@@ -18,16 +20,17 @@ public:
     //                                        0       1      2      3     ...
     // the commands are expected to be like: "command number number number..."
     // spaces don't matter (must be at least one)
-    Number FindNumber(int numberIndex) const;
+    Number FindNumber(size_t numberIndex) const;
     // when no command is found, returns nullptr
+    const char *Word(size_t wordIndex) const;
     const char *Command() const;
-    int Length() const;
+    size_t Length() const;
     bool IsFull() const;
     // pointer to the beggining of the buffer
     const char *C_Ptr() const;
 
     static constexpr char NULL_CHAR = '\0';
-    static constexpr size_t BUFFER_LENGTH = 100;
+    static constexpr size_t BUFFER_LENGTH = 100U;
     static constexpr int NOT_FOUND = -1;
 
 private:

@@ -21,6 +21,7 @@ namespace Command
 
   namespace Mega
   {
+    const char *LOST_CONNECTION = "LC";
     const char *BASE = "BASE";
     const char *SHOULDER = "SHOULDER";
     const char *ELBOW_1 = "ELBOW1";

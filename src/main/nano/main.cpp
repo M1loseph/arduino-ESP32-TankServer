@@ -12,19 +12,21 @@
 // ENGINE PINS
 // ================
 
-#define RIGHT_FRONT 2
-#define RIGHT_BACK 3
-#define LEFT_FRONT 4
-#define LEFT_BACK 5
-#define SIDE_FRONT A2
-#define SIDE_BACK A1
+typedef unsigned char uchar;
 
-#define RIGHT_SPEED 9
-#define LEFT_SPEED 10
-#define SIDE_SPEED A0
+constexpr uchar RIGHT_FRONT 2
+constexpr uchar RIGHT_BACK 3
+constexpr uchar LEFT_FRONT 4
+constexpr uchar LEFT_BACK 5
+constexpr uchar SIDE_FRONT A2
+constexpr uchar SIDE_BACK A1
 
-#define MP3_RX 11
-#define MP3_TX 12
+constexpr uchar RIGHT_SPEED 9
+constexpr uchar LEFT_SPEED 10
+constexpr uchar SIDE_SPEED A0
+
+constexpr uchar MP3_RX 11
+constexpr uchar MP3_TX 12
 
 // ================
 // DIODES
@@ -214,7 +216,7 @@ void setup()
 
 void loop()
 {
-  if (parser.ReadSerial())
+  if (parser.ReadStream())
     parser.ExecuteMessege();
   Blink();
 }

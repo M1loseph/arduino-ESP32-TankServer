@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include "parser.h"
 
-int Parser::ReadSerial()
+int Parser::ReadStream(Stream* stream)
 {
-    if (Serial.available())
+    if (stream->available())
     {
         unsigned long start = millis();
         bool foundNull = false;
@@ -12,16 +12,15 @@ int Parser::ReadSerial()
         // each \r and \n is ignored
         while (!foundNull && !m_Buffer.IsFull() && millis() - start < TIMEOUT)
         {
-            if (Serial.available())
+            if (stream->available())
             {
-                char c = (char)Serial.read();
+                char c = (char)stream->read();
                 if (c == '\0')
                     foundNull = true;
                 if (c == ' ')
                     c = '\0';
                 if (c != '\r' && c != '\n') // remove both these signs, we dont want them
                     m_Buffer.PushBack(c);
-                ;
             }
         }
 

@@ -73,18 +73,17 @@ void SpeedFun(const CommandBuffer &buffer)
   else
     LOG_NL("Speed not found");
 }
-
+/*
+  TODO
+  ZMIANA NA SPI
+  I W SUMIE TYLE
+*/
 void Move(const CommandBuffer &b)
 {
   const char *commandToSend = b.Word(1);
   if (commandToSend)
   {
-    // index of the command
-    size_t index = commandToSend - b.C_Ptr();
 
-    // send everything from this index till the very end
-    for (size_t i = index; i < b.Length(); i++)
-      Serial.write(b.C_Ptr()[i]);
   }
 }
 
@@ -140,6 +139,8 @@ void setup()
     delay(500);
   LOG_NL("Connected to wifi");
   // Tank
+  // move command to tank
+  parser.AddEvents(Command::Mcu::MOVE, Move);
   parser.AddEvents(Command::Mcu::TANK_FORWARD, ForwardFun);
   parser.AddEvents(Command::Mcu::TANK_BACKWARD, BackwardFun);
   parser.AddEvents(Command::Mcu::TANK_LEFT, LeftFun);
@@ -147,7 +148,6 @@ void setup()
   parser.AddEvents(Command::Mcu::TANK_STOP, StopFun);
   parser.AddEvents(Command::Mcu::TANK_SPEED, SpeedFun);
 
-  parser.AddEvents(Command::Mcu::MOVE, Move);
 }
 
 void loop()
@@ -157,6 +157,7 @@ void loop()
   {
     left.Stop();
     right.Stop();
+    Serial.print(Command::Mega::LOST_CONNECTION);
     reconnect();
   }
 }

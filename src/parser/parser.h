@@ -7,7 +7,7 @@ class Parser
 {
 public:
     // Returns how many characters have benn read
-    int ReadSerial();
+    int ReadStream(Stream* stream);
     void ExecuteMessege();
     void AddEvents(const char *command, void (*callbacFun)(const CommandBuffer &buffer));
     CommandBuffer &GetBuff();

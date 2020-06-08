@@ -16,29 +16,28 @@ Parser parser;
 
 void setup()
 {
-  arm.Attach();
+  // arm.Attach();
   Serial.begin(115200);
 }
 
 void loop()
 {
-  if (parser.ReadSerial())
+  if (parser.ReadStream(&Serial))
   {
-    parser.ExecuteMessege();
-
-    Serial.println(parser.GetBuff().C_Ptr());
     const char *command = parser.GetBuff().Command();
     if (command)
     {
       char c_command = *command;
       auto number = parser.GetBuff().FindNumber(1);
-
-      if (number.success)
-        arm.Parse(c_command, number.value);
+      Serial.print("Command ");
+      Serial.println(command);
+      Serial.println(number.value);
+      if (number.success);
+        // arm.Parse(c_command, number.value);
     }
     parser.GetBuff().Clear();
   }
-  arm.Update();
+  // arm.Update();
 }
 
 #endif // MEGA

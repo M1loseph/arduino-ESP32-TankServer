@@ -4,104 +4,55 @@
 
 #include <Arduino.h>
 #include <SoftwareSerial.h>
+#include <Adafruit_PWMServoDriver.h>
+#include <Wire.h>
 #include "parser/parser.h"
-#include "engine/engine.h"
 #include "debug.h"
-
-// ================
-// ENGINE PINS
-// ================
+#include "commands.h"
 
 typedef unsigned char uchar;
-
-constexpr uchar RIGHT_FRONT 2
-constexpr uchar RIGHT_BACK 3
-constexpr uchar LEFT_FRONT 4
-constexpr uchar LEFT_BACK 5
-constexpr uchar SIDE_FRONT A2
-constexpr uchar SIDE_BACK A1
-
-constexpr uchar RIGHT_SPEED 9
-constexpr uchar LEFT_SPEED 10
-constexpr uchar SIDE_SPEED A0
-
-constexpr uchar MP3_RX 11
-constexpr uchar MP3_TX 12
-
-// ================
-// DIODES
-// ================
-
-#define LEFT_DIODE 6
-#define RIGHT_DIODE 7
-
-// ================
-// DEFAULT VALUES
-// ================
-
-#define DEF_SPEED 120
-#define DEF_SIDE_SPEED 255
-
-#define EVENTS 20
-#define BUFFER_LENGTH 100
-
-#define TURN_MULTIPLIER 0.7
-#define BLINK_INTERVAL 1000
-
-// ================
-// COMMANDS
-// ================
-
-const char *FORWARD = "FORWARD";
-const char *BACKWARD = "BACKWARD";
-const char *LEFT = "LEFT";
-const char *RIGHT = "RIGHT";
-const char *LEFT_WHILE_DRIVING = "LEFT_WHILE_DRIVING";
-const char *RIGHT_WHILE_DRIVING = "RIGHT_WHILE_DRIVING";
-const char *STOP = "STOP";
-const char *SPEED = "SPEED";
-const char *MP3_COMMAND = "MP3_COMMAND";
-const char *SIDE_UP = "SIDE_UP";
-const char *SIDE_DOWN = "SIDE_DOWN";
+void moveServo(uchar servo, const Number &number);
 
 // ================
 // VARIABLES
 // ================
 
-Engine left(LEFT_FRONT, LEFT_BACK, LEFT_SPEED, DEF_SPEED);
-Engine right(RIGHT_FRONT, RIGHT_BACK, RIGHT_SPEED, DEF_SPEED);
-Engine side(SIDE_FRONT, SIDE_BACK, SIDE_SPEED, DEF_SIDE_SPEED);
+constexpr uchar MP3_RX = 11;
+constexpr uchar MP3_TX = 12;
+// PWM library shit
+constexpr size_t PULSE_MS_MIN = 550;
+constexpr size_t PULSE_MS_MAX = 2500;
+constexpr uchar SERVO_FREQ = 50;
+
 Parser parser;
 SoftwareSerial mp3(MP3_RX, MP3_TX);
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
-// ================
-// SETTING UP PINS
-// ================
+constexpr uchar MIN[] = {0, 30, 0, 0, 0, 40};
+constexpr uchar MAX[] = {180, 180, 180, 180, 180, 60};
+constexpr uchar DEF_ANGLES[] = {90, 90, 90, 90, 90, 50};
 
-static void InitEnginePins()
-{
-  pinMode(RIGHT_FRONT, OUTPUT);
-  pinMode(RIGHT_BACK, OUTPUT);
-  pinMode(LEFT_FRONT, OUTPUT);
-  pinMode(LEFT_BACK, OUTPUT);
-  pinMode(SIDE_FRONT, OUTPUT);
-  pinMode(SIDE_BACK, OUTPUT);
-  pinMode(RIGHT_SPEED, OUTPUT);
-  pinMode(LEFT_SPEED, OUTPUT);
-  pinMode(SIDE_SPEED, OUTPUT);
-}
+constexpr uchar SERVOS = 6;
 
-static void InitDiodes()
-{
-  pinMode(LEFT_DIODE, OUTPUT);
-  pinMode(RIGHT_DIODE, OUTPUT);
-}
+constexpr uchar BASE_PIN = 0;
+constexpr uchar SHOULDER_PIN = 1;
+constexpr uchar ELBOW_1_PIN = 2;
+constexpr uchar ELBOW_2_PIN = 3;
+constexpr uchar WRIST_PIN = 4;
+constexpr uchar CLAW_PIN = 5;
+
+auto BASE_FUN = [](const CommandBuffer &b) { moveServo(BASE_PIN, b.FindNumber(1)); };
+auto SHOULDER_FUN = [](const CommandBuffer &b) { moveServo(SHOULDER_PIN, b.FindNumber(1)); };
+auto ELBOW_1_FUN = [](const CommandBuffer &b) { moveServo(ELBOW_1_PIN, b.FindNumber(1)); };
+auto ELBOW_2_FUN = [](const CommandBuffer &b) { moveServo(ELBOW_2_PIN, b.FindNumber(1)); };
+auto WRIST_FUN = [](const CommandBuffer &b) { moveServo(WRIST_PIN, b.FindNumber(1)); };
+auto CLAW_FUN = [](const CommandBuffer &b) { moveServo(CLAW_PIN, b.FindNumber(1)); };
 
 // ==============
 // MP3 FUNCTIONS
 // ==============
 
-void MP3command(int8_t command, int8_t dat1, int8_t dat2)
+void MP3command(int8_t command, int8_t data_one, int8_t data_two)
 {
   int8_t Send_buf[8];
   Send_buf[0] = 0x7e;             //starting byte
@@ -109,8 +60,8 @@ void MP3command(int8_t command, int8_t dat1, int8_t dat2)
   Send_buf[2] = 0x06;             //the number of bytes of the command without starting byte and ending byte
   Send_buf[3] = command;          //
   Send_buf[4] = 0x00;             //0x00 = no feedback, 0x01 = feedback
-  Send_buf[5] = dat1;             //datah
-  Send_buf[6] = dat2;             //datal
+  Send_buf[5] = data_one;         //datah
+  Send_buf[6] = data_two;         //datal
   Send_buf[7] = 0xef;             //ending byte
   for (uint8_t i = 0; i < 8; i++) //
     mp3.write(Send_buf[i]);
@@ -118,109 +69,61 @@ void MP3command(int8_t command, int8_t dat1, int8_t dat2)
 
 void readMP3FromBuffer(const CommandBuffer &buffer)
 {
-  Number n1 = buffer.FindNumber(1);
-  Number n2 = buffer.FindNumber(2);
-  Number n3 = buffer.FindNumber(3);
+  static constexpr size_t NUMBERS = 3U;
+  Number numbers[NUMBERS];
+  for (size_t i = 0; i < NUMBERS; i++)
+    numbers[i] = buffer.FindNumber(i + 1);
 
-  if (n1.success && n2.success && n3.success)
-  {
-    LOG("Correct mp3 command: ");
-    LOG(n1.number);
-    LOG(" ");
-    LOG(n2.number);
-    LOG(" ");
-    LOG(n3.number);
-    MP3command(n1.value, n2.value, n3.value);
-  }
-  else
-  {
-    LOG_NL("===============================");
-    LOG_NL(n1.success);
-    LOG_NL(n2.success);
-    LOG_NL(n3.success);
-    LOG_NL("===============================");
-  }
+  // check the success of each number
+  // later check if each of them is 0 <= value <= 255
+  for (size_t i = 0; i < NUMBERS; i++)
+    if (!numbers[i].success || numbers[i].value < 0 || numbers[i].value > 255)
+      return;
+
+  MP3command(numbers[0].value, numbers[1].value, numbers[2].value);
 }
 
-// ==============
-// ENGINES
-// ==============
-
-void SpeedFun(const CommandBuffer &buffer)
+void moveServo(uchar servo, const Number &number)
 {
-  Number number = buffer.FindNumber(1);
-
-  if (number.success)
+  if (number.success && servo < SERVOS)
   {
-    if (number.value >= 0 && number.value <= 255)
-    {
-      left.ChangeSpeed((uchar)number.value);
-      right.ChangeSpeed((uchar)number.value);
-      LOG_NL(number.number);
-    }
-    else
-    {
-      LOG_NL("Speed is too large or too small");
-    }
-  }
-  else
-  {
-    LOG_NL("Speed not found");
+    int pulse = number.value;
+    int angle = (int)map(pulse, PULSE_MS_MIN, PULSE_MS_MAX, 0, 180);
+    // check if value is in bounds
+    if (angle >= MIN[servo] && angle <= MAX[servo])
+      pwm.writeMicroseconds(servo, pulse);
   }
 }
-
-// ==============
-// TYPICAL ARDUINO
-// ==============
-
-void Blink()
-{
-  static bool state = false;
-  static unsigned long lastChange = millis();
-
-  if (millis() - lastChange > BLINK_INTERVAL)
-  {
-    digitalWrite(LEFT_DIODE, state);
-    digitalWrite(RIGHT_DIODE, !state);
-    state = !state;
-    lastChange = millis();
-  }
-}
-
-auto Forward_Fun =  [](const CommandBuffer &b) { left.Forward(); right.Forward(); };
-auto BackwardFun = [](const CommandBuffer &b) {left.Backward(); left.Backward(); };
-auto LeftFun = [](const CommandBuffer &b) {left.Backward(); right.Forward(); };
-auto RightFun = [](const CommandBuffer &b) {left.Forward(); right.Backward(); };
-auto SideUpFun = [](const CommandBuffer &b) { side.Forward(); };
-auto SideDownFun =  [](const CommandBuffer &b) { side.Backward(); };
 
 void setup()
 {
   Serial.begin(115200);
-  mp3.begin(9600);
+  // mp3.begin(9600);
+  // MP3command(6, 0, 15);
+  pwm.begin();
+  pwm.setOscillatorFrequency(27000000);
+  pwm.setPWMFreq(SERVO_FREQ); // Analog servos run at ~50 Hz updates
 
-  InitEnginePins();
-  InitDiodes();
+  parser.AddEvents(Command::Nano::BASE, BASE_FUN);
+  parser.AddEvents(Command::Nano::SHOULDER, SHOULDER_FUN);
+  parser.AddEvents(Command::Nano::ELBOW_1, ELBOW_1_FUN);
+  parser.AddEvents(Command::Nano::ELBOW_2, ELBOW_2_FUN);
+  parser.AddEvents(Command::Nano::WRIST, WRIST_FUN);
+  parser.AddEvents(Command::Nano::CLAW, CLAW_FUN);
 
-  parser.AddEvents(FORWARD, Forward_Fun);
-  parser.AddEvents(BACKWARD, BackwardFun);
-  parser.AddEvents(SPEED, SpeedFun);
-  parser.AddEvents(LEFT, LeftFun);
-  parser.AddEvents(RIGHT, RightFun);
-  parser.AddEvents(SIDE_UP, SideUpFun);
-  parser.AddEvents(SIDE_DOWN, SideDownFun);
-  parser.AddEvents(MP3_COMMAND, readMP3FromBuffer);
-
-  MP3command(6, 0, 15);
+  for (size_t i = 0; i < SERVOS; i++)
+    pwm.writeMicroseconds(i, map(DEF_ANGLES[i], 0, 180, PULSE_MS_MIN, PULSE_MS_MAX));
 }
 
 void loop()
 {
-  if (parser.ReadStream())
+  if (parser.ReadStream(&Serial)){
+    for(uint16_t i = 0; i < parser.GetBuff().Length(); i++)
+      Serial.write(parser.GetBuff().C_Ptr()[i]);
+    
     parser.ExecuteMessege();
-  Blink();
+  }
 }
 
-
-#endif // NANOA
+#endif // NANO
 #endif // UNIT_TEST

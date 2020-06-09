@@ -3,7 +3,7 @@
 
 bool CommandBuffer::PushBack(char c)
 {
-    if (m_CurrentLength < BUFFER_LENGTH)
+    if (m_CurrentLength < ST_BUFFER_LENGTH)
     {
         // remove spaces -> change them to NULL_CHAR
         if (c == ' ')
@@ -17,7 +17,7 @@ bool CommandBuffer::PushBack(char c)
 
 void CommandBuffer::Clear()
 {
-    memset(m_Buffer, NULL_CHAR, BUFFER_LENGTH);
+    memset(m_Buffer, NULL_CHAR, ST_BUFFER_LENGTH);
     m_CurrentLength = 0;
     LOG_NL("Cleared memory");
 }
@@ -88,7 +88,7 @@ size_t CommandBuffer::Length() const
 
 bool CommandBuffer::IsFull() const
 {
-    return m_CurrentLength == BUFFER_LENGTH;
+    return m_CurrentLength == ST_BUFFER_LENGTH;
 }
 
 const char *CommandBuffer::C_Ptr() const

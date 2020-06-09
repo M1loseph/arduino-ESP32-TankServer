@@ -19,7 +19,7 @@ namespace Command
     const char *MOVE = "MOVE";
   } // namespace MCU
 
-  namespace Mega
+  namespace Nano
   {
     const char *LOST_CONNECTION = "LC";
     const char *BASE = "BASE";
@@ -28,7 +28,7 @@ namespace Command
     const char *ELBOW_2 = "ELBOW2";
     const char *WRIST = "WRIST";
     const char *CLAW = "CLAW";
-  }
+  } // namespace Nano
 } // namespace Command
 
 #endif //__COMMANDS_H__

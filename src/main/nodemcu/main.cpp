@@ -4,7 +4,6 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
-#include <SoftwareSerial.h>
 
 #include "parser/parser.h"
 #include "engine/engine.h"
@@ -78,12 +77,22 @@ void SpeedFun(const CommandBuffer &buffer)
   ZMIANA NA SPI
   I W SUMIE TYLE
 */
-void Move(const CommandBuffer &b)
+void MoveToNano(const CommandBuffer &b)
 {
   const char *commandToSend = b.Word(1);
   if (commandToSend)
   {
-
+    // get index of message we want to send
+    size_t index = (size_t)(commandToSend - b.C_Ptr());
+    // send entire messege
+    for (size_t i = index; i < b.Length(); i++)
+    {
+      char toSend = b.C_Ptr()[i];
+      if (toSend == b.NULL_CHAR)
+        Serial.write(' ');
+      else
+        Serial.write(toSend);
+    }
   }
 }
 
@@ -132,15 +141,13 @@ void setup()
   InitEnginePins();
   client.setServer(Network::MQTT_SERVER, Network::PORT);
   client.setCallback(callback);
-  Serial.begin(115200);
   WiFi.mode(WIFI_STA);
   WiFi.begin(Network::SSID, Network::PASSWORD);
   while (WiFi.status() != WL_CONNECTED)
     delay(500);
-  LOG_NL("Connected to wifi");
   // Tank
-  // move command to tank
-  parser.AddEvents(Command::Mcu::MOVE, Move);
+  // move command to nano
+  parser.AddEvents(Command::Mcu::MOVE, MoveToNano);
   parser.AddEvents(Command::Mcu::TANK_FORWARD, ForwardFun);
   parser.AddEvents(Command::Mcu::TANK_BACKWARD, BackwardFun);
   parser.AddEvents(Command::Mcu::TANK_LEFT, LeftFun);
@@ -148,6 +155,7 @@ void setup()
   parser.AddEvents(Command::Mcu::TANK_STOP, StopFun);
   parser.AddEvents(Command::Mcu::TANK_SPEED, SpeedFun);
 
+  Serial.begin(115200);
 }
 
 void loop()
@@ -157,7 +165,6 @@ void loop()
   {
     left.Stop();
     right.Stop();
-    Serial.print(Command::Mega::LOST_CONNECTION);
     reconnect();
   }
 }

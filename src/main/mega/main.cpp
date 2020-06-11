@@ -10,7 +10,7 @@
 #include "commands.h"
 
 typedef unsigned char uchar;
-void moveServo(uchar servo, const Number &number);
+void changeServoDirection(uchar servo, const Number &number);
 
 // ================
 // VARIABLES
@@ -26,11 +26,19 @@ constexpr uchar SERVO_FREQ = 50;
 Parser parser;
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
+constexpr uchar SERVOS = 6;
+
 constexpr uchar MIN_ANGLES[] = {5, 40, 0, 70, 0, 60};
 constexpr uchar MAX_ANGLES[] = {165, 150, 130, 180, 180, 115};
 constexpr uchar DEF_ANGLES[] = {90, 140, 120, 90, 90, 80};
 
-constexpr uchar SERVOS = 6;
+constexpr uchar SERVO_BACKWARD = 0;
+constexpr uchar SERVO_STOP = 1;
+constexpr uchar SERVO_FORWARD = 2;
+constexpr uchar SERVO_TIMEOUT = 20;
+
+uchar DIRECTIONS[] = {SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP};
+uchar CURRENT_ANGLES[SERVOS];
 
 constexpr uchar BASE_PIN = 0;
 constexpr uchar SHOULDER_PIN = 1;
@@ -39,12 +47,12 @@ constexpr uchar ELBOW_2_PIN = 3;
 constexpr uchar WRIST_PIN = 4;
 constexpr uchar CLAW_PIN = 5;
 
-auto BASE_FUN = [](const CommandBuffer &b) { moveServo(BASE_PIN, b.FindNumber(1)); };
-auto SHOULDER_FUN = [](const CommandBuffer &b) { moveServo(SHOULDER_PIN, b.FindNumber(1)); };
-auto ELBOW_1_FUN = [](const CommandBuffer &b) { moveServo(ELBOW_1_PIN, b.FindNumber(1)); };
-auto ELBOW_2_FUN = [](const CommandBuffer &b) { moveServo(ELBOW_2_PIN, b.FindNumber(1)); };
-auto WRIST_FUN = [](const CommandBuffer &b) { moveServo(WRIST_PIN, b.FindNumber(1)); };
-auto CLAW_FUN = [](const CommandBuffer &b) { moveServo(CLAW_PIN, b.FindNumber(1)); };
+auto BASE_FUN = [](const CommandBuffer &b) { changeServoDirection(BASE_PIN, b.FindNumber(1)); };
+auto SHOULDER_FUN = [](const CommandBuffer &b) { changeServoDirection(SHOULDER_PIN, b.FindNumber(1)); };
+auto ELBOW_1_FUN = [](const CommandBuffer &b) { changeServoDirection(ELBOW_1_PIN, b.FindNumber(1)); };
+auto ELBOW_2_FUN = [](const CommandBuffer &b) { changeServoDirection(ELBOW_2_PIN, b.FindNumber(1)); };
+auto WRIST_FUN = [](const CommandBuffer &b) { changeServoDirection(WRIST_PIN, b.FindNumber(1)); };
+auto CLAW_FUN = [](const CommandBuffer &b) { changeServoDirection(CLAW_PIN, b.FindNumber(1)); };
 
 // ==============
 // MP3 FUNCTIONS
@@ -81,17 +89,47 @@ void readMP3FromBuffer(const CommandBuffer &buffer)
   MP3command(numbers[0].value, numbers[1].value, numbers[2].value);
 }
 
-void moveServo(uchar servo, const Number &number)
+// ==============
+//  SERVOS
+// ==============
+
+// TODO HOTFIX
+void changeServoDirection(uchar servo, const Number &number)
 {
   if (number.success && servo < SERVOS)
   {
-    int angle = number.value;
-    // check if value is in bounds
-    if (angle >= MIN_ANGLES[servo] && angle <= MAX_ANGLES[servo])
+    int direction = number.value;
+    if (direction == SERVO_STOP || direction == SERVO_BACKWARD || direction == SERVO_FORWARD)
+      DIRECTIONS[servo] = direction;
+  }
+}
+
+void updateServos()
+{
+  static unsigned long timer = millis();
+  if (millis() - timer > SERVO_TIMEOUT)
+  {
+    for (size_t i = 0; i < SERVOS; i++)
     {
-      int pulse = (int)map(angle, 0, 180, PULSE_MS_MIN, PULSE_MS_MAX);
-      pwm.writeMicroseconds(servo, pulse);
+      bool changed = false;
+      if (DIRECTIONS[i] == SERVO_FORWARD && CURRENT_ANGLES[i] < MAX_ANGLES[i])
+      {
+        CURRENT_ANGLES[i]++;
+        changed = true;
+      }
+      else if (DIRECTIONS[i] == SERVO_BACKWARD && CURRENT_ANGLES[i] > MIN_ANGLES[i])
+      {
+
+        CURRENT_ANGLES[i]--;
+        changed = true;
+      }
+      if (changed)
+      {
+        int pulse = (int)map(CURRENT_ANGLES[i], 0, 180, PULSE_MS_MIN, PULSE_MS_MAX);
+        pwm.writeMicroseconds(i, pulse);
+      }
     }
+    timer = millis();
   }
 }
 
@@ -100,9 +138,16 @@ void setup()
   Serial.begin(115200);
   Serial3.begin(9600);
   MP3command(6, 0, 15);
+
   pwm.begin();
   pwm.setOscillatorFrequency(27000000);
   pwm.setPWMFreq(SERVO_FREQ); // Analog servos run at ~50 Hz updates
+
+  for (size_t i = 0; i < SERVOS; i++)
+  {
+    pwm.writeMicroseconds(i, map(DEF_ANGLES[i], 0, 180, PULSE_MS_MIN, PULSE_MS_MAX));
+    CURRENT_ANGLES[i] = DEF_ANGLES[i];
+  }
 
   parser.AddEvents(Command::Nano::BASE, BASE_FUN);
   parser.AddEvents(Command::Nano::SHOULDER, SHOULDER_FUN);
@@ -111,15 +156,13 @@ void setup()
   parser.AddEvents(Command::Nano::WRIST, WRIST_FUN);
   parser.AddEvents(Command::Nano::CLAW, CLAW_FUN);
   parser.AddEvents(Command::Nano::MP3_COMMAND, readMP3FromBuffer);
-
-  for (size_t i = 0; i < SERVOS; i++)
-    pwm.writeMicroseconds(i, map(DEF_ANGLES[i], 0, 180, PULSE_MS_MIN, PULSE_MS_MAX));
 }
 
 void loop()
 {
   if (parser.ReadStream(&Serial))
     parser.ExecuteMessege();
+  updateServos();
 }
 
 #endif // MEGA

@@ -34,10 +34,12 @@ public:
   void Stop() override;
   void ChangeSpeed(uint newSpeed);
 
+  static constexpr int E_MAX_SPEED = 1023;
+
 private:
+  bool m_Driving = false;
   uchar m_SpeedPin;
   uint m_CurrentSpeed;
 };
-
 
 #endif // __ENGINE_H

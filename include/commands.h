@@ -5,19 +5,19 @@ namespace Command
 {
   namespace Mcu
   {
-    const char *TANK_FORWARD = "FORWARD";
-    const char *TANK_BACKWARD = "BACKWARD";
-    const char *TANK_LEFT = "LEFT";
-    const char *TANK_RIGHT = "RIGHT";
-    const char *TANK_STOP = "STOP";
+    const char *TANK_FORWARD_L = "FORWARDL";
+    const char *TANK_FORWARD_R = "FORWARDR";
+
+    const char *TANK_BACKWARD_L = "BACKWARDL";
+    const char *TANK_BACKWARD_R = "BACKWARDR";
+
+    const char *TANK_STOP_L = "STOPL";
+    const char *TANK_STOP_R = "STOPR";
+    
     const char *TANK_SPEED = "SPEED";
-    const char *TURRET_FORWARD = "TFORWARD";
-    const char *TURRET_BACKWARD = "TBACKWARD";
-    const char *TURRET_STOP = "TSTOP";
-    const char *GUN_MOVE = "GMOVE";
-    const char *GUN_STOP = "GSTOP";
+
     const char *MOVE = "MOVE";
-  } // namespace MCU
+  } // namespace Mcu
 
   namespace Nano
   {
@@ -28,6 +28,7 @@ namespace Command
     const char *ELBOW_2 = "ELBOW2";
     const char *WRIST = "WRIST";
     const char *CLAW = "CLAW";
+    const char *MP3_COMMAND = "MP3";
   } // namespace Nano
 } // namespace Command
 

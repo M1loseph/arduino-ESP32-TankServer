@@ -17,21 +17,22 @@
 
 // https://www.youtube.com/watch?v=7h2bE2vNoaY
 
-constexpr int PIN_RIGHT_FRONT = D0;
-constexpr int PIN_RIGHT_BACK = D1;
-constexpr int PIN_LEFT_FRONT = D3;
-constexpr int PIN_LEFT_BACK = D2;
+constexpr uchar PIN_RIGHT_FRONT = D0;
+constexpr uchar PIN_RIGHT_BACK = D1;
+constexpr uchar PIN_LEFT_FRONT = D3;
+constexpr uchar PIN_LEFT_BACK = D2;
 
-constexpr int PIN_TANK_SPEED = D4;
+constexpr uchar PIN_LEFT_SPEED = D4;
+constexpr uchar PIN_RIGHT_SPEED = D5;
 
-constexpr uint DEF_SPEED = 500;
+constexpr uint DEF_SPEED = 500U;
 
 // ================
 // VARIABLES
 // ================
 
-Engine left(PIN_LEFT_FRONT, PIN_LEFT_BACK, PIN_TANK_SPEED, DEF_SPEED);
-Engine right(PIN_RIGHT_FRONT, PIN_RIGHT_BACK, PIN_TANK_SPEED, DEF_SPEED);
+Engine left(PIN_LEFT_FRONT, PIN_LEFT_BACK, PIN_LEFT_SPEED, DEF_SPEED);
+Engine right(PIN_RIGHT_FRONT, PIN_RIGHT_BACK, PIN_RIGHT_SPEED, DEF_SPEED);
 Parser parser;
 
 WiFiClient espClient;
@@ -45,9 +46,10 @@ static void InitEnginePins()
 {
   pinMode(PIN_RIGHT_FRONT, OUTPUT);
   pinMode(PIN_RIGHT_BACK, OUTPUT);
-  pinMode(PIN_TANK_SPEED, OUTPUT);
+  pinMode(PIN_LEFT_SPEED, OUTPUT);
   pinMode(PIN_LEFT_FRONT, OUTPUT);
   pinMode(PIN_LEFT_BACK, OUTPUT);
+  pinMode(PIN_RIGHT_SPEED, OUTPUT);
 }
 
 // ==============
@@ -72,11 +74,7 @@ void SpeedFun(const CommandBuffer &buffer)
   else
     LOG_NL("Speed not found");
 }
-/*
-  TODO
-  ZMIANA NA SPI
-  I W SUMIE TYLE
-*/
+
 void MoveToNano(const CommandBuffer &b)
 {
   const char *commandToSend = b.Word(1);
@@ -93,15 +91,19 @@ void MoveToNano(const CommandBuffer &b)
       else
         Serial.write(toSend);
     }
+    // to stop communation
+    Serial.write('\n');
   }
 }
 
-auto ForwardFun = [](const CommandBuffer &b) { left.Forward(); right.Forward(); };
-auto BackwardFun = [](const CommandBuffer &b) {left.Backward(); right.Backward(); };
-auto StopFun = [](const CommandBuffer &b) {left.Stop(); right.Stop(); };
+auto ForwardLeftFun = [](const CommandBuffer &b) { left.Forward(); };
+auto ForwardRightFun = [](const CommandBuffer &b) { right.Forward(); };
 
-auto LeftFun = [](const CommandBuffer &b) { Engine::TurnLeft(left, right); };
-auto RightFun = [](const CommandBuffer &b) { Engine::TurnRight(left, right); };
+auto BackwardLeftFun = [](const CommandBuffer &b) { left.Backward(); };
+auto BackwardRightFun = [](const CommandBuffer &b) { right.Backward(); };
+
+auto StopLeftFun = [](const CommandBuffer &b) { left.Stop(); };
+auto StopRightFun = [](const CommandBuffer &b) { right.Stop(); };
 
 // ==============
 // WIFI
@@ -148,11 +150,13 @@ void setup()
   // Tank
   // move command to nano
   parser.AddEvents(Command::Mcu::MOVE, MoveToNano);
-  parser.AddEvents(Command::Mcu::TANK_FORWARD, ForwardFun);
-  parser.AddEvents(Command::Mcu::TANK_BACKWARD, BackwardFun);
-  parser.AddEvents(Command::Mcu::TANK_LEFT, LeftFun);
-  parser.AddEvents(Command::Mcu::TANK_RIGHT, RightFun);
-  parser.AddEvents(Command::Mcu::TANK_STOP, StopFun);
+  parser.AddEvents(Command::Mcu::TANK_FORWARD_L, ForwardLeftFun);
+  parser.AddEvents(Command::Mcu::TANK_FORWARD_R, ForwardRightFun);
+  parser.AddEvents(Command::Mcu::TANK_BACKWARD_L, BackwardLeftFun);
+  parser.AddEvents(Command::Mcu::TANK_BACKWARD_R, BackwardRightFun);
+  parser.AddEvents(Command::Mcu::TANK_STOP_L, StopLeftFun);
+  parser.AddEvents(Command::Mcu::TANK_STOP_R, StopRightFun);
+
   parser.AddEvents(Command::Mcu::TANK_SPEED, SpeedFun);
 
   Serial.begin(115200);

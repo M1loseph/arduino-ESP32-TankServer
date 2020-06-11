@@ -1,13 +1,12 @@
 // main file, don't compile with unit tests
 #ifndef UNIT_TEST
-#ifdef NANO
+#ifdef MEGA
 
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <Wire.h>
 #include "parser/parser.h"
-#include "debug.h"
 #include "commands.h"
 
 typedef unsigned char uchar;
@@ -25,12 +24,11 @@ constexpr size_t PULSE_MS_MAX = 2500;
 constexpr uchar SERVO_FREQ = 50;
 
 Parser parser;
-SoftwareSerial mp3(MP3_RX, MP3_TX);
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
-constexpr uchar MIN[] = {0, 30, 0, 0, 0, 40};
-constexpr uchar MAX[] = {180, 180, 180, 180, 180, 60};
-constexpr uchar DEF_ANGLES[] = {90, 90, 90, 90, 90, 50};
+constexpr uchar MIN_ANGLES[] = {5, 40, 0, 70, 0, 60};
+constexpr uchar MAX_ANGLES[] = {165, 150, 130, 180, 180, 115};
+constexpr uchar DEF_ANGLES[] = {90, 140, 120, 90, 90, 80};
 
 constexpr uchar SERVOS = 6;
 
@@ -64,7 +62,7 @@ void MP3command(int8_t command, int8_t data_one, int8_t data_two)
   Send_buf[6] = data_two;         //datal
   Send_buf[7] = 0xef;             //ending byte
   for (uint8_t i = 0; i < 8; i++) //
-    mp3.write(Send_buf[i]);
+    Serial3.write(Send_buf[i]);
 }
 
 void readMP3FromBuffer(const CommandBuffer &buffer)
@@ -87,19 +85,21 @@ void moveServo(uchar servo, const Number &number)
 {
   if (number.success && servo < SERVOS)
   {
-    int pulse = number.value;
-    int angle = (int)map(pulse, PULSE_MS_MIN, PULSE_MS_MAX, 0, 180);
+    int angle = number.value;
     // check if value is in bounds
-    if (angle >= MIN[servo] && angle <= MAX[servo])
+    if (angle >= MIN_ANGLES[servo] && angle <= MAX_ANGLES[servo])
+    {
+      int pulse = (int)map(angle, 0, 180, PULSE_MS_MIN, PULSE_MS_MAX);
       pwm.writeMicroseconds(servo, pulse);
+    }
   }
 }
 
 void setup()
 {
   Serial.begin(115200);
-  // mp3.begin(9600);
-  // MP3command(6, 0, 15);
+  Serial3.begin(9600);
+  MP3command(6, 0, 15);
   pwm.begin();
   pwm.setOscillatorFrequency(27000000);
   pwm.setPWMFreq(SERVO_FREQ); // Analog servos run at ~50 Hz updates
@@ -110,6 +110,7 @@ void setup()
   parser.AddEvents(Command::Nano::ELBOW_2, ELBOW_2_FUN);
   parser.AddEvents(Command::Nano::WRIST, WRIST_FUN);
   parser.AddEvents(Command::Nano::CLAW, CLAW_FUN);
+  parser.AddEvents(Command::Nano::MP3_COMMAND, readMP3FromBuffer);
 
   for (size_t i = 0; i < SERVOS; i++)
     pwm.writeMicroseconds(i, map(DEF_ANGLES[i], 0, 180, PULSE_MS_MIN, PULSE_MS_MAX));
@@ -117,13 +118,9 @@ void setup()
 
 void loop()
 {
-  if (parser.ReadStream(&Serial)){
-    for(uint16_t i = 0; i < parser.GetBuff().Length(); i++)
-      Serial.write(parser.GetBuff().C_Ptr()[i]);
-    
+  if (parser.ReadStream(&Serial))
     parser.ExecuteMessege();
-  }
 }
 
-#endif // NANO
+#endif // MEGA
 #endif // UNIT_TEST

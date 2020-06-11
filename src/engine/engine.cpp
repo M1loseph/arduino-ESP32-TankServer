@@ -41,13 +41,14 @@ void StaticEngine::TurnRight(StaticEngine &left, StaticEngine &right)
 }
 
 Engine::Engine(uchar forward, uchar backward, uchar speed, uint defSpeed) : StaticEngine(forward, backward),
-                                                                             m_SpeedPin(speed),
-                                                                             m_CurrentSpeed(defSpeed)
+                                                                            m_SpeedPin(speed),
+                                                                            m_CurrentSpeed(defSpeed)
 {
 }
 
 void Engine::Forward()
 {
+  m_Driving = true;
   digitalWrite(m_SpeedPin, LOW);
   StaticEngine::Forward();
   analogWrite(m_SpeedPin, m_CurrentSpeed);
@@ -55,6 +56,7 @@ void Engine::Forward()
 
 void Engine::Backward()
 {
+  m_Driving = true;
   digitalWrite(m_SpeedPin, LOW);
   StaticEngine::Backward();
   analogWrite(m_SpeedPin, m_CurrentSpeed);
@@ -62,14 +64,19 @@ void Engine::Backward()
 
 void Engine::Stop()
 {
+  m_Driving = false;
   digitalWrite(m_SpeedPin, LOW);
   StaticEngine::Stop();
 }
 
 void Engine::ChangeSpeed(uint newSpeed)
 {
-  m_CurrentSpeed = newSpeed;
-  analogWrite(m_SpeedPin, m_CurrentSpeed);
-  LOG("Changed speed to: ");
-  LOG_NL(newSpeed);
+  if (newSpeed <= Engine::E_MAX_SPEED)
+  {
+    m_CurrentSpeed = newSpeed;
+    if (m_Driving)
+      analogWrite(m_SpeedPin, m_CurrentSpeed);
+    LOG("Changed speed to: ");
+    LOG_NL(newSpeed);
+  }
 }

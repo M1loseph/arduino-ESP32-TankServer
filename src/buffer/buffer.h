@@ -31,7 +31,7 @@ public:
 
     static constexpr char NULL_CHAR = '\0';
     static constexpr size_t ST_BUFFER_LENGTH = 100U;
-    static constexpr int NOT_FOUND = -1;
+    static constexpr int NOT_FOUND = 0;
 
 private:
     size_t m_CurrentLength = 0;

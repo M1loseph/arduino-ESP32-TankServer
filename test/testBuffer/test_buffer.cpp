@@ -13,11 +13,11 @@ void TestAddingAndRemoving()
 
     b.Clear();
 
-    char fullNulls[CommandBuffer::BUFFER_LENGTH] = {'\0'};
+    char fullNulls[CommandBuffer::ST_BUFFER_LENGTH] = {'\0'};
     TEST_ASSERT_EQUAL_CHAR_ARRAY(fullNulls, b.C_Ptr(), 100);
 }
 
-void TestNumberParsing()
+void TestPositiveNumberParsing()
 {
     CommandBuffer b;
     const char *numbers = "30 20a o0   30";
@@ -60,28 +60,70 @@ void TestCommandParsing()
 void TestFindingWords()
 {
     CommandBuffer b;
-    const char *text = "Reading Jojo is kind of like those pretend fights you had when you were .";
+    const char *text = "Reading Jojo is kind of like those pretend fights you had when you were younger.";
 
-    for(size_t i = 0; i < strlen(text); i++)
+    for (size_t i = 0; i < strlen(text); i++)
         b.PushBack(text[i]);
 
-    TEST_ASSERT_EQUAL_STRING(b.Word(0), "Reading");
-    TEST_ASSERT_EQUAL_STRING(b.Word(1), "Jojo");
-    TEST_ASSERT_EQUAL_STRING(b.Word(2), "is");
-    TEST_ASSERT_EQUAL_STRING(b.Word(3), "kind");
-    TEST_ASSERT_EQUAL_STRING(b.Word(4), "of");
-    TEST_ASSERT_EQUAL_STRING(b.Word(5), "like");
-    TEST_ASSERT_EQUAL_STRING(b.Word(6), "those");
-    TEST_ASSERT_EQUAL_STRING(b.Word(7), "pretend");
-    TEST_ASSERT_EQUAL_STRING(b.Word(8), "fights");
-    TEST_ASSERT_EQUAL_STRING(b.Word(9), "you");
-    TEST_ASSERT_EQUAL_STRING(b.Word(10), "had");
-    TEST_ASSERT_EQUAL_STRING(b.Word(11), "when");
-    TEST_ASSERT_EQUAL_STRING(b.Word(12), "you");
-    TEST_ASSERT_EQUAL_STRING(b.Word(13), "were");
-    TEST_ASSERT_EQUAL_STRING(b.Word(14), "younger.");
-    for(size_t i = 15; i < 100; i++)
+    TEST_ASSERT_EQUAL_STRING("Reading", b.Word(0));
+    TEST_ASSERT_EQUAL_STRING("Jojo", b.Word(1));
+    TEST_ASSERT_EQUAL_STRING("is", b.Word(2));
+    TEST_ASSERT_EQUAL_STRING("kind", b.Word(3));
+    TEST_ASSERT_EQUAL_STRING("of", b.Word(4));
+    TEST_ASSERT_EQUAL_STRING("like", b.Word(5));
+    TEST_ASSERT_EQUAL_STRING("those", b.Word(6));
+    TEST_ASSERT_EQUAL_STRING("pretend", b.Word(7));
+    TEST_ASSERT_EQUAL_STRING("fights", b.Word(8));
+    TEST_ASSERT_EQUAL_STRING("you", b.Word(9));
+    TEST_ASSERT_EQUAL_STRING("had", b.Word(10));
+    TEST_ASSERT_EQUAL_STRING("when", b.Word(11));
+    TEST_ASSERT_EQUAL_STRING("you", b.Word(12));
+    TEST_ASSERT_EQUAL_STRING("were", b.Word(13));
+    TEST_ASSERT_EQUAL_STRING("younger.", b.Word(14));
+    for (size_t i = 15; i < 100; i++)
         TEST_ASSERT_NULL(b.Word(i));
+}
+
+void TestBothPositiveAndNegativeLoop()
+{
+    char buffer[16];
+    CommandBuffer b;
+
+    for (int i = -24; i < 20; i++)
+    {
+        char *number = itoa(i, buffer, 10);
+
+        for (size_t j = 0; j < strlen(number); j++)
+            b.PushBack(number[j]);
+
+        Number m = b.FindNumber(0);
+        TEST_ASSERT_TRUE(m.success);
+        TEST_ASSERT_EQUAL_INT(i, m.value);
+        b.Clear();
+    }
+    Number m = b.FindNumber(0);
+
+    TEST_ASSERT_FALSE(m.success);
+    TEST_ASSERT_EQUAL_INT(CommandBuffer::NOT_FOUND, m.value);
+}
+
+void TestBothPositiveAndNegative()
+{
+    int values[] = {21, -30, 1215, -3124};
+    const char *text = "  21  -30 1215 -3124 --44";
+    CommandBuffer b;
+    for (size_t i = 0; i < strlen(text); i++)
+        b.PushBack(text[i]);
+
+    constexpr size_t length = 5;
+    Number numbers[length];
+    for (size_t i = 0; i < length; i++)
+        numbers[i] = b.FindNumber(i);
+
+    for (size_t i = 0; i < length - 1; i++)
+        TEST_ASSERT_EQUAL_INT(values[i], numbers[i].value);
+
+    TEST_ASSERT_FALSE(numbers[length - 1].success);
 }
 
 void setup()
@@ -90,8 +132,11 @@ void setup()
 
     UNITY_BEGIN();
     RUN_TEST(TestAddingAndRemoving);
-    RUN_TEST(TestNumberParsing);
+    RUN_TEST(TestPositiveNumberParsing);
     RUN_TEST(TestCommandParsing);
+    RUN_TEST(TestFindingWords);
+    RUN_TEST(TestBothPositiveAndNegative);
+    RUN_TEST(TestBothPositiveAndNegativeLoop);
     UNITY_END();
 }
 

@@ -16,23 +16,24 @@ static void Forward(const CommandBuffer &b)
 void testCommandFound()
 {
     Parser parser;
-    const char *events[9] = {
-        Command::Mcu::TANK_FORWARD,
-        Command::Mcu::TURRET_BACKWARD,
-        Command::Mcu::TANK_LEFT,
-        Command::Mcu::TANK_RIGHT,
-        Command::Mcu::TANK_STOP,
-        Command::Mcu::TANK_SPEED,
-        Command::Mcu::TURRET_FORWARD,
-        Command::Mcu::TURRET_BACKWARD,
-        Command::Mcu::TURRET_STOP};
+    constexpr size_t length = 7;
 
-    for(size_t i = 0; i < 9; i++)
+    const char *events[length] = {
+        Command::Mcu::TANK_FORWARD_L,
+        Command::Mcu::TANK_BACKWARD_R,
+        Command::Mcu::TANK_FASTER,
+        Command::Mcu::TANK_SLOWER,
+        Command::Mcu::TANK_STEADY,
+        Command::Mcu::TANK_STOP_L,
+        Command::Mcu::TANK_STOP_R
+    };
+
+    for(size_t i = 0; i < length; i++)
         parser.AddEvents(events[i], Forward);
 
     for (int i = 0; i < 1000; i++)
     {
-        const char *command = events[random(9)];
+        const char *command = events[random(length)];
         for (size_t i = 0; i < strlen(command) + 1; i++)
             parser.GetBuff().PushBack(command[i]);
 

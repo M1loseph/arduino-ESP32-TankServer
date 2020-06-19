@@ -7,15 +7,13 @@ namespace Command
   {
     const char *TANK_FORWARD_L = "FORWARDL";
     const char *TANK_FORWARD_R = "FORWARDR";
-
     const char *TANK_BACKWARD_L = "BACKWARDL";
     const char *TANK_BACKWARD_R = "BACKWARDR";
-
     const char *TANK_STOP_L = "STOPL";
     const char *TANK_STOP_R = "STOPR";
-    
-    const char *TANK_SPEED = "SPEED";
-
+    const char *TANK_FASTER = "FASTER";
+    const char *TANK_SLOWER = "SLOWER";
+    const char *TANK_STEADY = "STEADY";
     const char *MOVE = "MOVE";
   } // namespace Mcu
 

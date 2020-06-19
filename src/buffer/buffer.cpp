@@ -32,7 +32,18 @@ Number CommandBuffer::FindNumber(size_t numberIndex) const
         size_t index = numberPtr - m_Buffer;
 
         bool validNumber = true;
+        bool isNegative = false;
         // check if all char are digits
+
+        // check if number starts with -
+        // if so, then it's negative
+        if (*numberPtr == '-')
+        {
+            isNegative = true;
+            index++;
+            numberPtr++;
+        }
+
         while (index < Length() && m_Buffer[index] != NULL_CHAR && validNumber)
             // as long we read digits -> keep going
             if (!isdigit(m_Buffer[index]))
@@ -44,7 +55,13 @@ Number CommandBuffer::FindNumber(size_t numberIndex) const
         // it has to end with null (index 100 doesnt count)
         // it has to be numeric
         if ((*numberPtr) != NULL_CHAR && m_Buffer[index] == NULL_CHAR && validNumber)
+        {
+            // if it is negative, move one step back
+            // rest is handled by atoi
+            if (isNegative)
+                --numberPtr;
             return {atoi(numberPtr), true};
+        }
     }
     return {NOT_FOUND, false};
 }

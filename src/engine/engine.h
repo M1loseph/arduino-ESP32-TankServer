@@ -33,6 +33,7 @@ public:
   void Backward() override;
   void Stop() override;
   void ChangeSpeed(uint newSpeed);
+  uint CurrentSpeed();
 
   static constexpr int E_MAX_SPEED = 1023;
 

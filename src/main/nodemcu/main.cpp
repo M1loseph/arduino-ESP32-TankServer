@@ -26,6 +26,12 @@ constexpr uchar PIN_LEFT_SPEED = D4;
 constexpr uchar PIN_RIGHT_SPEED = D5;
 
 constexpr uint DEF_SPEED = 500U;
+constexpr uint SPEED_CHANGE_INTERVAL = 5;
+constexpr uchar SPEED_CHANGE_DOWN = 0;
+constexpr uchar SPEED_CHANGE_STEADY = 1;
+constexpr uchar SPEED_CHANGE_UP = 2;
+
+uchar changingSpeed = 1;
 
 // ================
 // VARIABLES
@@ -56,23 +62,27 @@ static void InitEnginePins()
 // FUNCTIONS TO EVENTS
 // ==============
 
-void SpeedFun(const CommandBuffer &buffer)
+void UpdateSpeed()
 {
-  Number number = buffer.FindNumber(1);
-
-  if (number.success)
+  static unsigned long lastUpdate = millis();
+  if (millis() - lastUpdate > SPEED_CHANGE_INTERVAL)
   {
-    if (number.value >= 0 && number.value <= 1023)
+    if (changingSpeed == SPEED_CHANGE_DOWN)
     {
-      left.ChangeSpeed(number.value);
-      right.ChangeSpeed(number.value);
-      LOG_NL(number.value);
+      if (left.CurrentSpeed() > 0U)
+        left.ChangeSpeed(left.CurrentSpeed() - 1);
+      if (right.CurrentSpeed() > 0U)
+        right.ChangeSpeed(right.CurrentSpeed() - 1);
+      //client.publish(Network::CALLBACK_TOPIC, "Slower");
     }
-    else
-      LOG_NL("Speed is too large or too small");
+    else if (changingSpeed == SPEED_CHANGE_UP)
+    {
+      left.ChangeSpeed(left.CurrentSpeed() + 1);
+      right.ChangeSpeed(right.CurrentSpeed() + 1);
+      //client.publish(Network::CALLBACK_TOPIC, "Faster");
+    }
+    lastUpdate = millis();
   }
-  else
-    LOG_NL("Speed not found");
 }
 
 void MoveToNano(const CommandBuffer &b)
@@ -104,6 +114,10 @@ auto BackwardRightFun = [](const CommandBuffer &b) { right.Backward(); };
 
 auto StopLeftFun = [](const CommandBuffer &b) { left.Stop(); };
 auto StopRightFun = [](const CommandBuffer &b) { right.Stop(); };
+
+auto FasterFun = [](const CommandBuffer &b) { changingSpeed = SPEED_CHANGE_UP; };
+auto SlowerFun = [](const CommandBuffer &b) { changingSpeed = SPEED_CHANGE_DOWN; };
+auto SteadyFun = [](const CommandBuffer &b) { changingSpeed = SPEED_CHANGE_STEADY; };
 
 // ==============
 // WIFI
@@ -141,13 +155,13 @@ void reconnect()
 void setup()
 {
   InitEnginePins();
-  client.setServer(Network::MQTT_SERVER, Network::PORT);
+  client.setServer(Network::MQTT_SERVER, Network::MQTT_PORT);
   client.setCallback(callback);
   WiFi.mode(WIFI_STA);
   WiFi.begin(Network::SSID, Network::PASSWORD);
   while (WiFi.status() != WL_CONNECTED)
     delay(500);
-  // Tank
+
   // move command to nano
   parser.AddEvents(Command::Mcu::MOVE, MoveToNano);
   parser.AddEvents(Command::Mcu::TANK_FORWARD_L, ForwardLeftFun);
@@ -157,7 +171,9 @@ void setup()
   parser.AddEvents(Command::Mcu::TANK_STOP_L, StopLeftFun);
   parser.AddEvents(Command::Mcu::TANK_STOP_R, StopRightFun);
 
-  parser.AddEvents(Command::Mcu::TANK_SPEED, SpeedFun);
+  parser.AddEvents(Command::Mcu::TANK_FASTER, FasterFun);
+  parser.AddEvents(Command::Mcu::TANK_SLOWER, SlowerFun);
+  parser.AddEvents(Command::Mcu::TANK_STEADY, SteadyFun);
 
   Serial.begin(115200);
 }
@@ -171,6 +187,7 @@ void loop()
     right.Stop();
     reconnect();
   }
+  UpdateSpeed();
 }
 
 #endif // UNIT_TEST

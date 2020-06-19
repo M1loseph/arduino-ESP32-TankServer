@@ -80,3 +80,8 @@ void Engine::ChangeSpeed(uint newSpeed)
     LOG_NL(newSpeed);
   }
 }
+
+uint Engine::CurrentSpeed()
+{
+  return m_CurrentSpeed;
+}

@@ -20,9 +20,9 @@ public:
     //                                        0       1      2      3     ...
     // the commands are expected to be like: "command number number number..."
     // spaces don't matter (must be at least one)
-    Number FindNumber(size_t numberIndex) const;
+    Number NumberAt(size_t numberIndex) const;
     // when no command is found, returns nullptr
-    const char *Word(size_t wordIndex) const;
+    const char *WordAt(size_t wordIndex) const;
     const char *Command() const;
     size_t Length() const;
     bool IsFull() const;

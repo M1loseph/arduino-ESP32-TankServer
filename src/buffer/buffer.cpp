@@ -22,9 +22,9 @@ void CommandBuffer::Clear()
     LOG_NL("Cleared memory");
 }
 
-Number CommandBuffer::FindNumber(size_t numberIndex) const
+Number CommandBuffer::NumberAt(size_t numberIndex) const
 {
-    const char *numberPtr = Word(numberIndex);
+    const char *numberPtr = WordAt(numberIndex);
 
     if (numberPtr)
     {
@@ -66,7 +66,7 @@ Number CommandBuffer::FindNumber(size_t numberIndex) const
     return {NOT_FOUND, false};
 }
 
-const char *CommandBuffer::Word(size_t wordIndex) const
+const char *CommandBuffer::WordAt(size_t wordIndex) const
 {
     size_t i = 0;
     for (size_t word = 0; word < wordIndex && i < Length(); word++)
@@ -95,7 +95,7 @@ const char *CommandBuffer::Word(size_t wordIndex) const
 
 const char *CommandBuffer::Command() const
 {
-    return Word(0U);
+    return WordAt(0U);
 }
 
 size_t CommandBuffer::Length() const

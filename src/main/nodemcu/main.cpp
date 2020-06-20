@@ -87,7 +87,7 @@ void UpdateSpeed()
 
 void MoveToNano(const CommandBuffer &b)
 {
-  const char *commandToSend = b.Word(1);
+  const char *commandToSend = b.WordAt(1);
   if (commandToSend)
   {
     // get index of message we want to send

@@ -6,11 +6,13 @@
 #include <SoftwareSerial.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <Wire.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
+
 #include "parser/parser.h"
 #include "commands.h"
 
 typedef unsigned char uchar;
-void changeServoDirection(uchar servo, const Number &number);
 
 // ================
 // VARIABLES
@@ -47,12 +49,17 @@ constexpr uchar ELBOW_2_PIN = 3;
 constexpr uchar WRIST_PIN = 4;
 constexpr uchar CLAW_PIN = 5;
 
-auto BASE_FUN = [](const CommandBuffer &b) { changeServoDirection(BASE_PIN, b.FindNumber(1)); };
-auto SHOULDER_FUN = [](const CommandBuffer &b) { changeServoDirection(SHOULDER_PIN, b.FindNumber(1)); };
-auto ELBOW_1_FUN = [](const CommandBuffer &b) { changeServoDirection(ELBOW_1_PIN, b.FindNumber(1)); };
-auto ELBOW_2_FUN = [](const CommandBuffer &b) { changeServoDirection(ELBOW_2_PIN, b.FindNumber(1)); };
-auto WRIST_FUN = [](const CommandBuffer &b) { changeServoDirection(WRIST_PIN, b.FindNumber(1)); };
-auto CLAW_FUN = [](const CommandBuffer &b) { changeServoDirection(CLAW_PIN, b.FindNumber(1)); };
+constexpr size_t TEMPERATURE_TIMEOUT = 500; // timeout in milliseconds
+constexpr uchar ONE_WIRE_BUS = 13;
+constexpr size_t TEMPERATURE_RESOLUTION = 9;
+
+OneWire oneWire(ONE_WIRE_BUS);
+DallasTemperature sensors(&oneWire);
+DeviceAddress inside, outside;
+
+bool awaitingForState = false;
+// needs to be init in setup
+unsigned long temperatureCheck;
 
 // ==============
 // MP3 FUNCTIONS
@@ -78,7 +85,7 @@ void readMP3FromBuffer(const CommandBuffer &buffer)
   static constexpr size_t NUMBERS = 3U;
   Number numbers[NUMBERS];
   for (size_t i = 0; i < NUMBERS; i++)
-    numbers[i] = buffer.FindNumber(i + 1);
+    numbers[i] = buffer.NumberAt(i + 1);
 
   // check the success of each number
   // later check if each of them is 0 <= value <= 255
@@ -93,7 +100,6 @@ void readMP3FromBuffer(const CommandBuffer &buffer)
 //  SERVOS
 // ==============
 
-// TODO HOTFIX
 void changeServoDirection(uchar servo, const Number &number)
 {
   if (number.success && servo < SERVOS)
@@ -133,11 +139,69 @@ void updateServos()
   }
 }
 
+void requestState(const CommandBuffer &buffer)
+{
+  Serial.println("Requesting state...");
+  // to make sure we dont get flooded with requests
+  if (!awaitingForState)
+  {
+    // we need to ask termometers for temperature
+    sensors.requestTemperatures();
+    awaitingForState = true;
+    temperatureCheck = millis();
+  }
+}
+
+void sendState()
+{
+  // if ${TEMPERATURE_TIMEOUT} has passed and we want a timeout
+  if (awaitingForState && millis() - temperatureCheck > TEMPERATURE_TIMEOUT)
+  {
+    int tempOutside = sensors.getTempC(outside);
+
+    // time for sending current state
+    Serial.print(tempOutside);
+    Serial.write(' ');
+
+    // sevo positions
+    for(size_t i = 0; i < SERVOS; i++)
+    {
+      Serial.print(CURRENT_ANGLES[i]);
+      Serial.write(' ');
+    }
+
+    awaitingForState = false;
+  }
+}
+
+// ==============
+// Parser functions
+// ==============
+
+auto BASE_FUN = [](const CommandBuffer &b) { changeServoDirection(BASE_PIN, b.NumberAt(1)); };
+auto SHOULDER_FUN = [](const CommandBuffer &b) { changeServoDirection(SHOULDER_PIN, b.NumberAt(1)); };
+auto ELBOW_1_FUN = [](const CommandBuffer &b) { changeServoDirection(ELBOW_1_PIN, b.NumberAt(1)); };
+auto ELBOW_2_FUN = [](const CommandBuffer &b) { changeServoDirection(ELBOW_2_PIN, b.NumberAt(1)); };
+auto WRIST_FUN = [](const CommandBuffer &b) { changeServoDirection(WRIST_PIN, b.NumberAt(1)); };
+auto CLAW_FUN = [](const CommandBuffer &b) { changeServoDirection(CLAW_PIN, b.NumberAt(1)); };
+
 void setup()
 {
   Serial.begin(115200);
   Serial3.begin(9600);
   MP3command(6, 0, 15);
+
+  sensors.begin();
+  sensors.getAddress(outside, 0);
+
+  // resolution and NO waiting for conversion
+  sensors.setResolution(TEMPERATURE_RESOLUTION);
+  sensors.setWaitForConversion(false);
+  sensors.requestTemperatures();
+  temperatureCheck = millis();
+
+  LOG(sensors.getDeviceCount());
+  LOG(sensors.getResolution(outside));
 
   pwm.begin();
   pwm.setOscillatorFrequency(27000000);
@@ -149,13 +213,14 @@ void setup()
     CURRENT_ANGLES[i] = DEF_ANGLES[i];
   }
 
-  parser.AddEvents(Command::Nano::BASE, BASE_FUN);
-  parser.AddEvents(Command::Nano::SHOULDER, SHOULDER_FUN);
-  parser.AddEvents(Command::Nano::ELBOW_1, ELBOW_1_FUN);
-  parser.AddEvents(Command::Nano::ELBOW_2, ELBOW_2_FUN);
-  parser.AddEvents(Command::Nano::WRIST, WRIST_FUN);
-  parser.AddEvents(Command::Nano::CLAW, CLAW_FUN);
-  parser.AddEvents(Command::Nano::MP3_COMMAND, readMP3FromBuffer);
+  parser.AddEvents(Command::Mega::BASE, BASE_FUN);
+  parser.AddEvents(Command::Mega::SHOULDER, SHOULDER_FUN);
+  parser.AddEvents(Command::Mega::ELBOW_1, ELBOW_1_FUN);
+  parser.AddEvents(Command::Mega::ELBOW_2, ELBOW_2_FUN);
+  parser.AddEvents(Command::Mega::WRIST, WRIST_FUN);
+  parser.AddEvents(Command::Mega::CLAW, CLAW_FUN);
+  parser.AddEvents(Command::Mega::MP3_COMMAND, readMP3FromBuffer);
+  parser.AddEvents(Command::Mega::STATE, requestState);
 }
 
 void loop()
@@ -163,6 +228,7 @@ void loop()
   if (parser.ReadStream(&Serial))
     parser.ExecuteMessege();
   updateServos();
+  sendState();
 }
 
 #endif // MEGA

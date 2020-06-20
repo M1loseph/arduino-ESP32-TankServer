@@ -17,7 +17,7 @@ namespace Command
     const char *MOVE = "MOVE";
   } // namespace Mcu
 
-  namespace Nano
+  namespace Mega
   {
     const char *LOST_CONNECTION = "LC";
     const char *BASE = "BASE";
@@ -27,7 +27,8 @@ namespace Command
     const char *WRIST = "WRIST";
     const char *CLAW = "CLAW";
     const char *MP3_COMMAND = "MP3";
-  } // namespace Nano
+    const char *STATE = "STATE";
+  } // namespace Mega
 } // namespace Command
 
 #endif //__COMMANDS_H__

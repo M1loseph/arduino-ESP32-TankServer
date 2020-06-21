@@ -13,8 +13,8 @@ void TestAddingAndRemoving()
 
     b.Clear();
 
-    char fullNulls[CommandBuffer::ST_BUFFER_LENGTH] = {'\0'};
-    TEST_ASSERT_EQUAL_CHAR_ARRAY(fullNulls, b.C_Ptr(), 100);
+    char fullNulls[CommandBuffer::BUFFER_MAX_LENGTH] = {'\0'};
+    TEST_ASSERT_EQUAL_CHAR_ARRAY(fullNulls, b.C_Ptr(), CommandBuffer::BUFFER_MAX_LENGTH);
 }
 
 void TestPositiveNumberParsing()
@@ -25,14 +25,14 @@ void TestPositiveNumberParsing()
     for (size_t i = 0; i < strlen(numbers); i++)
         b.PushBack(numbers[i]);
 
-    TEST_ASSERT_EQUAL_INT(30, b.FindNumber(0).value);
-    TEST_ASSERT_FALSE(b.FindNumber(1).success);
-    TEST_ASSERT_FALSE(b.FindNumber(2).success);
-    TEST_ASSERT_EQUAL_INT(30, b.FindNumber(3).value);
+    TEST_ASSERT_EQUAL_INT(30, b.IntAt(0).value);
+    TEST_ASSERT_FALSE(b.IntAt(1).success);
+    TEST_ASSERT_FALSE(b.IntAt(2).success);
+    TEST_ASSERT_EQUAL_INT(30, b.IntAt(3).value);
 
     b.Clear();
 
-    TEST_ASSERT_FALSE(b.FindNumber(0).success);
+    TEST_ASSERT_FALSE(b.IntAt(0).success);
     TEST_ASSERT_NULL(b.Command());
 }
 
@@ -45,15 +45,15 @@ void TestCommandParsing()
         b.PushBack(command[i]);
 
     TEST_ASSERT_EQUAL_STRING("MP3_COMMAND", b.Command());
-    TEST_ASSERT_FALSE(b.FindNumber(0).success);
-    TEST_ASSERT_EQUAL_INT(20, b.FindNumber(1).value);
-    TEST_ASSERT_EQUAL_INT(30, b.FindNumber(2).value);
-    TEST_ASSERT_EQUAL_INT(40, b.FindNumber(3).value);
-    TEST_ASSERT_FALSE(b.FindNumber(4).success);
+    TEST_ASSERT_FALSE(b.IntAt(0).success);
+    TEST_ASSERT_EQUAL_INT(20, b.IntAt(1).value);
+    TEST_ASSERT_EQUAL_INT(30, b.IntAt(2).value);
+    TEST_ASSERT_EQUAL_INT(40, b.IntAt(3).value);
+    TEST_ASSERT_FALSE(b.IntAt(4).success);
 
     b.Clear();
 
-    TEST_ASSERT_FALSE(b.FindNumber(0).success);
+    TEST_ASSERT_FALSE(b.IntAt(0).success);
     TEST_ASSERT_NULL(b.Command());
 }
 
@@ -65,23 +65,23 @@ void TestFindingWords()
     for (size_t i = 0; i < strlen(text); i++)
         b.PushBack(text[i]);
 
-    TEST_ASSERT_EQUAL_STRING("Reading", b.Word(0));
-    TEST_ASSERT_EQUAL_STRING("Jojo", b.Word(1));
-    TEST_ASSERT_EQUAL_STRING("is", b.Word(2));
-    TEST_ASSERT_EQUAL_STRING("kind", b.Word(3));
-    TEST_ASSERT_EQUAL_STRING("of", b.Word(4));
-    TEST_ASSERT_EQUAL_STRING("like", b.Word(5));
-    TEST_ASSERT_EQUAL_STRING("those", b.Word(6));
-    TEST_ASSERT_EQUAL_STRING("pretend", b.Word(7));
-    TEST_ASSERT_EQUAL_STRING("fights", b.Word(8));
-    TEST_ASSERT_EQUAL_STRING("you", b.Word(9));
-    TEST_ASSERT_EQUAL_STRING("had", b.Word(10));
-    TEST_ASSERT_EQUAL_STRING("when", b.Word(11));
-    TEST_ASSERT_EQUAL_STRING("you", b.Word(12));
-    TEST_ASSERT_EQUAL_STRING("were", b.Word(13));
-    TEST_ASSERT_EQUAL_STRING("younger.", b.Word(14));
+    TEST_ASSERT_EQUAL_STRING("Reading", b.WordAt(0));
+    TEST_ASSERT_EQUAL_STRING("Jojo", b.WordAt(1));
+    TEST_ASSERT_EQUAL_STRING("is", b.WordAt(2));
+    TEST_ASSERT_EQUAL_STRING("kind", b.WordAt(3));
+    TEST_ASSERT_EQUAL_STRING("of", b.WordAt(4));
+    TEST_ASSERT_EQUAL_STRING("like", b.WordAt(5));
+    TEST_ASSERT_EQUAL_STRING("those", b.WordAt(6));
+    TEST_ASSERT_EQUAL_STRING("pretend", b.WordAt(7));
+    TEST_ASSERT_EQUAL_STRING("fights", b.WordAt(8));
+    TEST_ASSERT_EQUAL_STRING("you", b.WordAt(9));
+    TEST_ASSERT_EQUAL_STRING("had", b.WordAt(10));
+    TEST_ASSERT_EQUAL_STRING("when", b.WordAt(11));
+    TEST_ASSERT_EQUAL_STRING("you", b.WordAt(12));
+    TEST_ASSERT_EQUAL_STRING("were", b.WordAt(13));
+    TEST_ASSERT_EQUAL_STRING("younger.", b.WordAt(14));
     for (size_t i = 15; i < 100; i++)
-        TEST_ASSERT_NULL(b.Word(i));
+        TEST_ASSERT_NULL(b.WordAt(i));
 }
 
 void TestBothPositiveAndNegativeLoop()
@@ -96,12 +96,12 @@ void TestBothPositiveAndNegativeLoop()
         for (size_t j = 0; j < strlen(number); j++)
             b.PushBack(number[j]);
 
-        Number m = b.FindNumber(0);
+        Integer m = b.IntAt(0);
         TEST_ASSERT_TRUE(m.success);
         TEST_ASSERT_EQUAL_INT(i, m.value);
         b.Clear();
     }
-    Number m = b.FindNumber(0);
+    Integer m = b.IntAt(0);
 
     TEST_ASSERT_FALSE(m.success);
     TEST_ASSERT_EQUAL_INT(CommandBuffer::NOT_FOUND, m.value);
@@ -116,14 +116,60 @@ void TestBothPositiveAndNegative()
         b.PushBack(text[i]);
 
     constexpr size_t length = 5;
-    Number numbers[length];
+    Integer numbers[length];
     for (size_t i = 0; i < length; i++)
-        numbers[i] = b.FindNumber(i);
+        numbers[i] = b.IntAt(i);
 
     for (size_t i = 0; i < length - 1; i++)
         TEST_ASSERT_EQUAL_INT(values[i], numbers[i].value);
 
     TEST_ASSERT_FALSE(numbers[length - 1].success);
+}
+
+void TestFloats()
+{
+    CommandBuffer b;
+    constexpr size_t floatLength = 6;
+    float floats[] = {1.0, 2.0, 3.0, 3.5, 10.5, 20.0};
+    const char *text = " 1.0  2.0  3.0 3.5 10.5 20.0  2.  3  2. .0 10..";
+
+    for (size_t i = 0; i < strlen(text); i++)
+        b.PushBack(text[i]);
+
+    for (size_t i = 0; i < floatLength; i++)
+    {
+        Float f = b.FloatAt(i);
+        TEST_ASSERT_EQUAL_FLOAT(floats[i], f.value);
+    }
+
+    for (size_t i = floatLength; i < floatLength + 10; i++)
+    {
+        Float f = b.FloatAt(i);
+        TEST_ASSERT_FALSE(f.success);
+    }
+}
+
+void TestNegativeFloats()
+{
+    CommandBuffer b;
+    constexpr size_t floatLength = 6;
+    float floats[] = {-1.0, -2.0, -3.0, -3.5, -10.5, -20.0};
+    const char *text = " -1.0  -2.0  -3.0 -3.5 -10.5 -20.0  -2.  -3  -2. -.0 --10.. -9";
+
+    for (size_t i = 0; i < strlen(text); i++)
+        b.PushBack(text[i]);
+
+    for (size_t i = 0; i < floatLength; i++)
+    {
+        Float f = b.FloatAt(i);
+        TEST_ASSERT_EQUAL_FLOAT(floats[i], f.value);
+    }
+
+    for (size_t i = floatLength; i < floatLength + 10; i++)
+    {
+        Float f = b.FloatAt(i);
+        TEST_ASSERT_FALSE(f.success);
+    }
 }
 
 void setup()
@@ -137,6 +183,8 @@ void setup()
     RUN_TEST(TestFindingWords);
     RUN_TEST(TestBothPositiveAndNegative);
     RUN_TEST(TestBothPositiveAndNegativeLoop);
+    RUN_TEST(TestFloats);
+    RUN_TEST(TestNegativeFloats);
     UNITY_END();
 }
 

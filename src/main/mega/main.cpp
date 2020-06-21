@@ -83,9 +83,9 @@ void MP3command(int8_t command, int8_t data_one, int8_t data_two)
 void readMP3FromBuffer(const CommandBuffer &buffer)
 {
   static constexpr size_t NUMBERS = 3U;
-  Number numbers[NUMBERS];
+  Integer numbers[NUMBERS];
   for (size_t i = 0; i < NUMBERS; i++)
-    numbers[i] = buffer.NumberAt(i + 1);
+    numbers[i] = buffer.IntAt(i + 1);
 
   // check the success of each number
   // later check if each of them is 0 <= value <= 255
@@ -100,7 +100,7 @@ void readMP3FromBuffer(const CommandBuffer &buffer)
 //  SERVOS
 // ==============
 
-void changeServoDirection(uchar servo, const Number &number)
+void changeServoDirection(uchar servo, const Integer &number)
 {
   if (number.success && servo < SERVOS)
   {
@@ -178,12 +178,12 @@ void sendState()
 // Parser functions
 // ==============
 
-auto BASE_FUN = [](const CommandBuffer &b) { changeServoDirection(BASE_PIN, b.NumberAt(1)); };
-auto SHOULDER_FUN = [](const CommandBuffer &b) { changeServoDirection(SHOULDER_PIN, b.NumberAt(1)); };
-auto ELBOW_1_FUN = [](const CommandBuffer &b) { changeServoDirection(ELBOW_1_PIN, b.NumberAt(1)); };
-auto ELBOW_2_FUN = [](const CommandBuffer &b) { changeServoDirection(ELBOW_2_PIN, b.NumberAt(1)); };
-auto WRIST_FUN = [](const CommandBuffer &b) { changeServoDirection(WRIST_PIN, b.NumberAt(1)); };
-auto CLAW_FUN = [](const CommandBuffer &b) { changeServoDirection(CLAW_PIN, b.NumberAt(1)); };
+auto BASE_FUN = [](const CommandBuffer &b) { changeServoDirection(BASE_PIN, b.IntAt(1)); };
+auto SHOULDER_FUN = [](const CommandBuffer &b) { changeServoDirection(SHOULDER_PIN, b.IntAt(1)); };
+auto ELBOW_1_FUN = [](const CommandBuffer &b) { changeServoDirection(ELBOW_1_PIN, b.IntAt(1)); };
+auto ELBOW_2_FUN = [](const CommandBuffer &b) { changeServoDirection(ELBOW_2_PIN, b.IntAt(1)); };
+auto WRIST_FUN = [](const CommandBuffer &b) { changeServoDirection(WRIST_PIN, b.IntAt(1)); };
+auto CLAW_FUN = [](const CommandBuffer &b) { changeServoDirection(CLAW_PIN, b.IntAt(1)); };
 
 void setup()
 {

@@ -9,7 +9,7 @@ size_t zmienna = 0;
 static void Forward(const CommandBuffer &b)
 {
     for (size_t i = 0; i < 10; i++)
-        TEST_ASSERT_FALSE(b.FindNumber(i).success);
+        TEST_ASSERT_FALSE(b.IntAt(i).success);
     zmienna += 1;
 }
 

@@ -3,7 +3,7 @@
 
 bool CommandBuffer::PushBack(char c)
 {
-    if (m_CurrentLength < ST_BUFFER_LENGTH)
+    if (m_CurrentLength < BUFFER_MAX_LENGTH)
     {
         // remove spaces -> change them to NULL_CHAR
         if (c == ' ')
@@ -17,59 +17,118 @@ bool CommandBuffer::PushBack(char c)
 
 void CommandBuffer::Clear()
 {
-    memset(m_Buffer, NULL_CHAR, ST_BUFFER_LENGTH);
+    memset(m_Buffer, NULL_CHAR, BUFFER_MAX_LENGTH);
     m_CurrentLength = 0;
     LOG_NL("Cleared memory");
 }
 
-Number CommandBuffer::NumberAt(size_t numberIndex) const
+Integer CommandBuffer::IntAt(size_t seekedIndex) const
 {
-    const char *numberPtr = WordAt(numberIndex);
+    const char *numberPtr = WordAt(seekedIndex);
 
     if (numberPtr)
     {
         // index of the ptr that has been returned
         size_t index = numberPtr - m_Buffer;
 
+        bool atLeastOneDigit = false;
         bool validNumber = true;
-        bool isNegative = false;
-        // check if all char are digits
 
         // check if number starts with -
         // if so, then it's negative
+        // simple increment by one, atoi will handle the rest
         if (*numberPtr == '-')
-        {
-            isNegative = true;
             index++;
-            numberPtr++;
-        }
 
+        // check if all chars are digits
         while (index < Length() && m_Buffer[index] != NULL_CHAR && validNumber)
             // as long we read digits -> keep going
-            if (!isdigit(m_Buffer[index]))
-                validNumber = false;
-            else
+            if (isdigit(m_Buffer[index]))
+            {
+                atLeastOneDigit = true;
                 ++index;
+            }
+            else
+            {
+                validNumber = false;
+            }
 
-        // number had to have at least one digit
+        // number has to have at least one digit
         // it has to end with null (index 100 doesnt count)
         // it has to be numeric
-        if ((*numberPtr) != NULL_CHAR && m_Buffer[index] == NULL_CHAR && validNumber)
-        {
-            // if it is negative, move one step back
-            // rest is handled by atoi
-            if (isNegative)
-                --numberPtr;
+        if (atLeastOneDigit && m_Buffer[index] == NULL_CHAR && validNumber)
             return {atoi(numberPtr), true};
-        }
     }
     return {NOT_FOUND, false};
 }
 
-const char *CommandBuffer::WordAt(size_t wordIndex) const
+Float CommandBuffer::FloatAt(size_t seekedIndex) const
+{
+    const char *numberPtr = WordAt(seekedIndex);
+    if (numberPtr)
+    {
+        // index of the ptr that has been returned
+        size_t index = numberPtr - m_Buffer;
+
+        // check if number starts with -
+        // if so, then it's negative
+        if (*numberPtr == '-')
+            index++;
+
+        bool validNumber = true;
+        bool atLeastOneDigit = false;
+        bool foundSeparator = false;
+        // now look for a dot
+        // at laest one digit must be found before we get to the dot
+        // all characters up to the dot must be a digit
+        // we can't go over the buffer length
+        while (index < Length() && m_Buffer[index] != NULL_CHAR && validNumber && !foundSeparator)
+            if (isDigit(m_Buffer[index]))
+            {
+                atLeastOneDigit = true;
+                index++;
+            }
+            else if (m_Buffer[index] == CommandBuffer::FLOAT_SEPARATOR)
+            {
+                foundSeparator = true;
+                index++;
+            }
+            else
+            {
+                // character we didnt want
+                validNumber = false;
+            }
+
+        if (validNumber && atLeastOneDigit && foundSeparator)
+        {
+            atLeastOneDigit = false;
+            //iterate over remaining digits
+            // has to be at LEAST one
+            while (index < Length() && m_Buffer[index] != NULL_CHAR && validNumber)
+                // as long we read digits -> keep going
+                if (isdigit(m_Buffer[index]))
+                {
+                    atLeastOneDigit = true;
+                    ++index;
+                }
+                else
+                {
+                    validNumber = false;
+                }
+
+            // check if everything is ok
+            if (atLeastOneDigit && m_Buffer[index] == NULL_CHAR && validNumber)
+                return {atof(numberPtr), true};
+        }
+    }
+    // in case if failure return error
+    return {NOT_FOUND, false};
+}
+
+const char *CommandBuffer::WordAt(size_t seekedIndex) const
 {
     size_t i = 0;
-    for (size_t word = 0; word < wordIndex && i < Length(); word++)
+    for (size_t word = 0; word < seekedIndex && i < Length(); word++)
     {
         // jump over NULLs
         while (i < Length() && m_Buffer[i] == NULL_CHAR)
@@ -105,7 +164,7 @@ size_t CommandBuffer::Length() const
 
 bool CommandBuffer::IsFull() const
 {
-    return m_CurrentLength == ST_BUFFER_LENGTH;
+    return m_CurrentLength == BUFFER_MAX_LENGTH;
 }
 
 const char *CommandBuffer::C_Ptr() const

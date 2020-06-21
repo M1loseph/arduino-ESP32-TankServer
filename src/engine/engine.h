@@ -18,7 +18,14 @@ public:
   static void TurnLeft(StaticEngine &left, StaticEngine &right);
   static void TurnRight(StaticEngine &left, StaticEngine &right);
 
+  int Direction() const;
+
+  static constexpr int MOVEMENT_BACKWARD = -1;
+  static constexpr int MOVEMENT_STOP = 0;
+  static constexpr int MOVEMENT_FORWARD = 1;
+
 protected:
+  int m_Direction = MOVEMENT_STOP;
   uchar m_ForwardPin;
   uchar m_BackwardPin;
 };
@@ -38,7 +45,6 @@ public:
   static constexpr int E_MAX_SPEED = 1023;
 
 private:
-  bool m_Driving = false;
   uchar m_SpeedPin;
   uint m_CurrentSpeed;
 };

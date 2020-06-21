@@ -15,6 +15,7 @@ namespace Command
     const char *TANK_SLOWER = "SLOWER";
     const char *TANK_STEADY = "STEADY";
     const char *MOVE = "MOVE";
+    const char *SEND = "SEND";
   } // namespace Mcu
 
   namespace Mega

@@ -8,6 +8,8 @@
 #include <Wire.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
+#include <I2Cdev.h>
+#include <MPU6050.h>
 
 #include "parser/parser.h"
 #include "commands.h"
@@ -39,8 +41,8 @@ constexpr uchar SERVO_STOP = 1;
 constexpr uchar SERVO_FORWARD = 2;
 constexpr uchar SERVO_TIMEOUT = 20;
 
-uchar DIRECTIONS[] = {SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP};
-uchar CURRENT_ANGLES[SERVOS];
+uchar directions[] = {SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP};
+uchar currentAngles[SERVOS];
 
 constexpr uchar BASE_PIN = 0;
 constexpr uchar SHOULDER_PIN = 1;
@@ -49,9 +51,9 @@ constexpr uchar ELBOW_2_PIN = 3;
 constexpr uchar WRIST_PIN = 4;
 constexpr uchar CLAW_PIN = 5;
 
-constexpr size_t TEMPERATURE_TIMEOUT = 500; // timeout in milliseconds
+constexpr size_t TEMPERATURE_TIMEOUT = 1000; // timeout in milliseconds
 constexpr uchar ONE_WIRE_BUS = 13;
-constexpr size_t TEMPERATURE_RESOLUTION = 9;
+constexpr size_t TEMPERATURE_RESOLUTION = 11;
 
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
@@ -59,7 +61,15 @@ DeviceAddress inside, outside;
 
 bool awaitingForState = false;
 // needs to be init in setup
-unsigned long temperatureCheck;
+unsigned long lastTemperatureCheck;
+
+// gyro and acc sensor
+MPU6050 accelgyro;
+const size_t commandLength = strlen(Command::Mcu::SEND);
+
+// distance sensor
+constexpr uchar TRIG = 31;
+constexpr uchar ECHO = 33;
 
 // ==============
 // MP3 FUNCTIONS
@@ -80,7 +90,7 @@ void MP3command(int8_t command, int8_t data_one, int8_t data_two)
     Serial3.write(Send_buf[i]);
 }
 
-void readMP3FromBuffer(const CommandBuffer &buffer)
+void ReadMP3FromBuffer(const CommandBuffer &buffer)
 {
   static constexpr size_t NUMBERS = 3U;
   Integer numbers[NUMBERS];
@@ -100,17 +110,17 @@ void readMP3FromBuffer(const CommandBuffer &buffer)
 //  SERVOS
 // ==============
 
-void changeServoDirection(uchar servo, const Integer &number)
+void ChangeServoDirection(uchar servo, const Integer &number)
 {
   if (number.success && servo < SERVOS)
   {
     int direction = number.value;
     if (direction == SERVO_STOP || direction == SERVO_BACKWARD || direction == SERVO_FORWARD)
-      DIRECTIONS[servo] = direction;
+      directions[servo] = direction;
   }
 }
 
-void updateServos()
+void UpdateServos()
 {
   static unsigned long timer = millis();
   if (millis() - timer > SERVO_TIMEOUT)
@@ -118,20 +128,20 @@ void updateServos()
     for (size_t i = 0; i < SERVOS; i++)
     {
       bool changed = false;
-      if (DIRECTIONS[i] == SERVO_FORWARD && CURRENT_ANGLES[i] < MAX_ANGLES[i])
+      if (directions[i] == SERVO_FORWARD && currentAngles[i] < MAX_ANGLES[i])
       {
-        CURRENT_ANGLES[i]++;
+        currentAngles[i]++;
         changed = true;
       }
-      else if (DIRECTIONS[i] == SERVO_BACKWARD && CURRENT_ANGLES[i] > MIN_ANGLES[i])
+      else if (directions[i] == SERVO_BACKWARD && currentAngles[i] > MIN_ANGLES[i])
       {
 
-        CURRENT_ANGLES[i]--;
+        currentAngles[i]--;
         changed = true;
       }
       if (changed)
       {
-        int pulse = (int)map(CURRENT_ANGLES[i], 0, 180, PULSE_MS_MIN, PULSE_MS_MAX);
+        int pulse = (int)map(currentAngles[i], 0, 180, PULSE_MS_MIN, PULSE_MS_MAX);
         pwm.writeMicroseconds(i, pulse);
       }
     }
@@ -139,36 +149,64 @@ void updateServos()
   }
 }
 
-void requestState(const CommandBuffer &buffer)
+int ReadDistance()
 {
-  Serial.println("Requesting state...");
+  digitalWrite(TRIG, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG, LOW);
+  unsigned long duration = pulseIn(ECHO, HIGH);
+  return (int)(duration * 0.034 / 2);
+}
+
+void RequestState(const CommandBuffer &buffer)
+{
   // to make sure we dont get flooded with requests
   if (!awaitingForState)
   {
     // we need to ask termometers for temperature
     sensors.requestTemperatures();
     awaitingForState = true;
-    temperatureCheck = millis();
+    lastTemperatureCheck = millis();
   }
 }
 
-void sendState()
+void SendState()
 {
   // if ${TEMPERATURE_TIMEOUT} has passed and we want a timeout
-  if (awaitingForState && millis() - temperatureCheck > TEMPERATURE_TIMEOUT)
+  if (awaitingForState && millis() - lastTemperatureCheck > TEMPERATURE_TIMEOUT)
   {
-    int tempOutside = sensors.getTempC(outside);
+    float tempOutside = sensors.getTempC(outside);
+    float tempInside = sensors.getTempC(inside);
 
+    int16_t resoults[6];
+    int distance = ReadDistance();
+    accelgyro.getMotion6(resoults, resoults + 1, resoults + 2, resoults + 3, resoults + 4, resoults + 5);
+
+    // we dont want a null character
+    for (size_t i = 0; i < commandLength; i++)
+      Serial.write(Command::Mcu::SEND[i]);
+
+    Serial.write(' ');
     // time for sending current state
     Serial.print(tempOutside);
     Serial.write(' ');
+    Serial.print(tempInside);
+    Serial.print(' ');
 
     // sevo positions
-    for(size_t i = 0; i < SERVOS; i++)
+    for (size_t i = 0; i < SERVOS; i++)
     {
-      Serial.print(CURRENT_ANGLES[i]);
+      Serial.print(currentAngles[i]);
       Serial.write(' ');
     }
+
+    for (size_t i = 0; i < 6; i++)
+    {
+      Serial.print(resoults[i]);
+      Serial.write(' ');
+    }
+
+    Serial.print(distance);
 
     awaitingForState = false;
   }
@@ -178,12 +216,12 @@ void sendState()
 // Parser functions
 // ==============
 
-auto BASE_FUN = [](const CommandBuffer &b) { changeServoDirection(BASE_PIN, b.IntAt(1)); };
-auto SHOULDER_FUN = [](const CommandBuffer &b) { changeServoDirection(SHOULDER_PIN, b.IntAt(1)); };
-auto ELBOW_1_FUN = [](const CommandBuffer &b) { changeServoDirection(ELBOW_1_PIN, b.IntAt(1)); };
-auto ELBOW_2_FUN = [](const CommandBuffer &b) { changeServoDirection(ELBOW_2_PIN, b.IntAt(1)); };
-auto WRIST_FUN = [](const CommandBuffer &b) { changeServoDirection(WRIST_PIN, b.IntAt(1)); };
-auto CLAW_FUN = [](const CommandBuffer &b) { changeServoDirection(CLAW_PIN, b.IntAt(1)); };
+auto BASE_FUN = [](const CommandBuffer &b) { ChangeServoDirection(BASE_PIN, b.IntAt(1)); };
+auto SHOULDER_FUN = [](const CommandBuffer &b) { ChangeServoDirection(SHOULDER_PIN, b.IntAt(1)); };
+auto ELBOW_1_FUN = [](const CommandBuffer &b) { ChangeServoDirection(ELBOW_1_PIN, b.IntAt(1)); };
+auto ELBOW_2_FUN = [](const CommandBuffer &b) { ChangeServoDirection(ELBOW_2_PIN, b.IntAt(1)); };
+auto WRIST_FUN = [](const CommandBuffer &b) { ChangeServoDirection(WRIST_PIN, b.IntAt(1)); };
+auto CLAW_FUN = [](const CommandBuffer &b) { ChangeServoDirection(CLAW_PIN, b.IntAt(1)); };
 
 void setup()
 {
@@ -193,15 +231,17 @@ void setup()
 
   sensors.begin();
   sensors.getAddress(outside, 0);
-
+  sensors.getAddress(inside, 1);
   // resolution and NO waiting for conversion
   sensors.setResolution(TEMPERATURE_RESOLUTION);
   sensors.setWaitForConversion(false);
-  sensors.requestTemperatures();
-  temperatureCheck = millis();
+  lastTemperatureCheck = millis();
 
   LOG(sensors.getDeviceCount());
   LOG(sensors.getResolution(outside));
+
+  Wire.begin();
+  accelgyro.initialize();
 
   pwm.begin();
   pwm.setOscillatorFrequency(27000000);
@@ -210,7 +250,7 @@ void setup()
   for (size_t i = 0; i < SERVOS; i++)
   {
     pwm.writeMicroseconds(i, map(DEF_ANGLES[i], 0, 180, PULSE_MS_MIN, PULSE_MS_MAX));
-    CURRENT_ANGLES[i] = DEF_ANGLES[i];
+    currentAngles[i] = DEF_ANGLES[i];
   }
 
   parser.AddEvents(Command::Mega::BASE, BASE_FUN);
@@ -219,16 +259,20 @@ void setup()
   parser.AddEvents(Command::Mega::ELBOW_2, ELBOW_2_FUN);
   parser.AddEvents(Command::Mega::WRIST, WRIST_FUN);
   parser.AddEvents(Command::Mega::CLAW, CLAW_FUN);
-  parser.AddEvents(Command::Mega::MP3_COMMAND, readMP3FromBuffer);
-  parser.AddEvents(Command::Mega::STATE, requestState);
+  parser.AddEvents(Command::Mega::MP3_COMMAND, ReadMP3FromBuffer);
+  parser.AddEvents(Command::Mega::STATE, RequestState);
+
+  pinMode(TRIG, OUTPUT);
+  pinMode(ECHO, INPUT);
+  digitalWrite(TRIG, LOW);
 }
 
 void loop()
 {
   if (parser.ReadStream(&Serial))
     parser.ExecuteMessege();
-  updateServos();
-  sendState();
+  UpdateServos();
+  SendState();
 }
 
 #endif // MEGA

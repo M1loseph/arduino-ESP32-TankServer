@@ -118,7 +118,7 @@ Float CommandBuffer::FloatAt(size_t seekedIndex) const
 
             // check if everything is ok
             if (atLeastOneDigit && m_Buffer[index] == NULL_CHAR && validNumber)
-                return {atof(numberPtr), true};
+                return {(float)atof(numberPtr), true};
         }
     }
     // in case if failure return error

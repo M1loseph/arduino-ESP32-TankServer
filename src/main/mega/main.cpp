@@ -65,7 +65,6 @@ unsigned long lastTemperatureCheck;
 
 // gyro and acc sensor
 MPU6050 accelgyro;
-const size_t commandLength = strlen(Command::Mcu::SEND);
 
 // distance sensor
 constexpr uchar TRIG = 31;
@@ -149,13 +148,13 @@ void UpdateServos()
   }
 }
 
-int ReadDistance()
+size_t ReadDistance()
 {
   digitalWrite(TRIG, HIGH);
   delayMicroseconds(10);
   digitalWrite(TRIG, LOW);
   unsigned long duration = pulseIn(ECHO, HIGH);
-  return (int)(duration * 0.034 / 2);
+  return (size_t)(duration * 0.034 / 2);
 }
 
 void RequestState(const CommandBuffer &buffer)
@@ -172,6 +171,8 @@ void RequestState(const CommandBuffer &buffer)
 
 void SendState()
 {
+  static const size_t stateLength = strlen(Command::Common::STATE);
+
   // if ${TEMPERATURE_TIMEOUT} has passed and we want a timeout
   if (awaitingForState && millis() - lastTemperatureCheck > TEMPERATURE_TIMEOUT)
   {
@@ -179,12 +180,12 @@ void SendState()
     float tempInside = sensors.getTempC(inside);
 
     int16_t resoults[6];
-    int distance = ReadDistance();
+    size_t distance = ReadDistance();
     accelgyro.getMotion6(resoults, resoults + 1, resoults + 2, resoults + 3, resoults + 4, resoults + 5);
 
     // we dont want a null character
-    for (size_t i = 0; i < commandLength; i++)
-      Serial.write(Command::Mcu::SEND[i]);
+    for (size_t i = 0; i < stateLength; i++)
+      Serial.write(Command::Common::STATE[i]);
 
     Serial.write(' ');
     // time for sending current state
@@ -207,9 +208,25 @@ void SendState()
     }
 
     Serial.print(distance);
-
+    // to ensure the communication ends here
+    Serial.write('\n');
     awaitingForState = false;
   }
+}
+
+void SendDistance(const CommandBuffer &b)
+{
+  static const size_t distanceLength = strlen(Command::Common::DISTANCE);
+  size_t distance = ReadDistance();
+
+  for (size_t i = 0; i < distanceLength; i++)
+    Serial.write(Command::Common::DISTANCE[i]);
+
+  Serial.write(' ');
+
+  Serial.print(distance);
+  // to ensure the communication ends here
+  Serial.write('\n');
 }
 
 // ==============
@@ -260,7 +277,8 @@ void setup()
   parser.AddEvents(Command::Mega::WRIST, WRIST_FUN);
   parser.AddEvents(Command::Mega::CLAW, CLAW_FUN);
   parser.AddEvents(Command::Mega::MP3_COMMAND, ReadMP3FromBuffer);
-  parser.AddEvents(Command::Mega::STATE, RequestState);
+  parser.AddEvents(Command::Common::STATE, RequestState);
+  parser.AddEvents(Command::Common::DISTANCE, SendDistance);
 
   pinMode(TRIG, OUTPUT);
   pinMode(ECHO, INPUT);

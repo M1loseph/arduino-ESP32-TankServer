@@ -15,7 +15,6 @@ namespace Command
     const char *TANK_SLOWER = "SLOWER";
     const char *TANK_STEADY = "STEADY";
     const char *MOVE = "MOVE";
-    const char *SEND = "SEND";
   } // namespace Mcu
 
   namespace Mega
@@ -28,8 +27,13 @@ namespace Command
     const char *WRIST = "WRIST";
     const char *CLAW = "CLAW";
     const char *MP3_COMMAND = "MP3";
-    const char *STATE = "STATE";
   } // namespace Mega
+
+  namespace Common
+  {
+    const char *STATE = "STATE";
+    const char *DISTANCE = "DIST";
+  } // namespace Common
 } // namespace Command
 
 #endif //__COMMANDS_H__

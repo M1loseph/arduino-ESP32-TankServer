@@ -49,7 +49,6 @@ char BUFFER[300];
 constexpr size_t TEMPERATURES = 2U;
 constexpr size_t REST = 13U;
 
-
 // ================
 // SETTING UP PINS
 // ================
@@ -154,7 +153,7 @@ void Reconnect()
   LOG_NL("Connected to broker");
 }
 
-void SendOverMQTT(const CommandBuffer &b)
+void SendStateMQTT(const CommandBuffer &b)
 {
 
   Float temperetures[TEMPERATURES];
@@ -187,7 +186,7 @@ void SendOverMQTT(const CommandBuffer &b)
   if (validData)
   {
     // format message
-    sprintf(BUFFER, JSON_MESSAGE,
+    sprintf(BUFFER, JSON_STATUS,
             temperetures[0].value,
             temperetures[1].value,
             rest[0].value,
@@ -213,6 +212,16 @@ void SendOverMQTT(const CommandBuffer &b)
   }
 }
 
+void SendDistanceMQTT(const CommandBuffer &b)
+{
+  Integer dist = b.IntAt(1);
+  if (dist.success)
+  {
+    sprintf(BUFFER, JSON_DISTANCE, dist.value);
+    client.publish(Network::DISTANCE_TOPIC, BUFFER);
+  }
+}
+
 // ==============
 // SETUP AND LOOP
 // ==============
@@ -229,6 +238,7 @@ void setup()
 
   // move command to nano
   parser.AddEvents(Command::Mcu::MOVE, MoveToNano);
+  parser.AddEvents(Command::Common::DISTANCE, SendDistanceMQTT);
   parser.AddEvents(Command::Mcu::TANK_FORWARD_L, ForwardLeftFun);
   parser.AddEvents(Command::Mcu::TANK_FORWARD_R, ForwardRightFun);
   parser.AddEvents(Command::Mcu::TANK_BACKWARD_L, BackwardLeftFun);
@@ -239,7 +249,7 @@ void setup()
   parser.AddEvents(Command::Mcu::TANK_FASTER, FasterFun);
   parser.AddEvents(Command::Mcu::TANK_SLOWER, SlowerFun);
   parser.AddEvents(Command::Mcu::TANK_STEADY, SteadyFun);
-  parser.AddEvents(Command::Mcu::SEND, SendOverMQTT);
+  parser.AddEvents(Command::Common::STATE, SendStateMQTT);
 
   Serial.begin(115200);
 }

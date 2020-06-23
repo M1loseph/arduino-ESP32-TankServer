@@ -15,5 +15,7 @@ const char *JSON_MESSAGE = "{"
                            "\"gz\": %d,"
                            "\"dist\": %d,"
                            "\"left\": %d,"
-                           "\"right\": %d"
+                           "\"right\": %d,"
+                           "\"lspeed\": %d,"
+                           "\"rspeed\": %d"
                            "}";

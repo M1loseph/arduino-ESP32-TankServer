@@ -204,7 +204,9 @@ void SendOverMQTT(const CommandBuffer &b)
             rest[11].value,
             rest[12].value,
             left.Direction(),
-            right.Direction());
+            right.Direction(),
+            left.CurrentSpeed(),
+            right.CurrentSpeed());
 
     // and finally send it over mqtt
     client.publish(Network::STATUS_TOPIC, BUFFER);

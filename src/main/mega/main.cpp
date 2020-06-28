@@ -10,7 +10,10 @@
 #include <DallasTemperature.h>
 #include <I2Cdev.h>
 #include <MPU6050.h>
+#include <SPI.h>
+#include <SD.h>
 
+#include "main/commonFun.h"
 #include "parser/parser.h"
 #include "commands.h"
 
@@ -36,12 +39,12 @@ constexpr uchar MIN_ANGLES[] = {5, 40, 0, 70, 0, 60};
 constexpr uchar MAX_ANGLES[] = {165, 150, 130, 180, 180, 115};
 constexpr uchar DEF_ANGLES[] = {90, 140, 120, 90, 90, 80};
 
-constexpr uchar SERVO_BACKWARD = 0;
-constexpr uchar SERVO_STOP = 1;
-constexpr uchar SERVO_FORWARD = 2;
-constexpr uchar SERVO_TIMEOUT = 20;
+constexpr int SERVO_BACKWARD = -1;
+constexpr int SERVO_STOP = 0;
+constexpr int SERVO_FORWARD = 1;
+constexpr size_t SERVO_TIMEOUT = 20;
 
-uchar directions[] = {SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP};
+int directions[] = {SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP};
 uchar currentAngles[SERVOS];
 
 constexpr uchar BASE_PIN = 0;
@@ -69,6 +72,14 @@ MPU6050 accelgyro;
 // distance sensor
 constexpr uchar TRIG = 31;
 constexpr uchar ECHO = 33;
+
+// SD card Slave Select
+constexpr int8_t SD_CARD_SLAVE_SELECT = 53;
+constexpr size_t FILE_NAME_BUFFER_LENGTH = 30;
+bool CardConnected = false;
+bool OpenNewFile = false;
+char FileNameBuffer[FILE_NAME_BUFFER_LENGTH];
+size_t NextCommandDelay = 0;
 
 // ==============
 // MP3 FUNCTIONS
@@ -116,6 +127,89 @@ void ChangeServoDirection(uchar servo, const Integer &number)
     int direction = number.value;
     if (direction == SERVO_STOP || direction == SERVO_BACKWARD || direction == SERVO_FORWARD)
       directions[servo] = direction;
+  }
+}
+
+void PrepareForSDExecute(const CommandBuffer &b)
+{
+  if (CardConnected)
+  {
+    const char *fileName = b.WordAt(1);
+    if (fileName)
+    {
+      OpenNewFile = true;
+      // to make sure the null is also included
+      size_t fNameLength = strlen(fileName) + 1;
+      for (size_t i = 0; i < FILE_NAME_BUFFER_LENGTH && i < fNameLength; i++)
+        FileNameBuffer[i] = fileName[i];
+      LOG_NL("Ready to start execution");
+    }
+  }
+}
+
+void ExecuteSD()
+{
+  static File file;
+  static unsigned long lastExecution = millis();
+  // by defult we dont wait, sice nothing has been executed yet
+  // we do anything only if the card has been connected
+  if (CardConnected)
+  {
+    // to open a new file we need to close a previous one
+    if (OpenNewFile)
+    {
+      file.close();
+      LOG("Opening file: ");
+      LOG_NL(FileNameBuffer);
+      file = SD.open(FileNameBuffer);
+      // to prevent old script blocking new one
+      NextCommandDelay = 0;
+      // to not open the same file again
+      OpenNewFile = false;
+    }
+
+    // if the file is opened and waiting for next execution has ended
+    if (file && millis() - lastExecution > NextCommandDelay)
+    {
+      // reset next command delay
+      NextCommandDelay = 0;
+      if (file.available())
+      {
+        // keep reading one line, when \n sign is found, stop reading
+        while (file.available())
+        {
+          char c = file.read();
+          if (c == '\n' || c == '\r')
+            break;
+          parser.GetBuff().PushBack(c);
+        }
+        if (parser.GetBuff().Length() > 0)
+          parser.ExecuteMessege();
+        lastExecution = millis();
+      }
+      else
+      {
+        LOG_NL("Closing file");
+        // when there is nothing more in the file -> close it
+        file.close();
+      }
+    }
+  }
+}
+
+void SetExecutionDelay(const CommandBuffer &b)
+{
+  Integer newDelay = b.IntAt(1);
+  if (newDelay.success && newDelay.value >= 0)
+  {
+    NextCommandDelay = newDelay.value;
+    LOG("New delay: ");
+    LOG_NL(NextCommandDelay);
+  }
+  else
+  {
+    LOG("Failed new delay: ");
+    LOG_NL(newDelay.value);
   }
 }
 
@@ -262,8 +356,10 @@ void setup()
   sensors.setWaitForConversion(false);
   lastTemperatureCheck = millis();
 
-  LOG(sensors.getDeviceCount());
-  LOG(sensors.getResolution(outside));
+  LOG("Devices count: ");
+  LOG_NL(sensors.getDeviceCount());
+  LOG("Current resolution: ");
+  LOG_NL(sensors.getResolution(outside));
 
   Wire.begin();
   accelgyro.initialize();
@@ -278,20 +374,30 @@ void setup()
     currentAngles[i] = DEF_ANGLES[i];
   }
 
-  parser.AddEvents(Command::Mega::INTERVAL, SetIntervalFromOutside);
-  parser.AddEvents(Command::Mega::BASE, BASE_FUN);
-  parser.AddEvents(Command::Mega::SHOULDER, SHOULDER_FUN);
-  parser.AddEvents(Command::Mega::ELBOW_1, ELBOW_1_FUN);
-  parser.AddEvents(Command::Mega::ELBOW_2, ELBOW_2_FUN);
-  parser.AddEvents(Command::Mega::WRIST, WRIST_FUN);
-  parser.AddEvents(Command::Mega::CLAW, CLAW_FUN);
-  parser.AddEvents(Command::Mega::MP3_COMMAND, ReadMP3FromBuffer);
-  parser.AddEvents(Command::Common::STATE, RequestState);
-  parser.AddEvents(Command::Common::DISTANCE, SendDistance);
+  parser.AddEvent(Command::Mega::INTERVAL, SetIntervalFromOutside);
+  parser.AddEvent(Command::Mega::BASE, BASE_FUN);
+  parser.AddEvent(Command::Mega::SHOULDER, SHOULDER_FUN);
+  parser.AddEvent(Command::Mega::ELBOW_1, ELBOW_1_FUN);
+  parser.AddEvent(Command::Mega::ELBOW_2, ELBOW_2_FUN);
+  parser.AddEvent(Command::Mega::WRIST, WRIST_FUN);
+  parser.AddEvent(Command::Mega::CLAW, CLAW_FUN);
+  parser.AddEvent(Command::Common::STATE, RequestState);
+  parser.AddEvent(Command::Common::DISTANCE, SendDistance);
+  parser.AddEvent(Command::Common::MOVE, MoveOverSerial);
+  parser.AddEvent(Command::Mega::EXECUTE, PrepareForSDExecute);
+  parser.AddEvent(Command::Mega::DELAY, SetExecutionDelay);
+  parser.AddEvent(Command::Mega::MP3_COMMAND, ReadMP3FromBuffer);
 
   pinMode(TRIG, OUTPUT);
   pinMode(ECHO, INPUT);
   digitalWrite(TRIG, LOW);
+
+  // to make sure the card was connected
+  if (SD.begin())
+    CardConnected = true;
+
+  LOG("Connecting SD card: ");
+  LOG_NL(CardConnected);
 }
 
 void loop()
@@ -301,6 +407,7 @@ void loop()
   parser.ExecuteInterval();
   UpdateServos();
   SendState();
+  ExecuteSD();
 }
 
 #endif // MEGA

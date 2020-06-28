@@ -172,6 +172,19 @@ void TestNegativeFloats()
     }
 }
 
+void TestLongNumbers()
+{
+    CommandBuffer b;
+    const char *text = "2000 3000 4000 5000 10000";
+    int trueResoults[] = {2000, 3000, 4000, 5000, 10000};
+
+    for(size_t i = 0; i < strlen(text); i++)
+        b.PushBack(text[i]);
+
+    for(size_t i = 0; i < 5; i++)
+        TEST_ASSERT_EQUAL(trueResoults[i], b.IntAt(i).value);
+}
+
 void setup()
 {
     delay(2000);
@@ -185,6 +198,7 @@ void setup()
     RUN_TEST(TestBothPositiveAndNegativeLoop);
     RUN_TEST(TestFloats);
     RUN_TEST(TestNegativeFloats);
+    RUN_TEST(TestLongNumbers);
     UNITY_END();
 }
 

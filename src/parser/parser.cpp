@@ -19,7 +19,7 @@ int Parser::ReadStream(Stream *stream)
                     m_Buffer.PushBack(c);
             }
         }
-
+        LOG_NL(' ');
         LOG("Read characters: ");
         LOG_NL(m_Buffer.Length());
         LOG_NL(m_Buffer.C_Ptr());
@@ -35,6 +35,8 @@ void Parser::ExecuteMessege()
         const char *command = m_Buffer.Command();
         if (strcmp(command, m_Events[i]) == 0)
         {
+            LOG("Executing ");
+            LOG_NL(m_Events[i]);
             m_Functions[i](m_Buffer);
             break;
         }
@@ -42,7 +44,7 @@ void Parser::ExecuteMessege()
     m_Buffer.Clear();
 }
 
-void Parser::AddEvents(const char *Command, void (*callbacFun)(const CommandBuffer &buffer))
+void Parser::AddEvent(const char *Command, void (*callbacFun)(const CommandBuffer &buffer))
 {
     if (Command && callbacFun && m_CurrentEvents < MAX_EVENTS)
     {

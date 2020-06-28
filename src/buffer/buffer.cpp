@@ -52,6 +52,14 @@ Integer CommandBuffer::IntAt(size_t seekedIndex) const
             {
                 validNumber = false;
             }
+        
+        // debub only
+        LOG("Pointer: ");
+        LOG_NL(numberPtr);
+        LOG("Valid: ");
+        LOG_NL(validNumber);
+        LOG("Is last index null: ");
+        LOG_NL(m_Buffer[index] == NULL_CHAR);
 
         // number has to have at least one digit
         // it has to end with null (index 100 doesnt count)

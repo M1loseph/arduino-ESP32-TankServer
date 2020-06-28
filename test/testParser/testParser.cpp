@@ -28,7 +28,7 @@ void TestCommandFound()
         Command::Mcu::TANK_STOP_R};
 
     for (size_t i = 0; i < length; i++)
-        parser.AddEvents(events[i], Forward);
+        parser.AddEvent(events[i], Forward);
 
     for (int i = 0; i < 1000; i++)
     {
@@ -45,8 +45,8 @@ void TestCommandFound()
 void TestSettingInterval()
 {
     Parser p;
-    p.AddEvents(Command::Mega::MP3_COMMAND, Forward);
-    p.AddEvents(Command::Mega::ELBOW_2, Forward);
+    p.AddEvent(Command::Mega::MP3_COMMAND, Forward);
+    p.AddEvent(Command::Mega::ELBOW_2, Forward);
 
     TEST_ASSERT_TRUE(p.SetInterval(Command::Mega::MP3_COMMAND, 30));
     TEST_ASSERT_TRUE(p.SetInterval(Command::Mega::ELBOW_2, 40));
@@ -54,7 +54,7 @@ void TestSettingInterval()
     TEST_ASSERT_EQUAL(30, p.GetInterval(Command::Mega::MP3_COMMAND));
     TEST_ASSERT_EQUAL(40, p.GetInterval(Command::Mega::ELBOW_2));
 
-    TEST_ASSERT_EQUAL(Parser::INTERVAL_NOT_FOUND, p.GetInterval(Command::Mcu::MOVE));
+    TEST_ASSERT_EQUAL(Parser::INTERVAL_NOT_FOUND, p.GetInterval(Command::Common::MOVE));
     TEST_ASSERT_FALSE(p.SetInterval(Command::Mega::SHOULDER, 0));
 }
 

@@ -14,7 +14,6 @@ namespace Command
     const char *TANK_FASTER = "FASTER";
     const char *TANK_SLOWER = "SLOWER";
     const char *TANK_STEADY = "STEADY";
-    const char *MOVE = "MOVE";
   } // namespace Mcu
 
   namespace Mega
@@ -27,12 +26,16 @@ namespace Command
     const char *CLAW = "CLAW";
     const char *MP3_COMMAND = "MP3";
     const char *INTERVAL = "INTERVAL";
+    // this one is only for scripts, sending it to tank is useless
+    const char *DELAY = "DELAY";
+    const char *EXECUTE = "EXECUTE";
   } // namespace Mega
 
   namespace Common
   {
     const char *STATE = "STATE";
     const char *DISTANCE = "DIST";
+    const char *MOVE = "MOVE";
   } // namespace Common
 } // namespace Command
 

@@ -11,6 +11,7 @@
 #include "network.h"
 #include "commands.h"
 #include "jsonMessage.h"
+#include "main/commonFun.h"
 
 // ================
 // ENGINE PINS
@@ -87,27 +88,6 @@ void UpdateSpeed()
       //client.publish(Network::CALLBACK_TOPIC, "Faster");
     }
     lastUpdate = millis();
-  }
-}
-
-void MoveToNano(const CommandBuffer &b)
-{
-  const char *commandToSend = b.WordAt(1);
-  if (commandToSend)
-  {
-    // get index of message we want to send
-    size_t index = (size_t)(commandToSend - b.C_Ptr());
-    // send entire messege
-    for (size_t i = index; i < b.Length(); i++)
-    {
-      char toSend = b.C_Ptr()[i];
-      if (toSend == b.NULL_CHAR)
-        Serial.write(' ');
-      else
-        Serial.write(toSend);
-    }
-    // to stop communation
-    Serial.write('\n');
   }
 }
 
@@ -237,19 +217,19 @@ void setup()
     delay(500);
 
   // move command to nano
-  parser.AddEvents(Command::Mcu::MOVE, MoveToNano);
-  parser.AddEvents(Command::Common::DISTANCE, SendDistanceMQTT);
-  parser.AddEvents(Command::Mcu::TANK_FORWARD_L, ForwardLeftFun);
-  parser.AddEvents(Command::Mcu::TANK_FORWARD_R, ForwardRightFun);
-  parser.AddEvents(Command::Mcu::TANK_BACKWARD_L, BackwardLeftFun);
-  parser.AddEvents(Command::Mcu::TANK_BACKWARD_R, BackwardRightFun);
-  parser.AddEvents(Command::Mcu::TANK_STOP_L, StopLeftFun);
-  parser.AddEvents(Command::Mcu::TANK_STOP_R, StopRightFun);
+  parser.AddEvent(Command::Common::MOVE, MoveOverSerial);
+  parser.AddEvent(Command::Common::DISTANCE, SendDistanceMQTT);
+  parser.AddEvent(Command::Mcu::TANK_FORWARD_L, ForwardLeftFun);
+  parser.AddEvent(Command::Mcu::TANK_FORWARD_R, ForwardRightFun);
+  parser.AddEvent(Command::Mcu::TANK_BACKWARD_L, BackwardLeftFun);
+  parser.AddEvent(Command::Mcu::TANK_BACKWARD_R, BackwardRightFun);
+  parser.AddEvent(Command::Mcu::TANK_STOP_L, StopLeftFun);
+  parser.AddEvent(Command::Mcu::TANK_STOP_R, StopRightFun);
 
-  parser.AddEvents(Command::Mcu::TANK_FASTER, FasterFun);
-  parser.AddEvents(Command::Mcu::TANK_SLOWER, SlowerFun);
-  parser.AddEvents(Command::Mcu::TANK_STEADY, SteadyFun);
-  parser.AddEvents(Command::Common::STATE, SendStateMQTT);
+  parser.AddEvent(Command::Mcu::TANK_FASTER, FasterFun);
+  parser.AddEvent(Command::Mcu::TANK_SLOWER, SlowerFun);
+  parser.AddEvent(Command::Mcu::TANK_STEADY, SteadyFun);
+  parser.AddEvent(Command::Common::STATE, SendStateMQTT);
 
   Serial.begin(115200);
 }

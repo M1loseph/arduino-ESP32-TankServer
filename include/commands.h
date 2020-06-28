@@ -19,7 +19,6 @@ namespace Command
 
   namespace Mega
   {
-    const char *LOST_CONNECTION = "LC";
     const char *BASE = "BASE";
     const char *SHOULDER = "SHOULDER";
     const char *ELBOW_1 = "ELBOW1";
@@ -27,6 +26,7 @@ namespace Command
     const char *WRIST = "WRIST";
     const char *CLAW = "CLAW";
     const char *MP3_COMMAND = "MP3";
+    const char *INTERVAL = "INTERVAL";
   } // namespace Mega
 
   namespace Common

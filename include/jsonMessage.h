@@ -21,3 +21,12 @@ const char *JSON_STATUS = "{"
                           "}";
 
 const char *JSON_DISTANCE = "{\"dist\": %d}";
+
+const char *JSON_GYRO = "{"
+                        "\"ax\": %d,"
+                        "\"ay\": %d,"
+                        "\"az\": %d,"
+                        "\"gx\": %d,"
+                        "\"gy\": %d,"
+                        "\"gz\": %d"
+                        "}";

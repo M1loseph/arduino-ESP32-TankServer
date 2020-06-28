@@ -229,6 +229,14 @@ void SendDistance(const CommandBuffer &b)
   Serial.write('\n');
 }
 
+void SetIntervalFromOutside(const CommandBuffer &b)
+{
+  const char *command = b.WordAt(1);
+  Integer interval = b.IntAt(2);
+  if (command && interval.success && interval.value >= 0)
+    parser.SetInterval(command, interval.value);
+}
+
 // ==============
 // Parser functions
 // ==============
@@ -270,6 +278,7 @@ void setup()
     currentAngles[i] = DEF_ANGLES[i];
   }
 
+  parser.AddEvents(Command::Mega::INTERVAL, SetIntervalFromOutside);
   parser.AddEvents(Command::Mega::BASE, BASE_FUN);
   parser.AddEvents(Command::Mega::SHOULDER, SHOULDER_FUN);
   parser.AddEvents(Command::Mega::ELBOW_1, ELBOW_1_FUN);
@@ -289,6 +298,7 @@ void loop()
 {
   if (parser.ReadStream(&Serial))
     parser.ExecuteMessege();
+  parser.ExecuteInterval();
   UpdateServos();
   SendState();
 }

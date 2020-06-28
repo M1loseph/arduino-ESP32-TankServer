@@ -30,7 +30,7 @@ int Parser::ReadStream(Stream *stream)
 
 void Parser::ExecuteMessege()
 {
-    for (int i = 0; i < currentEvents; i++)
+    for (size_t i = 0; i < m_CurrentEvents; i++)
     {
         const char *command = m_Buffer.Command();
         if (strcmp(command, m_Events[i]) == 0)
@@ -44,15 +44,58 @@ void Parser::ExecuteMessege()
 
 void Parser::AddEvents(const char *Command, void (*callbacFun)(const CommandBuffer &buffer))
 {
-    if (Command && callbacFun && currentEvents < MAX_EVENTS)
+    if (Command && callbacFun && m_CurrentEvents < MAX_EVENTS)
     {
-        m_Events[currentEvents] = Command;
-        m_Functions[currentEvents] = callbacFun;
-        ++currentEvents;
+        m_Events[m_CurrentEvents] = Command;
+        m_Functions[m_CurrentEvents] = callbacFun;
+        ++m_CurrentEvents;
     }
 }
 
 CommandBuffer &Parser::GetBuff()
 {
     return m_Buffer;
+}
+
+void Parser::ExecuteInterval()
+{
+    for (size_t i = 0; i < m_CurrentEvents; i++)
+    {
+        // first check if interval is active -> 0 means it is inactive
+        // if interval is active, check when it was last used
+        // if the interval has passed, update last time and execute command
+        IntervalInfo &interval = m_Intervals[i];
+        if (interval.interval != 0 && millis() - interval.lastUpdate > interval.interval)
+        {
+            m_Functions[i](m_Buffer);
+            interval.lastUpdate = millis();
+        }
+    }
+}
+
+bool Parser::SetInterval(const char *command, size_t interval)
+{
+    if (command)
+    {
+        for (size_t i = 0; i < m_CurrentEvents; i++)
+        {
+            if (strcmp(command, m_Events[i]) == 0)
+            {
+                m_Intervals[i].interval = interval;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+int Parser::GetInterval(const char *command)
+{
+    if (command)
+    {
+        for (size_t i = 0; i < m_CurrentEvents; i++)
+            if (strcmp(command, m_Events[i]) == 0)
+                return m_Intervals[i].interval;
+    }
+    return Parser::INTERVAL_NOT_FOUND;
 }

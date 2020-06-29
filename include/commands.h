@@ -29,6 +29,7 @@ namespace Command
     // this one is only for scripts, sending it to tank is useless
     const char *DELAY = "DELAY";
     const char *EXECUTE = "EXECUTE";
+    const char *LOG = "LOG";
   } // namespace Mega
 
   namespace Common

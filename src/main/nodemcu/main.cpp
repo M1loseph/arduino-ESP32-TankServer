@@ -245,7 +245,7 @@ void loop()
   }
   UpdateSpeed();
 
-  if (parser.ReadStream(&Serial))
+  if (parser.ReadStream(Serial))
     parser.ExecuteMessege();
 }
 

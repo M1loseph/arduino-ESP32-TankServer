@@ -1,18 +1,18 @@
 #include <Arduino.h>
 #include "parser.h"
 
-int Parser::ReadStream(Stream *stream)
+int Parser::ReadStream(Stream &stream)
 {
-    if (stream->available())
+    if (stream.available())
     {
         unsigned long start = millis();
         bool foundEnd = false;
         // when null or \r or \n is found, we end the loop
         while (!foundEnd && !m_Buffer.IsFull() && millis() - start < TIMEOUT)
         {
-            if (stream->available())
+            if (stream.available())
             {
-                char c = (char)stream->read();
+                char c = (char)stream.read();
                 if (c == '\0' || c == '\r' || c == '\n')
                     foundEnd = true;
                 else

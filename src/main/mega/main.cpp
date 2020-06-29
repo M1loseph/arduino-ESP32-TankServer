@@ -4,7 +4,6 @@
 
 #include <Arduino.h>
 #include <SoftwareSerial.h>
-#include <Adafruit_PWMServoDriver.h>
 #include <Wire.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
@@ -14,8 +13,10 @@
 #include <SD.h>
 
 #include "main/commonFun.h"
+#include "arm.h"
 #include "parser/parser.h"
 #include "commands.h"
+#include "mp3.h"
 
 typedef unsigned char uchar;
 
@@ -23,36 +24,7 @@ typedef unsigned char uchar;
 // VARIABLES
 // ================
 
-constexpr uchar MP3_RX = 11;
-constexpr uchar MP3_TX = 12;
-// PWM library shit
-constexpr size_t PULSE_MS_MIN = 550;
-constexpr size_t PULSE_MS_MAX = 2500;
-constexpr uchar SERVO_FREQ = 50;
-
 Parser parser;
-Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
-
-constexpr uchar SERVOS = 6;
-
-constexpr uchar MIN_ANGLES[] = {5, 40, 0, 70, 0, 60};
-constexpr uchar MAX_ANGLES[] = {165, 150, 130, 180, 180, 115};
-constexpr uchar DEF_ANGLES[] = {90, 140, 120, 90, 90, 80};
-
-constexpr int SERVO_BACKWARD = -1;
-constexpr int SERVO_STOP = 0;
-constexpr int SERVO_FORWARD = 1;
-constexpr size_t SERVO_TIMEOUT = 20;
-
-int directions[] = {SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP};
-uchar currentAngles[SERVOS];
-
-constexpr uchar BASE_PIN = 0;
-constexpr uchar SHOULDER_PIN = 1;
-constexpr uchar ELBOW_1_PIN = 2;
-constexpr uchar ELBOW_2_PIN = 3;
-constexpr uchar WRIST_PIN = 4;
-constexpr uchar CLAW_PIN = 5;
 
 constexpr size_t TEMPERATURE_TIMEOUT = 1000; // timeout in milliseconds
 constexpr uchar ONE_WIRE_BUS = 13;
@@ -85,21 +57,6 @@ size_t NextCommandDelay = 0;
 // MP3 FUNCTIONS
 // ==============
 
-void MP3command(int8_t command, int8_t data_one, int8_t data_two)
-{
-  int8_t Send_buf[8];
-  Send_buf[0] = 0x7e;             //starting byte
-  Send_buf[1] = 0xff;             //version
-  Send_buf[2] = 0x06;             //the number of bytes of the command without starting byte and ending byte
-  Send_buf[3] = command;          //
-  Send_buf[4] = 0x00;             //0x00 = no feedback, 0x01 = feedback
-  Send_buf[5] = data_one;         //datah
-  Send_buf[6] = data_two;         //datal
-  Send_buf[7] = 0xef;             //ending byte
-  for (uint8_t i = 0; i < 8; i++) //
-    Serial3.write(Send_buf[i]);
-}
-
 void ReadMP3FromBuffer(const CommandBuffer &buffer)
 {
   static constexpr size_t NUMBERS = 3U;
@@ -113,22 +70,12 @@ void ReadMP3FromBuffer(const CommandBuffer &buffer)
     if (!numbers[i].success || numbers[i].value < 0 || numbers[i].value > 255)
       return;
 
-  MP3command(numbers[0].value, numbers[1].value, numbers[2].value);
+  MP3command(Serial3, numbers[0].value, numbers[1].value, numbers[2].value);
 }
 
 // ==============
 //  SERVOS
 // ==============
-
-void ChangeServoDirection(uchar servo, const Integer &number)
-{
-  if (number.success && servo < SERVOS)
-  {
-    int direction = number.value;
-    if (direction == SERVO_STOP || direction == SERVO_BACKWARD || direction == SERVO_FORWARD)
-      directions[servo] = direction;
-  }
-}
 
 void PrepareForSDExecute(const CommandBuffer &b)
 {
@@ -210,35 +157,6 @@ void SetExecutionDelay(const CommandBuffer &b)
   {
     LOG("Failed new delay: ");
     LOG_NL(newDelay.value);
-  }
-}
-
-void UpdateServos()
-{
-  static unsigned long timer = millis();
-  if (millis() - timer > SERVO_TIMEOUT)
-  {
-    for (size_t i = 0; i < SERVOS; i++)
-    {
-      bool changed = false;
-      if (directions[i] == SERVO_FORWARD && currentAngles[i] < MAX_ANGLES[i])
-      {
-        currentAngles[i]++;
-        changed = true;
-      }
-      else if (directions[i] == SERVO_BACKWARD && currentAngles[i] > MIN_ANGLES[i])
-      {
-
-        currentAngles[i]--;
-        changed = true;
-      }
-      if (changed)
-      {
-        int pulse = (int)map(currentAngles[i], 0, 180, PULSE_MS_MIN, PULSE_MS_MAX);
-        pwm.writeMicroseconds(i, pulse);
-      }
-    }
-    timer = millis();
   }
 }
 
@@ -346,7 +264,7 @@ void setup()
 {
   Serial.begin(115200);
   Serial3.begin(9600);
-  MP3command(6, 0, 15);
+  MP3command(Serial3, 6, 0, 15);
 
   sensors.begin();
   sensors.getAddress(outside, 0);
@@ -402,7 +320,7 @@ void setup()
 
 void loop()
 {
-  if (parser.ReadStream(&Serial))
+  if (parser.ReadStream(Serial))
     parser.ExecuteMessege();
   parser.ExecuteInterval();
   UpdateServos();

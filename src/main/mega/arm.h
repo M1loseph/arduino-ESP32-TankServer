@@ -16,7 +16,7 @@ constexpr uchar SERVOS = 6;
 
 constexpr uchar MIN_ANGLES[] = {5, 40, 0, 70, 0, 60};
 constexpr uchar MAX_ANGLES[] = {165, 150, 130, 180, 180, 115};
-constexpr uchar DEF_ANGLES[] = {90, 140, 120, 90, 90, 80};
+constexpr uchar DEF_ANGLES[] = {90, 90, 90, 90, 90, 80};
 
 constexpr int SERVO_BACKWARD = -1;
 constexpr int SERVO_STOP = 0;

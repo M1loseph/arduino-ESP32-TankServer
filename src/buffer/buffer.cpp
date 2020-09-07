@@ -1,181 +1,199 @@
 #include <Arduino.h>
 #include "buffer.h"
+#include "debug.h"
 
-bool CommandBuffer::PushBack(char c)
+#if BUFFER_DEBUG
+
+#define LOG_BUFFER(message) LOG(message)
+#define LOG_BUFFER_NL(message) LOG_NL(message)
+
+#else
+
+#define LOG_BUFFER(message) 
+#define LOG_BUFFER_NL(message)
+
+#endif
+
+bool CommandBuffer::push_back(char c)
 {
-    if (m_CurrentLength < BUFFER_MAX_LENGTH)
+    if (m_current_length < BUFFER_MAX_LENGTH)
     {
         // remove spaces -> change them to NULL_CHAR
         if (c == ' ')
             c = NULL_CHAR;
-        m_Buffer[m_CurrentLength++] = c;
-        LOG(m_Buffer[m_CurrentLength - 1]);
+        m_buffer[m_current_length++] = c;
+        LOG_BUFFER("New char: ");
+        LOG_BUFFER_NL(m_buffer[m_current_length - 1]);
         return true;
     }
     return false;
 }
 
-void CommandBuffer::Clear()
+void CommandBuffer::clear()
 {
-    memset(m_Buffer, NULL_CHAR, BUFFER_MAX_LENGTH);
-    m_CurrentLength = 0;
-    LOG_NL("Cleared memory");
+    memset(m_buffer, NULL_CHAR, BUFFER_MAX_LENGTH);
+    m_current_length = 0;
+    LOG_BUFFER_NL("Cleared buffer");
 }
 
-Integer CommandBuffer::IntAt(size_t seekedIndex) const
+Integer CommandBuffer::int_at(size_t seeked_index) const
 {
-    const char *numberPtr = WordAt(seekedIndex);
+    const char *number_ptr = word_at(seeked_index);
 
-    if (numberPtr)
+    if (number_ptr)
     {
         // index of the ptr that has been returned
-        size_t index = numberPtr - m_Buffer;
+        size_t index = number_ptr - m_buffer;
 
-        bool atLeastOneDigit = false;
-        bool validNumber = true;
+        bool at_least_one_digit = false;
+        bool valid_number = true;
 
         // check if number starts with -
         // if so, then it's negative
         // simple increment by one, atoi will handle the rest
-        if (*numberPtr == '-')
+        if (*number_ptr == '-')
             index++;
 
         // check if all chars are digits
-        while (index < Length() && m_Buffer[index] != NULL_CHAR && validNumber)
+        while (index < length() && m_buffer[index] != NULL_CHAR && valid_number)
             // as long we read digits -> keep going
-            if (isdigit(m_Buffer[index]))
+            if (isdigit(m_buffer[index]))
             {
-                atLeastOneDigit = true;
+                at_least_one_digit = true;
                 ++index;
             }
             else
             {
-                validNumber = false;
+                valid_number = false;
             }
         
         // debub only
-        LOG("Pointer: ");
-        LOG_NL(numberPtr);
-        LOG("Valid: ");
-        LOG_NL(validNumber);
-        LOG("Is last index null: ");
-        LOG_NL(m_Buffer[index] == NULL_CHAR);
+        LOG_BUFFER("Pointer: ");
+        LOG_BUFFER_NL(number_ptr);
+        LOG_BUFFER("Is valid: ");
+        LOG_BUFFER_NL(valid_number);
+        LOG_BUFFER("Is the last index null: ");
+        LOG_BUFFER_NL(m_buffer[index] == NULL_CHAR);
 
         // number has to have at least one digit
         // it has to end with null (index 100 doesnt count)
         // it has to be numeric
-        if (atLeastOneDigit && m_Buffer[index] == NULL_CHAR && validNumber)
-            return {atoi(numberPtr), true};
+        if (at_least_one_digit && m_buffer[index] == NULL_CHAR && valid_number)
+        {
+            LOG_BUFFER("Integer: ");
+            LOG_BUFFER_NL(atoi(number_ptr));
+
+            return {atoi(number_ptr), true};
+        }
     }
     return {NOT_FOUND, false};
 }
 
-Float CommandBuffer::FloatAt(size_t seekedIndex) const
+Float CommandBuffer::float_at(size_t seeked_index) const
 {
-    const char *numberPtr = WordAt(seekedIndex);
-    if (numberPtr)
+    const char *number_ptr = word_at(seeked_index);
+    if (number_ptr)
     {
         // index of the ptr that has been returned
-        size_t index = numberPtr - m_Buffer;
+        size_t index = number_ptr - m_buffer;
 
         // check if number starts with -
         // if so, then it's negative
-        if (*numberPtr == '-')
+        if (*number_ptr == '-')
             index++;
 
-        bool validNumber = true;
-        bool atLeastOneDigit = false;
-        bool foundSeparator = false;
+        bool valid_number = true;
+        bool at_least_one_digit = false;
+        bool found_separator = false;
         // now look for a dot
         // at laest one digit must be found before we get to the dot
         // all characters up to the dot must be a digit
         // we can't go over the buffer length
-        while (index < Length() && m_Buffer[index] != NULL_CHAR && validNumber && !foundSeparator)
-            if (isDigit(m_Buffer[index]))
+        while (index < length() && m_buffer[index] != NULL_CHAR && valid_number && !found_separator)
+            if (isDigit(m_buffer[index]))
             {
-                atLeastOneDigit = true;
+                at_least_one_digit = true;
                 index++;
             }
-            else if (m_Buffer[index] == CommandBuffer::FLOAT_SEPARATOR)
+            else if (m_buffer[index] == CommandBuffer::FLOAT_SEPARATOR)
             {
-                foundSeparator = true;
+                found_separator = true;
                 index++;
             }
             else
             {
                 // character we didnt want
-                validNumber = false;
+                valid_number = false;
             }
 
-        if (validNumber && atLeastOneDigit && foundSeparator)
+        if (valid_number && at_least_one_digit && found_separator)
         {
-            atLeastOneDigit = false;
+            at_least_one_digit = false;
             //iterate over remaining digits
             // has to be at LEAST one
-            while (index < Length() && m_Buffer[index] != NULL_CHAR && validNumber)
+            while (index < length() && m_buffer[index] != NULL_CHAR && valid_number)
                 // as long we read digits -> keep going
-                if (isdigit(m_Buffer[index]))
+                if (isdigit(m_buffer[index]))
                 {
-                    atLeastOneDigit = true;
+                    at_least_one_digit = true;
                     ++index;
                 }
                 else
                 {
-                    validNumber = false;
+                    valid_number = false;
                 }
 
             // check if everything is ok
-            if (atLeastOneDigit && m_Buffer[index] == NULL_CHAR && validNumber)
-                return {(float)atof(numberPtr), true};
+            if (at_least_one_digit && m_buffer[index] == NULL_CHAR && valid_number)
+                return {(float)atof(number_ptr), true};
         }
     }
     // in case if failure return error
     return {NOT_FOUND, false};
 }
 
-const char *CommandBuffer::WordAt(size_t seekedIndex) const
+const char *CommandBuffer::word_at(size_t seeked_index) const
 {
     size_t i = 0;
-    for (size_t word = 0; word < seekedIndex && i < Length(); word++)
+    for (size_t word = 0; word < seeked_index && i < length(); word++)
     {
         // jump over NULLs
-        while (i < Length() && m_Buffer[i] == NULL_CHAR)
+        while (i < length() && m_buffer[i] == NULL_CHAR)
             ++i;
 
         // jump over normal string
-        while (i < Length() && m_Buffer[i] != NULL_CHAR)
+        while (i < length() && m_buffer[i] != NULL_CHAR)
             ++i;
     }
 
     // jump over NULLs
-    while (i < Length() && m_Buffer[i] == NULL_CHAR)
+    while (i < length() && m_buffer[i] == NULL_CHAR)
         ++i;
 
     // make sure we are not at the end
-    if (m_Buffer[i] != NULL_CHAR)
+    if (m_buffer[i] != NULL_CHAR)
     {
-        return m_Buffer + i;
+        return m_buffer + i;
     }
-
     return nullptr;
 }
 
-const char *CommandBuffer::Command() const
+const char *CommandBuffer::command() const
 {
-    return WordAt(0U);
+    return word_at(0U);
 }
 
-size_t CommandBuffer::Length() const
+size_t CommandBuffer::length() const
 {
-    return m_CurrentLength;
+    return m_current_length;
 }
 
-bool CommandBuffer::IsFull() const
+bool CommandBuffer::is_full() const
 {
-    return m_CurrentLength == BUFFER_MAX_LENGTH;
+    return m_current_length == BUFFER_MAX_LENGTH;
 }
 
-const char *CommandBuffer::C_Ptr() const
+const char *CommandBuffer::c_ptr() const
 {
-    return m_Buffer;
+    return m_buffer;
 }

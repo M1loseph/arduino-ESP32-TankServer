@@ -1,8 +1,8 @@
+#if 0
 #ifndef __ENGINE_H__
 #define __ENGINE_H__
 
-typedef unsigned char uchar;
-typedef unsigned int uint;
+#include "typedefs.h"
 
 class StaticEngine
 {
@@ -33,20 +33,22 @@ protected:
 class Engine : public StaticEngine
 {
 public:
-  explicit Engine(uchar forward, uchar backward, uchar speed, uint defSpeed);
+  explicit Engine(uchar forward, uchar backward, uchar speed, size_t defSpeed);
   ~Engine() = default;
 
   void Forward() override;
   void Backward() override;
   void Stop() override;
-  void ChangeSpeed(uint newSpeed);
-  uint CurrentSpeed();
+  void ChangeSpeed(size_t newSpeed);
+  size_t CurrentSpeed();
 
   static constexpr int E_MAX_SPEED = 1023;
 
 private:
   uchar m_SpeedPin;
-  uint m_CurrentSpeed;
+  size_t m_CurrentSpeed;
 };
 
 #endif // __ENGINE_H
+
+#endif

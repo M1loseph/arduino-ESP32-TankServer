@@ -6,36 +6,41 @@
 class Parser
 {
 public:
-    // Returns how many characters have benn read
-    int ReadStream(Stream &stream);
+    typedef void (*Event)(const CommandBuffer &);
 
-    void AddEvent(const char *command, void (*callbacFun)(const CommandBuffer &buffer));
+    // Returns how many characters have benn read
+    size_t ReadStream(Stream &stream);
+
+    bool AddEvent(const char *command, Event event, size_t interval = Parser::IDLE_INTERVAL);
     bool SetInterval(const char *command, size_t interval);
 
-    void ExecuteMessege();
-    void ExecuteInterval();
+    void ExecuteBuffer();
+    void ExecuteIntervals();
 
     CommandBuffer &GetBuff();
-    int GetInterval(const char* command);
+    int GetInterval(const char *command);
+
+    bool IsFull();
 
     static constexpr int TIMEOUT = 20;
     static constexpr int MAX_EVENTS = 20;
-    static constexpr int INTERVAL_NOT_FOUND = -1; 
+    static constexpr int INTERVAL_NOT_FOUND = -1;
+    static constexpr size_t IDLE_INTERVAL = 0U;
 
 private:
-    static constexpr int IDLE_INTERVAL = 0;
-
-    struct IntervalInfo
+    typedef struct EventData
     {
+        const char *name;
+        Event event;
+        // used fot the interval functionality
         unsigned long lastUpdate = 0;
-        size_t interval = Parser::IDLE_INTERVAL;
-    };
+        size_t interval;
+    } EventData;
 
     CommandBuffer m_Buffer;
+    // arrays of events and info about them
     size_t m_CurrentEvents = 0;
-    void (*m_Functions[MAX_EVENTS])(const CommandBuffer &buffer);
-    const char *m_Events[MAX_EVENTS];
-    IntervalInfo m_Intervals[MAX_EVENTS];
+    EventData m_Events[MAX_EVENTS];
 };
 
 #endif // __PARSER_H

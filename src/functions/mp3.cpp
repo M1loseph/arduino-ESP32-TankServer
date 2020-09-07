@@ -1,7 +1,4 @@
-#ifndef __MP3_H__
-#define __MP3_H__
-#include <Arduino.h>
-#include "buffer/buffer.h"
+#include "mp3.h"
 
 void MP3command(Stream &stream, int8_t command, int8_t data_one, int8_t data_two)
 {
@@ -17,5 +14,3 @@ void MP3command(Stream &stream, int8_t command, int8_t data_one, int8_t data_two
     for (uint8_t i = 0; i < 8; i++) //
         stream.write(Send_buf[i]);
 }
-
-#endif //__MP3_H__

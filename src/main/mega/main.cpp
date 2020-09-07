@@ -18,7 +18,6 @@
 #include "commands.h"
 #include "mp3.h"
 
-typedef unsigned char uchar;
 
 // ================
 // VARIABLES
@@ -131,7 +130,7 @@ void ExecuteSD()
           parser.GetBuff().PushBack(c);
         }
         if (parser.GetBuff().Length() > 0)
-          parser.ExecuteMessege();
+          parser.ExecuteBuffer();
         lastExecution = millis();
       }
       else
@@ -209,7 +208,7 @@ void SendState()
     // sevo positions
     for (size_t i = 0; i < SERVOS; i++)
     {
-      Serial.print(currentAngles[i]);
+      Serial.print(current_angles[i]);
       Serial.write(' ');
     }
 
@@ -253,12 +252,12 @@ void SetIntervalFromOutside(const CommandBuffer &b)
 // Parser functions
 // ==============
 
-auto BASE_FUN = [](const CommandBuffer &b) { ChangeServoDirection(BASE_PIN, b.IntAt(1)); };
-auto SHOULDER_FUN = [](const CommandBuffer &b) { ChangeServoDirection(SHOULDER_PIN, b.IntAt(1)); };
-auto ELBOW_1_FUN = [](const CommandBuffer &b) { ChangeServoDirection(ELBOW_1_PIN, b.IntAt(1)); };
-auto ELBOW_2_FUN = [](const CommandBuffer &b) { ChangeServoDirection(ELBOW_2_PIN, b.IntAt(1)); };
-auto WRIST_FUN = [](const CommandBuffer &b) { ChangeServoDirection(WRIST_PIN, b.IntAt(1)); };
-auto CLAW_FUN = [](const CommandBuffer &b) { ChangeServoDirection(CLAW_PIN, b.IntAt(1)); };
+auto BASE_FUN = [](const CommandBuffer &b) { change_servo_direction(BASE_PIN, b.IntAt(1)); };
+auto SHOULDER_FUN = [](const CommandBuffer &b) { change_servo_direction(SHOULDER_PIN, b.IntAt(1)); };
+auto ELBOW_1_FUN = [](const CommandBuffer &b) { change_servo_direction(ELBOW_1_PIN, b.IntAt(1)); };
+auto ELBOW_2_FUN = [](const CommandBuffer &b) { change_servo_direction(ELBOW_2_PIN, b.IntAt(1)); };
+auto WRIST_FUN = [](const CommandBuffer &b) { change_servo_direction(WRIST_PIN, b.IntAt(1)); };
+auto CLAW_FUN = [](const CommandBuffer &b) { change_servo_direction(CLAW_PIN, b.IntAt(1)); };
 
 void setup()
 {
@@ -289,7 +288,7 @@ void setup()
   for (size_t i = 0; i < SERVOS; i++)
   {
     pwm.writeMicroseconds(i, map(DEF_ANGLES[i], 0, 180, PULSE_MS_MIN, PULSE_MS_MAX));
-    currentAngles[i] = DEF_ANGLES[i];
+    current_angles[i] = DEF_ANGLES[i];
   }
 
   parser.AddEvent(Command::Mega::INTERVAL, SetIntervalFromOutside);
@@ -321,9 +320,9 @@ void setup()
 void loop()
 {
   if (parser.ReadStream(Serial))
-    parser.ExecuteMessege();
-  parser.ExecuteInterval();
-  UpdateServos();
+    parser.ExecuteBuffer();
+  parser.ExecuteIntervals();
+  update_servos_movement();
   SendState();
   ExecuteSD();
 }

@@ -3,41 +3,38 @@
 
 namespace Command
 {
-  namespace Mcu
-  {
-    const char *TANK_FORWARD_L = "FORWARDL";
-    const char *TANK_FORWARD_R = "FORWARDR";
-    const char *TANK_BACKWARD_L = "BACKWARDL";
-    const char *TANK_BACKWARD_R = "BACKWARDR";
-    const char *TANK_STOP_L = "STOPL";
-    const char *TANK_STOP_R = "STOPR";
-    const char *TANK_FASTER = "FASTER";
-    const char *TANK_SLOWER = "SLOWER";
-    const char *TANK_STEADY = "STEADY";
-  } // namespace Mcu
+  const char *FORWARD_L = "FORWARD_L";
+  const char *FORWARD_R = "FORWARD_R";
+  const char *FORWARD = "FORWARD";
+  const char *BACKWARD_L = "BACKWARD_L";
+  const char *BACKWARD_R = "BACKWARD_R";
+  const char *BACKWARD = "BACKWARD";
+  const char *STOP_L = "STOP_L";
+  const char *STOP_R = "STOP_R";
+  const char *STOP = "STOP";
+  const char *FASTER_L = "FASTER_L";
+  const char *FASTER_R = "FASTER_R";
+  const char *FASTER = "FASTER";
+  const char *SLOWER_L = "SLOWER_L";
+  const char *SLOWER_R = "SLOWER_R";
+  const char *SLOWER = "SLOWER";
+  const char *STEADY_L = "STEADY_L";
+  const char *STEADY_R = "STEADY_R";
+  const char *STEADY = "STEADY";
+  const char *SPEED = "SPEED";
 
-  namespace Mega
-  {
-    const char *BASE = "BASE";
-    const char *SHOULDER = "SHOULDER";
-    const char *ELBOW_1 = "ELBOW1";
-    const char *ELBOW_2 = "ELBOW2";
-    const char *WRIST = "WRIST";
-    const char *CLAW = "CLAW";
-    const char *MP3_COMMAND = "MP3";
-    const char *INTERVAL = "INTERVAL";
-    // this one is only for scripts, sending it to tank is useless
-    const char *DELAY = "DELAY";
-    const char *EXECUTE = "EXECUTE";
-    const char *LOG = "LOG";
-  } // namespace Mega
+  const char *ARM = "ARM";
+  const char *MP3 = "MP3";
+  const char *INTERVAL = "INTERVAL";
+  // this one is only for scripts, sending it to tank is useless
+  const char *DELAY = "DELAY";
+  const char *EXECUTE = "EXECUTE";
+  const char *LOG = "LOG";
+  // all sensors
+  const char *FULL_JSON = "FULL_JSON";
 
-  namespace Common
-  {
-    const char *STATE = "STATE";
-    const char *DISTANCE = "DIST";
-    const char *MOVE = "MOVE";
-  } // namespace Common
+  const char *ARM_STATE = "ARM_STATE";
+  const char *DISTANCES = "DISTANCES";
 } // namespace Command
 
 #endif //__COMMANDS_H__

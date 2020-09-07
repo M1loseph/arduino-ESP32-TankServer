@@ -1,3 +1,4 @@
+#if 0
 #include <Arduino.h>
 #include "debug.h"
 #include "engine.h"
@@ -48,7 +49,7 @@ int StaticEngine::Direction() const
   return m_Direction;
 }
 
-Engine::Engine(uchar forward, uchar backward, uchar speed, uint defSpeed) : StaticEngine(forward, backward),
+Engine::Engine(uchar forward, uchar backward, uchar speed, size_t defSpeed) : StaticEngine(forward, backward),
                                                                             m_SpeedPin(speed),
                                                                             m_CurrentSpeed(defSpeed)
 {
@@ -74,7 +75,7 @@ void Engine::Stop()
   StaticEngine::Stop();
 }
 
-void Engine::ChangeSpeed(uint newSpeed)
+void Engine::ChangeSpeed(size_t newSpeed)
 {
   if (newSpeed <= Engine::E_MAX_SPEED)
   {
@@ -86,7 +87,9 @@ void Engine::ChangeSpeed(uint newSpeed)
   }
 }
 
-uint Engine::CurrentSpeed()
+size_t Engine::CurrentSpeed()
 {
   return m_CurrentSpeed;
 }
+
+#endif

@@ -1,6 +1,7 @@
 #ifndef __PARSER_H__
 #define __PARSER_H__
 
+#include <Arduino.h>
 #include "buffer/buffer.h"
 
 class Parser
@@ -28,6 +29,7 @@ public:
     static constexpr size_t IDLE_INTERVAL = 0U;
 
 private:
+
     typedef struct EventData
     {
         const char *name;

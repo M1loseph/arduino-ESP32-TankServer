@@ -27,7 +27,7 @@ static constexpr size_t SPEED_MAX = 1023U;
 static constexpr size_t SPEED_DEFAULT = 500U;
 static constexpr size_t SPEED_CHANGE_INTERVAL = 5U;
 
-#ifdef ESP_32
+#ifdef ESP32
 static constexpr uchar PWM_CHANNEL_LEFT = 1U;
 static constexpr uchar PWM_CHANNEL_RIGHT = 2U;
 // in bits
@@ -60,8 +60,8 @@ extern SpeedControll speed_controll_right;
 extern Direction direction_left;
 extern Direction direction_right;
 
-extern size_t current_speed_left;
-extern size_t current_speed_right;
+extern size_t speed_left;
+extern size_t speed_right;
 
 // ================
 // EXPORT
@@ -95,6 +95,33 @@ void faster(const CommandBuffer &b);
 void steady_left(const CommandBuffer &b);
 void steady_right(const CommandBuffer &b);
 void steady(const CommandBuffer &b);
+
+void forward_left();
+void forward_right();
+void forward();
+
+void backward_left();
+void backward_right();
+void backwardb();
+
+void stop_left();
+void stop_right();
+void stop();
+
+void rotate_left();
+void rotate_right();
+
+void slower_left();
+void slower_right();
+void slower();
+
+void faster_left();
+void faster_right();
+void faster();
+
+void steady_left();
+void steady_right();
+void steady();
 
 void update_speed();
 

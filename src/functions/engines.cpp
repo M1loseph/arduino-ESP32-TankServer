@@ -1,9 +1,5 @@
 #include "engines.h"
 
-// ================
-// VARIABLES
-// ================
-
 #if ENGINE_DEBUG
 
 #define LOG_ENGINE(message) LOG(message)
@@ -16,14 +12,18 @@
 
 #endif
 
+// ================
+// VARIABLES
+// ================
+
 SpeedControll speed_controll_left;
 SpeedControll speed_controll_right;
 
 Direction direction_left;
 Direction direction_right;
 
-size_t current_speed_left = SPEED_DEFAULT;
-size_t current_speed_right = SPEED_DEFAULT;
+size_t speed_left = SPEED_DEFAULT;
+size_t speed_right = SPEED_DEFAULT;
 
 // ================
 // PRIVATE
@@ -31,7 +31,7 @@ size_t current_speed_right = SPEED_DEFAULT;
 
 static void disable_left_speed()
 {
-#ifdef ESP_32
+#ifdef ESP32
     ledcWrite(PWM_CHANNEL_LEFT, 0);
 #else
     digitalWrite(PIN_SPEED_RIGHT, LOW);
@@ -40,8 +40,8 @@ static void disable_left_speed()
 
 static void enable_left_speed()
 {
-#ifdef ESP_32
-    ledcWrite(PWM_CHANNEL_RIGHT, current_speed_right);
+#ifdef ESP32
+    ledcWrite(PWM_CHANNEL_RIGHT, speed_right);
 #else
     analogWrite(PIN_SPEED_RIGHT, speed_right);
 #endif
@@ -49,7 +49,7 @@ static void enable_left_speed()
 
 static void disable_right_speed()
 {
-#ifdef ESP_32
+#ifdef ESP32
     ledcWrite(PWM_CHANNEL_RIGHT, 0);
 #else
     digitalWrite(PIN_SPEED_RIGHT, LOW);
@@ -58,8 +58,8 @@ static void disable_right_speed()
 
 static void enable_right_speed()
 {
-#ifdef ESP_32
-    ledcWrite(PWM_CHANNEL_RIGHT, current_speed_right);
+#ifdef ESP32
+    ledcWrite(PWM_CHANNEL_RIGHT, speed_right);
 #else
     analogWrite(PIN_SPEED_RIGHT, speed_right);
 #endif
@@ -75,7 +75,7 @@ void init_engines()
     pinMode(PIN_FRONT_RIGHT, OUTPUT);
     pinMode(PIN_BACK_LEFT, OUTPUT);
     pinMode(PIN_BACK_RIGHT, OUTPUT);
-#ifdef ESP_32
+#ifdef ESP32
     // two 1000 Hz channels
     ledcSetup(PWM_CHANNEL_LEFT, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcSetup(PWM_CHANNEL_RIGHT, PWM_FREQUENCY, PWM_RESOLUTION);
@@ -89,7 +89,7 @@ void init_engines()
     LOG_ENGINE_NL("Initialized engine pins");
 }
 
-void forward_left(const CommandBuffer &b)
+void forward_left()
 {
     // disabling speed pin just in case
     disable_left_speed();
@@ -100,7 +100,7 @@ void forward_left(const CommandBuffer &b)
     LOG_ENGINE_NL("Forward Left");
 }
 
-void forward_right(const CommandBuffer &b)
+void forward_right()
 {
     disable_right_speed();
     digitalWrite(PIN_FRONT_RIGHT, HIGH);
@@ -110,14 +110,14 @@ void forward_right(const CommandBuffer &b)
     LOG_ENGINE_NL("Forward Right");
 }
 
-void forward(const CommandBuffer &b)
+void forward()
 {
-    forward_left(b);
-    forward_right(b);
+    forward_left();
+    forward_right();
     LOG_ENGINE_NL("Both Forward");
 }
 
-void backward_left(const CommandBuffer &b)
+void backward_left()
 {
     disable_left_speed();
     digitalWrite(PIN_FRONT_LEFT, LOW);
@@ -127,7 +127,7 @@ void backward_left(const CommandBuffer &b)
     LOG_ENGINE_NL("Backward Left");
 }
 
-void backward_right(const CommandBuffer &b)
+void backward_right()
 {
     disable_right_speed();
     digitalWrite(PIN_FRONT_RIGHT, LOW);
@@ -137,14 +137,14 @@ void backward_right(const CommandBuffer &b)
     LOG_ENGINE_NL("Backward Right");
 }
 
-void backward(const CommandBuffer &b)
+void backward()
 {
-    backward_left(b);
-    backward_right(b);
+    backward_left();
+    backward_right();
     LOG_ENGINE_NL("Both Backward");
 }
 
-void stop_left(const CommandBuffer &b)
+void stop_left()
 {
     disable_left_speed();
     digitalWrite(PIN_FRONT_LEFT, LOW);
@@ -153,7 +153,7 @@ void stop_left(const CommandBuffer &b)
     LOG_ENGINE_NL("Stop Left");
 }
 
-void stop_right(const CommandBuffer &b)
+void stop_right()
 {
     disable_right_speed();
     digitalWrite(PIN_FRONT_RIGHT, LOW);
@@ -162,82 +162,182 @@ void stop_right(const CommandBuffer &b)
     LOG_ENGINE_NL("Stop Right");
 }
 
-void stop(const CommandBuffer &b)
+void stop()
 {
-    stop_left(b);
-    stop_right(b);
+    stop_left();
+    stop_right();
     LOG_ENGINE_NL("Both Stop");
 }
 
-void rotate_left(const CommandBuffer &b)
+void rotate_left()
 {
-    backward_left(b);
-    forward_right(b);
+    backward_left();
+    forward_right();
     LOG_ENGINE_NL("Rotate Left");
 }
 
-void rotate_right(const CommandBuffer &b)
+void rotate_right()
 {
-    forward_left(b);
-    backward_right(b);
+    forward_left();
+    backward_right();
     LOG_ENGINE_NL("Rotate Right");
 }
 
-void slower_left(const CommandBuffer &b)
+void slower_left()
 {
     speed_controll_left = SpeedControll::SLOWER;
     LOG_ENGINE_NL("Slower Left");
 }
 
-void slower_right(const CommandBuffer &b)
+void slower_right()
 {
     speed_controll_right = SpeedControll::SLOWER;
     LOG_ENGINE_NL("Slower Right");
 }
 
-void slower(const CommandBuffer &b)
+void slower()
 {
-    slower_left(b);
-    slower_right(b);
+    slower_left();
+    slower_right();
     LOG_ENGINE_NL("Both Slower");
 }
 
-void faster_left(const CommandBuffer &b)
+void faster_left()
 {
     speed_controll_left = SpeedControll::FASTER;
     LOG_ENGINE_NL("Faster Left");
 }
 
-void faster_right(const CommandBuffer &b)
+void faster_right()
 {
     speed_controll_right = SpeedControll::FASTER;
     LOG_ENGINE_NL("Faster Right");
 }
 
-void faster(const CommandBuffer &b)
+void faster()
 {
-    faster_left(b);
-    faster_right(b);
+    faster_left();
+    faster_right();
     LOG_ENGINE_NL("Both Faster");
 }
 
-void steady_left(const CommandBuffer &b)
+void steady_left()
 {
     speed_controll_left = SpeedControll::STEADY;
     LOG_ENGINE_NL("Steady Left");
 }
 
-void steady_right(const CommandBuffer &b)
+void steady_right()
 {
     speed_controll_right = SpeedControll::STEADY;
     LOG_ENGINE_NL("Steady Right");
 }
 
+void steady()
+{
+    steady_left();
+    steady_right();
+    LOG_ENGINE_NL("Both Steady");
+}
+
+void forward_left(const CommandBuffer &b)
+{
+    forward_left();
+}
+
+void forward_right(const CommandBuffer &b)
+{
+    forward_right();
+}
+
+void forward(const CommandBuffer &b)
+{
+    forward();
+}
+
+void backward_left(const CommandBuffer &b)
+{
+    backward_left();
+}
+
+void backward_right(const CommandBuffer &b)
+{
+    backward_right();
+}
+
+void backward(const CommandBuffer &b)
+{
+    backward();
+}
+
+void stop_left(const CommandBuffer &b)
+{
+    stop_left();
+}
+
+void stop_right(const CommandBuffer &b)
+{
+    stop_right();
+}
+
+void stop(const CommandBuffer &b)
+{
+    stop();
+}
+
+void rotate_left(const CommandBuffer &b)
+{
+    rotate_left();
+}
+
+void rotate_right(const CommandBuffer &b)
+{
+    rotate_right();
+}
+
+void slower_left(const CommandBuffer &b)
+{
+    slower_left();
+}
+
+void slower_right(const CommandBuffer &b)
+{
+    slower_right();
+}
+
+void slower(const CommandBuffer &b)
+{
+    slower();
+}
+
+void faster_left(const CommandBuffer &b)
+{
+    faster_left();
+}
+
+void faster_right(const CommandBuffer &b)
+{
+    faster_right();
+}
+
+void faster(const CommandBuffer &b)
+{
+    faster();
+}
+
+void steady_left(const CommandBuffer &b)
+{
+    steady_left();
+}
+
+void steady_right(const CommandBuffer &b)
+{
+    steady_right();
+}
+
 void steady(const CommandBuffer &b)
 {
-    steady_left(b);
-    steady_right(b);
-    LOG_ENGINE_NL("Both Steady");
+    steady();
 }
 
 void update_speed()
@@ -246,20 +346,20 @@ void update_speed()
     if (millis() - last_update > SPEED_CHANGE_INTERVAL)
     {
         if (speed_controll_left == SpeedControll::SLOWER)
-            if (current_speed_left > 0U)
-                current_speed_left--;
+            if (speed_left > 0U)
+                speed_left--;
 
         if (speed_controll_right == SpeedControll::SLOWER)
-            if (current_speed_right > 0U)
-                current_speed_right--;
+            if (speed_right > 0U)
+                speed_right--;
 
         if (speed_controll_left == SpeedControll::FASTER)
-            if (current_speed_left < SPEED_MAX)
-                current_speed_left++;
+            if (speed_left < SPEED_MAX)
+                speed_left++;
 
         if (speed_controll_right == SpeedControll::FASTER)
-            if (current_speed_right < SPEED_MAX)
-                current_speed_right++;
+            if (speed_right < SPEED_MAX)
+                speed_right++;
 
         last_update = millis();
         LOG_ENGINE_NL("Updated Speed");

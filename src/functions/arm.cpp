@@ -1,6 +1,28 @@
 #include "arm.h"
 
+#if ARM_DEBUG
+
+#define LOG_ARM(message) LOG(message)
+#define LOG_ARM(message) LOG_NL(message)
+
+#else
+
+#define LOG_ARM(message) 
+#define LOG_ARM(message)
+
+#endif // ARM_DEBUG 
+
+// ================
+// VARIABLES
+// ================
+
 Adafruit_PWMServoDriver pwm;
+int directions[SERVOS] = {SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP};
+uchar current_angles[SERVOS];
+
+// ================
+// EXPORT
+// ================
 
 void change_servo_direction(uchar servo, const Integer &number)
 {

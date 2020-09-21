@@ -9,18 +9,18 @@
 
 #else
 
-#define LOG_BUFFER(message) 
+#define LOG_BUFFER(message)
 #define LOG_BUFFER_NL(message)
 
 #endif
 
 bool CommandBuffer::push_back(char c)
 {
-    if (m_current_length < BUFFER_MAX_LENGTH)
+    if (m_current_length < MAX_LENGTH)
     {
         // remove spaces -> change them to NULL_CHAR
         if (c == ' ')
-            c = NULL_CHAR;
+            c = DEFAULT_FILL;
         m_buffer[m_current_length++] = c;
         LOG_BUFFER("New char: ");
         LOG_BUFFER_NL(m_buffer[m_current_length - 1]);
@@ -29,9 +29,26 @@ bool CommandBuffer::push_back(char c)
     return false;
 }
 
+bool CommandBuffer::push_back(const char *string, size_t length)
+{
+    if (string)
+    {
+        bool if_added = true;
+        length = length ? length : strlen(string);
+        // iterate over antire string
+        // if char can't be pushed -> break the loop
+        // return if last char was added successfully
+        for (size_t i = 0; i < length && if_added; i++)
+           if_added = push_back(string[i]);
+        
+        return if_added;
+    }
+    return false;
+}
+
 void CommandBuffer::clear()
 {
-    memset(m_buffer, NULL_CHAR, BUFFER_MAX_LENGTH);
+    memset(m_buffer, DEFAULT_FILL, MAX_LENGTH);
     m_current_length = 0;
     LOG_BUFFER_NL("Cleared buffer");
 }
@@ -55,7 +72,7 @@ Integer CommandBuffer::int_at(size_t seeked_index) const
             index++;
 
         // check if all chars are digits
-        while (index < length() && m_buffer[index] != NULL_CHAR && valid_number)
+        while (index < length() && m_buffer[index] != DEFAULT_FILL && valid_number)
             // as long we read digits -> keep going
             if (isdigit(m_buffer[index]))
             {
@@ -66,19 +83,19 @@ Integer CommandBuffer::int_at(size_t seeked_index) const
             {
                 valid_number = false;
             }
-        
+
         // debub only
         LOG_BUFFER("Pointer: ");
         LOG_BUFFER_NL(number_ptr);
         LOG_BUFFER("Is valid: ");
         LOG_BUFFER_NL(valid_number);
         LOG_BUFFER("Is the last index null: ");
-        LOG_BUFFER_NL(m_buffer[index] == NULL_CHAR);
+        LOG_BUFFER_NL(m_buffer[index] == DEFAULT_FILL);
 
         // number has to have at least one digit
         // it has to end with null (index 100 doesnt count)
         // it has to be numeric
-        if (at_least_one_digit && m_buffer[index] == NULL_CHAR && valid_number)
+        if (at_least_one_digit && m_buffer[index] == DEFAULT_FILL && valid_number)
         {
             LOG_BUFFER("Integer: ");
             LOG_BUFFER_NL(atoi(number_ptr));
@@ -109,7 +126,7 @@ Float CommandBuffer::float_at(size_t seeked_index) const
         // at laest one digit must be found before we get to the dot
         // all characters up to the dot must be a digit
         // we can't go over the buffer length
-        while (index < length() && m_buffer[index] != NULL_CHAR && valid_number && !found_separator)
+        while (index < length() && m_buffer[index] != DEFAULT_FILL && valid_number && !found_separator)
             if (isDigit(m_buffer[index]))
             {
                 at_least_one_digit = true;
@@ -131,7 +148,7 @@ Float CommandBuffer::float_at(size_t seeked_index) const
             at_least_one_digit = false;
             //iterate over remaining digits
             // has to be at LEAST one
-            while (index < length() && m_buffer[index] != NULL_CHAR && valid_number)
+            while (index < length() && m_buffer[index] != DEFAULT_FILL && valid_number)
                 // as long we read digits -> keep going
                 if (isdigit(m_buffer[index]))
                 {
@@ -144,7 +161,7 @@ Float CommandBuffer::float_at(size_t seeked_index) const
                 }
 
             // check if everything is ok
-            if (at_least_one_digit && m_buffer[index] == NULL_CHAR && valid_number)
+            if (at_least_one_digit && m_buffer[index] == DEFAULT_FILL && valid_number)
                 return {(float)atof(number_ptr), true};
         }
     }
@@ -158,20 +175,20 @@ const char *CommandBuffer::word_at(size_t seeked_index) const
     for (size_t word = 0; word < seeked_index && i < length(); word++)
     {
         // jump over NULLs
-        while (i < length() && m_buffer[i] == NULL_CHAR)
+        while (i < length() && m_buffer[i] == DEFAULT_FILL)
             ++i;
 
         // jump over normal string
-        while (i < length() && m_buffer[i] != NULL_CHAR)
+        while (i < length() && m_buffer[i] != DEFAULT_FILL)
             ++i;
     }
 
     // jump over NULLs
-    while (i < length() && m_buffer[i] == NULL_CHAR)
+    while (i < length() && m_buffer[i] == DEFAULT_FILL)
         ++i;
 
     // make sure we are not at the end
-    if (m_buffer[i] != NULL_CHAR)
+    if (m_buffer[i] != DEFAULT_FILL)
     {
         return m_buffer + i;
     }
@@ -190,7 +207,7 @@ size_t CommandBuffer::length() const
 
 bool CommandBuffer::is_full() const
 {
-    return m_current_length == BUFFER_MAX_LENGTH;
+    return m_current_length == MAX_LENGTH;
 }
 
 const char *CommandBuffer::c_ptr() const

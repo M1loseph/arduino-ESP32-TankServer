@@ -1,20 +1,24 @@
-// commands for driving
-const FORWARD_LEFT = 'FORWARDL ';
-const BACKWARD_LEFT = 'BACKWARDL ';
-const FORWARD_RIGHT = 'FORWARDR ';
-const BACKWARD_RIGHT = 'BACKWARDR ';
-const STOP_LEFT = 'STOPL ';
-const STOP_RIGHT = 'STOPR ';
-// buttons associated with driving
-const LB = 4;
-const LF = 6;
-const RB = 5;
-const RF = 7;
-
-// speed buttons and commands
-const FASTER = 'FASTER ';
-const SLOWER = 'SLOWER ';
-const STEADY = 'STEADY ';
+// The following commands MUST be the same as in the commands.h file
+// Otherwise it won't work :(
+// namespace DRIVING
+const FORWARD_LEFT = 'FORWARD_L';
+const FORWARD_RIGHT = 'FORWARD_R';
+const FORWARD = 'FORWARD;'
+const BACKWARD_LEFT = 'BACKWARD_L';
+const BACKWARD_RIGHT = 'BACKWARD_R';
+const BACKWARD = 'BACKWARD';
+const STOP_LEFT = 'STOP_L';
+const STOP_RIGHT = 'STOP_R';
+const STOP = 'STOP';
+const FASTER_L = 'FASTER_L';
+const FASTER_R = 'FASTER_R';
+const FASTER = 'FASTER';
+const SLOWER_L = 'SLOWER_L';
+const SLOWER_R = 'SLOWER_R';
+const SLOWER = 'SLOWER';
+const KEEP_SPEED_L = 'KEEP_SPEED';
+const KEEP_SPEED_R = 'KEEP_SPEED';
+const KEEP_SPEED = 'KEEP_SPEED';
 
 const SPEED_UP_BUTTON = 12;
 const SPEED_DOWN_BUTTON = 13;
@@ -33,6 +37,12 @@ const BUTTONS = [{ name: 'SHOULDER_', forward: 0, backward: 3 }, { name: 'BASE_'
 const SERVO_BACKWARD = -1;
 const SERVO_STOP = 0;
 const SERVO_FORAWRD = 1;
+
+// buttons associated with driving
+const LB = 4;
+const LF = 6;
+const RB = 5;
+const RF = 7;
 
 // code
 let previous = null;
@@ -72,7 +82,7 @@ function processGamepad(gamepad) {
         } else if (gb[SPEED_DOWN_BUTTON] && !pb[SPEED_DOWN_BUTTON]) {
             message += SLOWER;
         } else if (!gb[SPEED_DOWN_BUTTON] && !gb[SPEED_UP_BUTTON] && (pb[SPEED_UP_BUTTON] || pb[SPEED_DOWN_BUTTON]))
-            message += STEADY;
+            message += KEEP_SPEED;
 
         // joysticks
         for (let i = 0; i < JOYSTICKS.length; i++) {

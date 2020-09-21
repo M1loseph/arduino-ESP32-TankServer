@@ -221,22 +221,22 @@ void faster()
     LOG_ENGINE_NL("Both Faster");
 }
 
-void steady_left()
+void keep_speed_left()
 {
     speed_controll_left = SpeedControll::STEADY;
     LOG_ENGINE_NL("Steady Left");
 }
 
-void steady_right()
+void keep_speed_right()
 {
     speed_controll_right = SpeedControll::STEADY;
     LOG_ENGINE_NL("Steady Right");
 }
 
-void steady()
+void keep_speed()
 {
-    steady_left();
-    steady_right();
+    keep_speed_left();
+    keep_speed_right();
     LOG_ENGINE_NL("Both Steady");
 }
 
@@ -325,19 +325,19 @@ void faster(const CommandBuffer &b)
     faster();
 }
 
-void steady_left(const CommandBuffer &b)
+void keep_speed_left(const CommandBuffer &b)
 {
-    steady_left();
+    keep_speed_left();
 }
 
-void steady_right(const CommandBuffer &b)
+void keep_speed_right(const CommandBuffer &b)
 {
-    steady_right();
+    keep_speed_right();
 }
 
-void steady(const CommandBuffer &b)
+void keep_speed(const CommandBuffer &b)
 {
-    steady();
+    keep_speed();
 }
 
 void update_speed()

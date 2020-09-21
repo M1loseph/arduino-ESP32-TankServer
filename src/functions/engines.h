@@ -92,9 +92,9 @@ void faster_left(const CommandBuffer &b);
 void faster_right(const CommandBuffer &b);
 void faster(const CommandBuffer &b);
 
-void steady_left(const CommandBuffer &b);
-void steady_right(const CommandBuffer &b);
-void steady(const CommandBuffer &b);
+void keep_speed_left(const CommandBuffer &b);
+void keep_speed_right(const CommandBuffer &b);
+void keep_speed(const CommandBuffer &b);
 
 void forward_left();
 void forward_right();
@@ -119,9 +119,9 @@ void faster_left();
 void faster_right();
 void faster();
 
-void steady_left();
-void steady_right();
-void steady();
+void keep_speed_left();
+void keep_speed_right();
+void keep_speed();
 
 void update_speed();
 

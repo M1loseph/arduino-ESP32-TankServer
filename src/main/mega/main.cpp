@@ -127,10 +127,10 @@ void ExecuteSD()
           char c = file.read();
           if (c == '\n' || c == '\r')
             break;
-          parser.GetBuff().PushBack(c);
+          parser.get_buff().PushBack(c);
         }
-        if (parser.GetBuff().Length() > 0)
-          parser.ExecuteBuffer();
+        if (parser.get_buff().Length() > 0)
+          parser.exec_buffer();
         lastExecution = millis();
       }
       else
@@ -245,7 +245,7 @@ void SetIntervalFromOutside(const CommandBuffer &b)
   const char *command = b.WordAt(1);
   Integer interval = b.IntAt(2);
   if (command && interval.success && interval.value >= 0)
-    parser.SetInterval(command, interval.value);
+    parser.set_interval(command, interval.value);
 }
 
 // ==============
@@ -291,19 +291,19 @@ void setup()
     current_angles[i] = DEF_ANGLES[i];
   }
 
-  parser.AddEvent(Command::Mega::INTERVAL, SetIntervalFromOutside);
-  parser.AddEvent(Command::Mega::BASE, BASE_FUN);
-  parser.AddEvent(Command::Mega::SHOULDER, SHOULDER_FUN);
-  parser.AddEvent(Command::Mega::ELBOW_1, ELBOW_1_FUN);
-  parser.AddEvent(Command::Mega::ELBOW_2, ELBOW_2_FUN);
-  parser.AddEvent(Command::Mega::WRIST, WRIST_FUN);
-  parser.AddEvent(Command::Mega::CLAW, CLAW_FUN);
-  parser.AddEvent(Command::Common::STATE, RequestState);
-  parser.AddEvent(Command::Common::DISTANCE, SendDistance);
-  parser.AddEvent(Command::Common::MOVE, MoveOverSerial);
-  parser.AddEvent(Command::Mega::EXECUTE, PrepareForSDExecute);
-  parser.AddEvent(Command::Mega::DELAY, SetExecutionDelay);
-  parser.AddEvent(Command::Mega::MP3_COMMAND, ReadMP3FromBuffer);
+  parser.add_event(Command::Mega::INTERVAL, SetIntervalFromOutside);
+  parser.add_event(Command::Mega::BASE, BASE_FUN);
+  parser.add_event(Command::Mega::SHOULDER, SHOULDER_FUN);
+  parser.add_event(Command::Mega::ELBOW_1, ELBOW_1_FUN);
+  parser.add_event(Command::Mega::ELBOW_2, ELBOW_2_FUN);
+  parser.add_event(Command::Mega::WRIST, WRIST_FUN);
+  parser.add_event(Command::Mega::CLAW, CLAW_FUN);
+  parser.add_event(Command::Common::STATE, RequestState);
+  parser.add_event(Command::Common::DISTANCE, SendDistance);
+  parser.add_event(Command::Common::MOVE, MoveOverSerial);
+  parser.add_event(Command::Mega::EXECUTE, PrepareForSDExecute);
+  parser.add_event(Command::Mega::DELAY, SetExecutionDelay);
+  parser.add_event(Command::Mega::MP3_COMMAND, ReadMP3FromBuffer);
 
   pinMode(TRIG, OUTPUT);
   pinMode(ECHO, INPUT);
@@ -319,9 +319,9 @@ void setup()
 
 void loop()
 {
-  if (parser.ReadStream(Serial))
-    parser.ExecuteBuffer();
-  parser.ExecuteIntervals();
+  if (parser.read_stream(Serial))
+    parser.exec_buffer();
+  parser.exec_intervals();
   update_servos_movement();
   SendState();
   ExecuteSD();

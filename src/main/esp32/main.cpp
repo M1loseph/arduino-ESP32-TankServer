@@ -20,20 +20,13 @@
 // #include <SPI.h>
 // #include <SD.h>
 
-#include "parser/parser.h"
-
 #include "debug.h"
 #include "json_messages.h"
 #include "commands.h"
 
 #include "functions/webserver.h"
 #include "functions/engines.h"
-
-// ================
-// VARIABLES
-// ================
-
-Parser parser;
+#include "functions/global_parser.h"
 
 // ==============
 // SETUP AND LOOP
@@ -44,35 +37,37 @@ void setup()
   LOG_NL("Initing engine pins...");
   init_engines();
 
+  LOG_NL("Initing global semaphore...");
+  init_global_semaphore();
   LOG_NL("Adding events...");
-  parser.AddEvent(Command::FORWARD_L, forward_left);
-  parser.AddEvent(Command::FORWARD_R, forward_right);
-  parser.AddEvent(Command::FORWARD, forward);
+  global_parser.add_event(commands::driving::FORWARD_L, forward_left);
+  global_parser.add_event(commands::driving::FORWARD_R, forward_right);
+  global_parser.add_event(commands::driving::FORWARD, forward);
 
-  parser.AddEvent(Command::BACKWARD_L, backward_left);
-  parser.AddEvent(Command::BACKWARD_R, backward_right);
-  parser.AddEvent(Command::BACKWARD, backward);
+  global_parser.add_event(commands::driving::BACKWARD_L, backward_left);
+  global_parser.add_event(commands::driving::BACKWARD_R, backward_right);
+  global_parser.add_event(commands::driving::BACKWARD, backward);
 
-  parser.AddEvent(Command::STOP_L, stop_left);
-  parser.AddEvent(Command::STOP_R, stop_right);
-  parser.AddEvent(Command::STOP, stop);
+  global_parser.add_event(commands::driving::STOP_L, stop_left);
+  global_parser.add_event(commands::driving::STOP_R, stop_right);
+  global_parser.add_event(commands::driving::STOP, stop);
 
-  parser.AddEvent(Command::FASTER_L, faster_left);
-  parser.AddEvent(Command::FASTER_R, faster_right);
-  parser.AddEvent(Command::FASTER, faster);
+  global_parser.add_event(commands::driving::FASTER_L, faster_left);
+  global_parser.add_event(commands::driving::FASTER_R, faster_right);
+  global_parser.add_event(commands::driving::FASTER, faster);
 
-  parser.AddEvent(Command::SLOWER_L, slower_left);
-  parser.AddEvent(Command::SLOWER_R, slower_right);
-  parser.AddEvent(Command::SLOWER, slower);
+  global_parser.add_event(commands::driving::SLOWER_L, slower_left);
+  global_parser.add_event(commands::driving::SLOWER_R, slower_right);
+  global_parser.add_event(commands::driving::SLOWER, slower);
 
-  parser.AddEvent(Command::STEADY_L, steady_left);
-  parser.AddEvent(Command::STEADY_R, steady_right);
-  parser.AddEvent(Command::STEADY, steady);
+  global_parser.add_event(commands::driving::KEEP_SPEED_L, keep_speed_left);
+  global_parser.add_event(commands::driving::KEEP_SPEED_R, keep_speed_right);
+  global_parser.add_event(commands::driving::KEEP_SPEED, keep_speed);
 
   Serial.begin(115200);
 
   LOG("Is event queue full: ");
-  LOG_NL(parser.IsFull());
+  LOG_NL(global_parser.is_full());
 
   LOG_NL("Creating WiFi...");
   init_entire_web();
@@ -83,8 +78,13 @@ void loop()
   dns.processNextRequest();
   web_socket.cleanupClients();
   // JUST FOR DEBUG
-  if (parser.ReadStream(Serial))
-    parser.ExecuteBuffer();
+  if (xSemaphoreTake(global_parser_semaphore, (TickType_t)10) == pdTRUE)
+  {
+    if (global_parser.read_stream(Serial))
+      global_parser.exec_buffer();
+
+    xSemaphoreGive(global_parser_semaphore);
+  }
 }
 
 #endif // UNIT_TEST

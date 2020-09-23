@@ -34,16 +34,16 @@ static void disable_left_speed()
 #ifdef ESP32
     ledcWrite(PWM_CHANNEL_LEFT, 0);
 #else
-    digitalWrite(PIN_SPEED_RIGHT, LOW);
+    digitalWrite(PIN_SPEED_LEFT, LOW);
 #endif
 }
 
 static void enable_left_speed()
 {
 #ifdef ESP32
-    ledcWrite(PWM_CHANNEL_RIGHT, speed_right);
+    ledcWrite(PWM_CHANNEL_LEFT, speed_left);
 #else
-    analogWrite(PIN_SPEED_RIGHT, speed_right);
+    analogWrite(PIN_SPEED_LEFT, speed_left);
 #endif
 }
 

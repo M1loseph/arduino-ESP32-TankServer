@@ -11,20 +11,20 @@
 // ================
 
 // TODO => FIX PIN NUMBERS
-static constexpr uchar PIN_FRONT_RIGHT = 27;
-static constexpr uchar PIN_BACK_RIGHT = 26;
-static constexpr uchar PIN_FRONT_LEFT = 12;
-static constexpr uchar PIN_BACK_LEFT = 14;
+static constexpr uchar PIN_FRONT_RIGHT = 33;
+static constexpr uchar PIN_BACK_RIGHT = 25;
+static constexpr uchar PIN_FRONT_LEFT = 27;
+static constexpr uchar PIN_BACK_LEFT = 26;
 
-static constexpr uchar PIN_SPEED_LEFT = 13;
-static constexpr uchar PIN_SPEED_RIGHT = 25;
+static constexpr uchar PIN_SPEED_LEFT = 12;
+static constexpr uchar PIN_SPEED_RIGHT = 32;
 
 // ================
 // CONFIGURATION
 // ================
 
 static constexpr size_t SPEED_MAX = 1023U;
-static constexpr size_t SPEED_DEFAULT = 500U;
+static constexpr size_t SPEED_DEFAULT = 700U;
 static constexpr size_t SPEED_CHANGE_INTERVAL = 5U;
 
 #ifdef ESP32

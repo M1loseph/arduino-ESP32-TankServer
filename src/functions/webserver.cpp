@@ -10,6 +10,29 @@ const char *WEB_SOCKET_ROOT = "/ws";
 const char *SSID = "TankWiFi";
 const char *PASSWORD = "eurobeat";
 
+const char *ROOTS[] = {
+    "/",
+    "/index.html",
+
+    "/index.html",
+    "/index.html",
+
+    "/styles.css",
+    "/styles.css",
+
+    "/main.js",
+    "/main.js",
+
+    "/configs.js",
+    "/configs.js",
+
+    "/gamepad_processing.js",
+    "/gamepad_processing.js",
+
+    "/tank_commands.js",
+    "/tank_commands.js"
+};
+
 void init_access_point()
 {
     WiFi.softAP(SSID, PASSWORD);
@@ -32,6 +55,19 @@ void init_web_server()
     web_server.on("/styles.css", HTTP_GET, [](AsyncWebServerRequest *request) {
         request->send(SPIFFS, "/styles.css");
     });
+
+    web_server.on("/configs.js", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SPIFFS, "/configs.js");
+    });
+
+    web_server.on("/gamepad_processing.js", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SPIFFS, "/gamepad_processing.js");
+    });
+
+    web_server.on("/tank_commands.js", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SPIFFS, "/tank_commands.js");
+    });
+
 }
 
 void init_web_socket()
@@ -51,7 +87,8 @@ void handle_web_socket(AsyncWebSocket *server, AsyncWebSocketClient *client, Aws
             if (frame->final && frame->index == 0 && frame->len == len)
             {
                 // wait untill we get the resourse
-                while(xSemaphoreTake(global_parser_semaphore, (TickType_t) 100) != pdTRUE);
+                while (xSemaphoreTake(global_parser_semaphore, (TickType_t)100) != pdTRUE)
+                    ;
                 // we care only about text data
                 for (size_t i = 0; i < len; i++)
                     global_parser.get_buff().push_back((char)data[i]);

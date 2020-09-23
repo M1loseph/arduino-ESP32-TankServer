@@ -1,14 +1,15 @@
+import { DEFAULT_CONFIG, DEBUG_DRIVING_CONFIG } from './configs.js'
 import { get_gamepad_info, process_gamepad } from './gamepad_processing.js'
 
 // connect to websocket server
 const WS_ADDRESS = "ws://192.168.4.1/ws"
-const GAMEPAD_INTERVAL = 1000
+const GAMEPAD_INTERVAL = 33
 let webSocket = new WebSocket(WS_ADDRESS);
 
 
 webSocket.onopen = function(e) {
     console.log("Connected to WS server");
-    print(e);
+    console.log(e);
 };
 
 
@@ -36,11 +37,18 @@ window.addEventListener("gamepadconnected", function(e) {
 setInterval(function() {
     let gamepadState = get_gamepad_info();
     if (gamepadState) {
-        let messages = process_gamepad(gamepadState);
-        console.log(messages)
+        let messages;
+        let functions;
+
+        [messages, functions] = process_gamepad(gamepadState, DEBUG_DRIVING_CONFIG);
+
+        console.log(messages);
+
+        functions.forEach(f => f());
+
         if (webSocket.readyState === WebSocket.OPEN) {
-            messages.forEach(element => {
-                webSocket.send(element);
+            messages.forEach(m => {
+                webSocket.send(m);
             });
         }
     }

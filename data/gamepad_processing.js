@@ -1,125 +1,80 @@
-import commands from './tank_commands.js'
-import './gamepad.js'
-import GAMEPAD from './gamepad.js';
-
-const PIVOT = 0.5;
-
-class AxisPositionBehaviour {
-    constructor(index, onPositive, onIdle, onNegative) {
-        this.index = index;
-        this.onPositive = onPositive;
-        this.onIdle = onIdle;
-        this.onNegative = onNegative;
-    }
-}
-
-class AxisNumericBehaviour {
-    // function needs to take a number between -1 and 1 and process it
-    // returns string
-    constructor(index, callback) {
-        this.index = index;
-        this.fun = callback;
-    }
-}
-
-class ButtonBehaviour {
-    constructor(index, onPressed, onReleased) {
-        this.index = index;
-        this.onPressed = onPressed;
-        this.onReleased = onReleased;
-    }
-}
-
-class ButtonCombination {
-    constructor(indexes, combination, onPressed, onReleased) {
-        this.indexes = indexes;
-        this.combination = combination;
-        this.onPressed = onPressed;
-        this.onReleased = onReleased;
-    }
-}
-
-// config 
-// needs to have 3 arrays
-// 1st axes
-// 2nd buttons
-// 3rd combinations
-
-const debugMessages = {
-    NEGATIVE: "NEGATIVE",
-    POSITIVE: "POSITIVE",
-    IDLE: "IDLE",
-    PRESSED: "PRESSED",
-    RELEASED: "RELEASED",
-}
-
-const DEFAULT_CONFIG = {
-    axesPosition: [new AxisPositionBehaviour(GAMEPAD.AXIS_LEFT_VER, debugMessages.POSITIVE, debugMessages.IDLE, debugMessages.NEGATIVE)],
-    axesNumeric: [],
-    buttons: [new ButtonBehaviour(GAMEPAD.Y, debugMessages.PRESSED, debugMessages.RELEASED)],
-    combinations: []
-};
-
-// code
-let currentConfig = DEFAULT_CONFIG;
 let previous = null;
 
-function process_gamepad(current) {
-    // array of strings
+function process_gamepad(current, currentConfig) {
+
     let messages = [];
+    let functions = [];
     // console.log(gamepad);
     // console.log(previous);
 
     if (previous !== null) {
 
-        currentConfig.axesPosition.forEach(function(positionBeh) {
-            let currentPos = current.axes[positionBeh.index];
-            let previousPos = previous.axes[positionBeh.index];
+        currentConfig.axesPosition.forEach(positionBeh => {
 
-            // console.log(currentPos);
-            // console.log(previousPos);
+            const currentPos = current.axes[positionBeh.index];
+            const previousPos = previous.axes[positionBeh.index];
+            const pivot = positionBeh.pivot;
 
-            // console.log(-PIVOT <= currentPos <= PIVOT);
-
-            if (currentPos < -PIVOT && previousPos >= -PIVOT && positionBeh.onNegative !== null)
-                messages.push(positionBeh.onNegative);
-
-            if (currentPos > PIVOT && previousPos <= PIVOT && positionBeh.onPositive !== null)
-                messages.push(positionBeh.onPositive);
-
-            if (-PIVOT <= currentPos && currentPos <= PIVOT && (previousPos > PIVOT || previousPos < -PIVOT) && positionBeh.onIdle !== null) {
-                messages.push(positionBeh.onIdle);
+            if (currentPos < -pivot && previousPos >= -pivot) {
+                messages.push(positionBeh.onNegativeString);
+                functions.push(positionBeh.onNegativeFun);
+            } else if (currentPos > pivot && previousPos <= pivot) {
+                messages.push(positionBeh.onPositiveString);
+                functions.push(positionBeh.onPositiveFun);
+            } else if (-pivot <= currentPos && currentPos <= pivot && (previousPos > pivot || previousPos < -pivot)) {
+                messages.push(positionBeh.onIdleString);
+                functions.push(positionBeh.onIdleFun);
             }
         });
 
-        currentConfig.axesNumeric.forEach(function(numericBeh) {
+        currentConfig.axesNumeric.forEach(numericBeh => {
             console.log(numericBeh);
         });
 
-        currentConfig.buttons.forEach(function(buttonBeh) {
-            let isCurrentPressed = current.buttons[buttonBeh.index];
-            let isPreviousPressed = previous.buttons[buttonBeh.index];
+        currentConfig.buttons.forEach(buttonBeh => {
+
+            const isCurrentPressed = current.buttons[buttonBeh.index];
+            const isPreviousPressed = previous.buttons[buttonBeh.index];
 
             // if previously button wasn't pressed, but current is -> behavious onPressed
-            if (!isPreviousPressed && isCurrentPressed && buttonBeh.onPressed !== null)
-                messages.push(buttonBeh.onPressed);
-
-            // if previously button was pressed, but cureen isn't -> behavious onPressed
-            if (isPreviousPressed && !isCurrentPressed && buttonBeh.onReleased !== null)
-                messages.push(buttonBeh.onReleased);
-
-            // console.log(buttonBeh);
+            // same goes for button being released
+            if (!isPreviousPressed && isCurrentPressed) {
+                messages.push(buttonBeh.onPressedString);
+                functions.push(buttonBeh.onPressedFun)
+            } else if (isPreviousPressed && !isCurrentPressed) {
+                messages.push(buttonBeh.onReleasedString);
+                functions.push(buttonBeh.onReleasedFun)
+            }
         });
 
-        currentConfig.combinations.forEach(function(combination) {
-            console.log(combination);
+        currentConfig.combinations.forEach(combinationBeh => {
+
+            function helper(gamepad) {
+                return (acc, [index, expected]) => {
+                    return acc && gamepad.buttons[index] === expected;
+                }
+            }
+
+            const isCurrentCombination = combinationBeh.combination.reduce(helper(current), true);
+            const isPrevCombination = combinationBeh.combination.reduce(helper(previous), true);
+
+            if (!isPrevCombination && isCurrentCombination) {
+                messages.push(combinationBeh.onPressedString);
+                functions.push(combinationBeh.onPressedFun);
+            } else if (isPrevCombination && !isCurrentCombination) {
+                messages.push(combinationBeh.onReleasedString);
+                functions.push(combinationBeh.onReleasedFun);
+            }
         });
     }
     // save gamepad state
     previous = current;
 
-    // array of commands
-    return messages;
+    // remove nulls
+    messages = messages.filter(m => m !== null);
+    functions = functions.filter(f => f !== null);
+
+    return [messages, functions];
 }
 
 function get_gamepad_info() {

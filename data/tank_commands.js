@@ -1,7 +1,7 @@
 // The following commands MUST be the same as in the commands.h file
 // Otherwise it won't work :(
-const commands = {
-    driving: {
+const COMMANDS = {
+    DRIVING: {
         FORWARD_LEFT: 'FORWARD_L',
         FORWARD_RIGHT: 'FORWARD_R',
         FORWARD: 'FORWARD',
@@ -23,4 +23,4 @@ const commands = {
     }
 }
 
-export default commands;
+export { COMMANDS };

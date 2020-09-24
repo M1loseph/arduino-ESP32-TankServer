@@ -6,11 +6,13 @@
 
 #define LOG_NL(messege) Serial.println(messege)
 #define LOG(messege) Serial.print(messege)
+#define LOG_F(...) Serial.printf(__VA_ARGS__)
 
 #else
 
 #define LOG_NL(messege)
 #define LOG(messege)
+#define LOG_F(...)
 
 #endif // SMART_TANK_DEBUG
 

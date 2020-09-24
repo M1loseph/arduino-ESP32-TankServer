@@ -4,9 +4,14 @@
 #include <Arduino.h>
 #include "parser/parser.h"
 
-extern Parser global_parser;
-extern xSemaphoreHandle global_parser_semaphore;
+namespace global_parser
+{
 
-void init_global_semaphore();
- 
+    extern Parser parser;
+    extern xSemaphoreHandle semaphore;
+
+    void init_global_semaphore();
+
+} // namespace global_parser
+
 #endif // __GLOBAL_PARSER_H__

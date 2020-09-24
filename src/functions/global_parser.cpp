@@ -1,9 +1,13 @@
 #include "global_parser.h"
 
-Parser global_parser;
-xSemaphoreHandle global_parser_semaphore;
-
-void init_global_semaphore()
+namespace global_parser
 {
-    global_parser_semaphore = xSemaphoreCreateMutex();
-}
+    Parser parser;
+    xSemaphoreHandle semaphore;
+
+    void init_global_semaphore()
+    {
+        semaphore = xSemaphoreCreateMutex();
+    }
+
+} // namespace global_parser

@@ -11,8 +11,7 @@
 #endif
 
 #include <Arduino.h>
-
-// #include <Wire.h>
+#include <Wire.h>
 // #include <OneWire.h>
 // #include <DallasTemperature.h>
 // #include <I2Cdev.h>
@@ -22,9 +21,10 @@
 
 #include "debug.h"
 
+#include "functions/global_parser.h"
 #include "functions/webserver.h"
 #include "functions/engines.h"
-#include "functions/global_parser.h"
+#include "functions/arm.h"
 
 // ==============
 // SETUP AND LOOP
@@ -36,37 +36,54 @@ void setup()
   driving::init_engines();
 
   LOG_NL("Initing global semaphore...");
-  init_global_semaphore();
-  LOG_NL("Adding events...");
-  global_parser.add_event(driving::commands::FORWARD, driving::forward);
-  global_parser.add_event(driving::commands::BACKWARD, driving::backward);
-  global_parser.add_event(driving::commands::STOP, driving::stop);
-  global_parser.add_event(driving::commands::FASTER, driving::faster);
-  global_parser.add_event(driving::commands::SLOWER, driving::slower);
-  global_parser.add_event(driving::commands::KEEP_SPEED, driving::keep_speed);
-  global_parser.add_event(driving::commands::SET_SPEED, driving::set_speed);
+  global_parser::init_global_semaphore();
 
+  LOG_NL("Initing arm...");
+  arm::init_arm();
+
+  LOG_NL("Adding events...");
+  // driving events
+  global_parser::parser.add_event(driving::commands::FORWARD, driving::forward);
+  global_parser::parser.add_event(driving::commands::BACKWARD, driving::backward);
+  global_parser::parser.add_event(driving::commands::STOP, driving::stop);
+  global_parser::parser.add_event(driving::commands::FASTER, driving::faster);
+  global_parser::parser.add_event(driving::commands::SLOWER, driving::slower);
+  global_parser::parser.add_event(driving::commands::KEEP_SPEED, driving::keep_speed);
+  global_parser::parser.add_event(driving::commands::SET_SPEED, driving::set_speed);
+
+  // arm events
+  global_parser::parser.add_event(arm::commands::BASE, arm::move_base);
+  global_parser::parser.add_event(arm::commands::SHOULDER, arm::move_shoulder);
+  global_parser::parser.add_event(arm::commands::ELBOW, arm::move_elbow);
+  global_parser::parser.add_event(arm::commands::WRIST, arm::move_wrist);
+  global_parser::parser.add_event(arm::commands::ROTATION, arm::move_rotation);
+  global_parser::parser.add_event(arm::commands::CLAW, arm::move_claw);
+
+#if SMART_TANK_DEBUG
   Serial.begin(115200);
+#endif // DEBUG
 
   LOG("Is event queue full: ");
-  LOG_NL(global_parser.is_full());
+  LOG_NL(global_parser::parser.is_full());
 
   LOG_NL("Creating WiFi...");
-  init_entire_web();
+  webserver::init_entire_web();
 }
 
 void loop()
 {
-  dns.processNextRequest();
-  web_socket.cleanupClients();
+  webserver::dns.processNextRequest();
+  webserver::web_socket.cleanupClients();
+#ifdef SMART_TANK_DEBUG
   // JUST FOR DEBUG
-  if (xSemaphoreTake(global_parser_semaphore, (TickType_t)10) == pdTRUE)
+  if (xSemaphoreTake(global_parser::semaphore, (TickType_t)10) == pdTRUE)
   {
-    if (global_parser.read_stream(Serial))
-      global_parser.exec_buffer();
+    if (global_parser::parser.read_stream(Serial))
+      global_parser::parser.exec_buffer();
 
-    xSemaphoreGive(global_parser_semaphore);
+    xSemaphoreGive(global_parser::semaphore);
   }
+#endif // SMART_TANK_DEBUG
 }
 
 #endif // UNIT_TEST

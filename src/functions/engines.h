@@ -6,10 +6,6 @@
 #include "typedefs.h"
 #include "debug.h"
 
-// ================
-// PINS
-// ================
-
 namespace driving
 {
     namespace commands
@@ -30,25 +26,25 @@ namespace driving
         } // namespace modifiers
     }     // namespace commands
 
-    enum class SpeedControll
+    enum class speed_controll
     {
         SLOWER,
         FASTER,
         KEEP_SPEED
     };
 
-    enum class Direction
+    enum class engine_direction
     {
         BACKWARD,
         FORWARD,
         STOP
     };
 
-    extern SpeedControll speed_controll_left;
-    extern SpeedControll speed_controll_right;
+    extern speed_controll speed_controll_left;
+    extern speed_controll speed_controll_right;
 
-    extern Direction direction_left;
-    extern Direction direction_right;
+    extern engine_direction direction_left;
+    extern engine_direction direction_right;
 
     extern size_t speed_left;
     extern size_t speed_right;

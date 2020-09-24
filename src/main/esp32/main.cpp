@@ -21,8 +21,6 @@
 // #include <SD.h>
 
 #include "debug.h"
-#include "json_messages.h"
-#include "commands.h"
 
 #include "functions/webserver.h"
 #include "functions/engines.h"
@@ -35,34 +33,18 @@
 void setup()
 {
   LOG_NL("Initing engine pins...");
-  init_engines();
+  driving::init_engines();
 
   LOG_NL("Initing global semaphore...");
   init_global_semaphore();
   LOG_NL("Adding events...");
-  global_parser.add_event(commands::driving::FORWARD_L, forward_left);
-  global_parser.add_event(commands::driving::FORWARD_R, forward_right);
-  global_parser.add_event(commands::driving::FORWARD, forward);
-
-  global_parser.add_event(commands::driving::BACKWARD_L, backward_left);
-  global_parser.add_event(commands::driving::BACKWARD_R, backward_right);
-  global_parser.add_event(commands::driving::BACKWARD, backward);
-
-  global_parser.add_event(commands::driving::STOP_L, stop_left);
-  global_parser.add_event(commands::driving::STOP_R, stop_right);
-  global_parser.add_event(commands::driving::STOP, stop);
-
-  global_parser.add_event(commands::driving::FASTER_L, faster_left);
-  global_parser.add_event(commands::driving::FASTER_R, faster_right);
-  global_parser.add_event(commands::driving::FASTER, faster);
-
-  global_parser.add_event(commands::driving::SLOWER_L, slower_left);
-  global_parser.add_event(commands::driving::SLOWER_R, slower_right);
-  global_parser.add_event(commands::driving::SLOWER, slower);
-
-  global_parser.add_event(commands::driving::KEEP_SPEED_L, keep_speed_left);
-  global_parser.add_event(commands::driving::KEEP_SPEED_R, keep_speed_right);
-  global_parser.add_event(commands::driving::KEEP_SPEED, keep_speed);
+  global_parser.add_event(driving::commands::FORWARD, driving::forward);
+  global_parser.add_event(driving::commands::BACKWARD, driving::backward);
+  global_parser.add_event(driving::commands::STOP, driving::stop);
+  global_parser.add_event(driving::commands::FASTER, driving::faster);
+  global_parser.add_event(driving::commands::SLOWER, driving::slower);
+  global_parser.add_event(driving::commands::KEEP_SPEED, driving::keep_speed);
+  global_parser.add_event(driving::commands::SET_SPEED, driving::set_speed);
 
   Serial.begin(115200);
 

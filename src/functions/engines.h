@@ -10,119 +10,97 @@
 // PINS
 // ================
 
-// TODO => FIX PIN NUMBERS
-static constexpr uchar PIN_FRONT_RIGHT = 33;
-static constexpr uchar PIN_BACK_RIGHT = 25;
-static constexpr uchar PIN_FRONT_LEFT = 27;
-static constexpr uchar PIN_BACK_LEFT = 26;
-
-static constexpr uchar PIN_SPEED_LEFT = 12;
-static constexpr uchar PIN_SPEED_RIGHT = 32;
-
-// ================
-// CONFIGURATION
-// ================
-
-static constexpr size_t SPEED_MAX = 1023U;
-static constexpr size_t SPEED_DEFAULT = 700U;
-static constexpr size_t SPEED_CHANGE_INTERVAL = 5U;
-
-#ifdef ESP32
-static constexpr uchar PWM_CHANNEL_LEFT = 1U;
-static constexpr uchar PWM_CHANNEL_RIGHT = 2U;
-// in bits
-static constexpr uchar PWM_RESOLUTION = 10U;
-// Hz
-static constexpr size_t PWM_FREQUENCY = 1000U;
-#endif
-
-// ================
-// EXPORT
-// ================
-
-enum class SpeedControll
+namespace driving
 {
-    SLOWER,
-    FASTER,
-    STEADY
-};
+    namespace commands
+    {
+        extern const char *FORWARD;
+        extern const char *BACKWARD;
+        extern const char *STOP;
+        extern const char *FASTER;
+        extern const char *SLOWER;
+        extern const char *KEEP_SPEED;
+        extern const char *SET_SPEED;
 
-enum class Direction
-{
-    BACKWARD,
-    FORWARD,
-    STOP
-};
+        namespace modifiers
+        {
+            extern const char *LEFT;
+            extern const char *RIGHT;
+            extern const char *BOTH;
+        } // namespace modifiers
+    }     // namespace commands
 
-extern SpeedControll speed_controll_left;
-extern SpeedControll speed_controll_right;
+    enum class SpeedControll
+    {
+        SLOWER,
+        FASTER,
+        KEEP_SPEED
+    };
 
-extern Direction direction_left;
-extern Direction direction_right;
+    enum class Direction
+    {
+        BACKWARD,
+        FORWARD,
+        STOP
+    };
 
-extern size_t speed_left;
-extern size_t speed_right;
+    extern SpeedControll speed_controll_left;
+    extern SpeedControll speed_controll_right;
 
-// ================
-// EXPORT
-// ================
+    extern Direction direction_left;
+    extern Direction direction_right;
 
-void init_engines();
+    extern size_t speed_left;
+    extern size_t speed_right;
 
-void forward_left(const CommandBuffer &b);
-void forward_right(const CommandBuffer &b);
-void forward(const CommandBuffer &b);
+    // ================
+    // EXPORT
+    // ================
 
-void backward_left(const CommandBuffer &b);
-void backward_right(const CommandBuffer &b);
-void backward(const CommandBuffer &b);
+    void init_engines();
 
-void stop_left(const CommandBuffer &b);
-void stop_right(const CommandBuffer &b);
-void stop(const CommandBuffer &b);
+    void forward(const CommandBuffer &b);
+    void backward(const CommandBuffer &b);
+    void stop(const CommandBuffer &b);
+    void rotate(const CommandBuffer &b);
+    void slower(const CommandBuffer &b);
+    void faster(const CommandBuffer &b);
+    void keep_speed(const CommandBuffer &b);
+    void set_speed(const CommandBuffer &b);
 
-void rotate_left(const CommandBuffer &b);
-void rotate_right(const CommandBuffer &b);
+    void forward_left();
+    void forward_right();
+    void forward();
 
-void slower_left(const CommandBuffer &b);
-void slower_right(const CommandBuffer &b);
-void slower(const CommandBuffer &b);
+    void backward_left();
+    void backward_right();
+    void backward_both();
 
-void faster_left(const CommandBuffer &b);
-void faster_right(const CommandBuffer &b);
-void faster(const CommandBuffer &b);
+    void stop_left();
+    void stop_right();
+    void stop_both();
 
-void keep_speed_left(const CommandBuffer &b);
-void keep_speed_right(const CommandBuffer &b);
-void keep_speed(const CommandBuffer &b);
+    void rotate_left();
+    void rotate_right();
 
-void forward_left();
-void forward_right();
-void forward();
+    void slower_left();
+    void slower_right();
+    void slower_both();
 
-void backward_left();
-void backward_right();
-void backwardb();
+    void faster_left();
+    void faster_right();
+    void faster_both();
 
-void stop_left();
-void stop_right();
-void stop();
+    void keep_speed_left();
+    void keep_speed_right();
+    void keep_speed_both();
 
-void rotate_left();
-void rotate_right();
+    void set_speed_left(size_t new_speed);
+    void set_speed_right(size_t new_speed);
+    void set_speed_both(size_t new_speed);
 
-void slower_left();
-void slower_right();
-void slower();
+    void update_speed();
 
-void faster_left();
-void faster_right();
-void faster();
-
-void keep_speed_left();
-void keep_speed_right();
-void keep_speed();
-
-void update_speed();
+} // namespace driving
 
 #endif // __ENGINES_H__

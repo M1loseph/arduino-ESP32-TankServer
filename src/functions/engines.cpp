@@ -4,11 +4,13 @@
 
 #define LOG_ENGINE(message) LOG(message)
 #define LOG_ENGINE_NL(message) LOG_NL(message)
+#define LOG_ENGINE_F(...) LOG_F(__VA_ARGS__)
 
 #else
 
 #define LOG_ENGINE(message)
 #define LOG_ENGINE_NL(message)
+#define LOG_ENGINE_F(...)
 
 #endif // ENGINE_DEBUG
 
@@ -21,20 +23,27 @@ namespace driving
     namespace commands
     {
         const char *FORWARD = "FORWARD";
+        const char *FORWARD_LEFT = "FORWARD_LEFT";
+        const char *FORWARD_RIGHT = "FORWARD_RIGHT";
         const char *BACKWARD = "BACKWARD";
+        const char *BACKWARD_LEFT = "BACKWARD_LEFT";
+        const char *BACKWARD_RIGHT = "BACKWARD_RIGHT";
         const char *STOP = "STOP";
+        const char *STOP_LEFT = "STOP_LEFT";
+        const char *STOP_RIGHT = "STOP_RIGHT";
         const char *FASTER = "FASTER";
+        const char *FASTER_LEFT = "FASTER_LEFT";
+        const char *FASTER_RIGHT = "FASTER_RIGHT";
         const char *SLOWER = "SLOWER";
+        const char *SLOWER_LEFT = "SLOWER_LEFT";
+        const char *SLOWER_RIGHT = "SLOWER_RIGHT";
         const char *KEEP_SPEED = "KEEP_SPEED";
-        const char *SET_SPEED = "SET_SPEED";
-
-        namespace modifiers
-        {
-            const char *LEFT = "LEFT";
-            const char *RIGHT = "RIGHT";
-            const char *BOTH = "BOTH";
-        } // namespace modifiers
-    }     // namespace commands
+        const char *KEEP_SPEED_LEFT = "KEEP_SPEED_LEFT";
+        const char *KEEP_SPEED_RIGHT = "KEEP_SPEED_RIGHT";
+        const char *SPEED = "SPEED";
+        const char *SPEED_LEFT = "SPEED_LEFT";
+        const char *SPEED_RIGHT = "SPEED_RIGHT";
+    } // namespace commands
 
     constexpr uchar PIN_FRONT_RIGHT = 33;
     constexpr uchar PIN_BACK_RIGHT = 25;
@@ -56,6 +65,10 @@ namespace driving
     // Hz
     constexpr size_t PWM_FREQUENCY = 1000U;
 #endif
+
+    // ================
+    // CONFIG
+    // ================
 
     speed_controll speed_controll_left;
     speed_controll speed_controll_right;
@@ -106,39 +119,6 @@ namespace driving
 #endif
     }
 
-    // this function doesn't provide any safety, check agrs beforehand
-    template <typename fun1, typename fun2, typename fun3, typename... Args>
-    static void check_engine_modifiers(const char *modifier, fun1 if_both, fun2 if_left, fun3 if_right, Args... args)
-    {
-        if (modifier)
-        {
-            if (strcmp(modifier, commands::modifiers::BOTH) == 0)
-            {
-                if (if_both)
-                    if_both(args...);
-            }
-            else if (strcmp(modifier, commands::modifiers::LEFT) == 0)
-            {
-                if (if_left)
-                    if_left(args...);
-            }
-            else if (strcmp(modifier, commands::modifiers::RIGHT) == 0)
-            {
-                if (if_right)
-                    if_right(args...);
-            }
-            else
-            {
-                LOG_ENGINE("Unknown modifier ");
-                LOG_NL(modifier);
-            }
-        }
-        else
-        {
-            LOG_ENGINE_NL("The modifier was NULL");
-        }
-    }
-
     // ================
     // EXPORT
     // ================
@@ -163,6 +143,13 @@ namespace driving
         LOG_ENGINE_NL("Initialized engine pins");
     }
 
+    void forward()
+    {
+        forward_left();
+        forward_right();
+        LOG_ENGINE_NL("Both Forward");
+    }
+
     void forward_left()
     {
         // disabling speed pin just in case
@@ -184,11 +171,11 @@ namespace driving
         LOG_ENGINE_NL("Forward Right");
     }
 
-    void forward_both()
+    void backward()
     {
-        forward_left();
-        forward_right();
-        LOG_ENGINE_NL("Both Forward");
+        backward_left();
+        backward_right();
+        LOG_ENGINE_NL("Both Backward");
     }
 
     void backward_left()
@@ -211,11 +198,11 @@ namespace driving
         LOG_ENGINE_NL("Backward Right");
     }
 
-    void backward_both()
+    void stop()
     {
-        backward_left();
-        backward_right();
-        LOG_ENGINE_NL("Both Backward");
+        stop_left();
+        stop_right();
+        LOG_ENGINE_NL("Both Stop");
     }
 
     void stop_left()
@@ -236,13 +223,6 @@ namespace driving
         LOG_ENGINE_NL("Stop Right");
     }
 
-    void stop_both()
-    {
-        stop_left();
-        stop_right();
-        LOG_ENGINE_NL("Both Stop");
-    }
-
     void rotate_left()
     {
         backward_left();
@@ -257,6 +237,13 @@ namespace driving
         LOG_ENGINE_NL("Rotate Right");
     }
 
+    void slower()
+    {
+        slower_left();
+        slower_right();
+        LOG_ENGINE_NL("Both Slower");
+    }
+
     void slower_left()
     {
         speed_controll_left = speed_controll::SLOWER;
@@ -269,11 +256,11 @@ namespace driving
         LOG_ENGINE_NL("Slower Right");
     }
 
-    void slower_both()
+    void faster()
     {
-        slower_left();
-        slower_right();
-        LOG_ENGINE_NL("Both Slower");
+        faster_left();
+        faster_right();
+        LOG_ENGINE_NL("Both Faster");
     }
 
     void faster_left()
@@ -288,11 +275,11 @@ namespace driving
         LOG_ENGINE_NL("Faster Right");
     }
 
-    void faster_both()
+    void keep_speed()
     {
-        faster_left();
-        faster_right();
-        LOG_ENGINE_NL("Both Faster");
+        keep_speed_left();
+        keep_speed_right();
+        LOG_ENGINE_NL("Both keep speed");
     }
 
     void keep_speed_left()
@@ -307,11 +294,10 @@ namespace driving
         LOG_ENGINE_NL("Right keeps speed");
     }
 
-    void keep_speed_both()
+    void set_speed(size_t new_speed)
     {
-        keep_speed_left();
-        keep_speed_right();
-        LOG_ENGINE_NL("Both keep speed");
+        set_speed_left(new_speed);
+        set_speed_right(new_speed);
     }
 
     void set_speed_left(size_t new_speed)
@@ -321,13 +307,12 @@ namespace driving
             speed_left = new_speed;
             if (direction_left != engine_direction::STOP)
                 enable_speed_left();
-            LOG_ENGINE("New left speed: ");
+            LOG_ENGINE_F("New left speed: %d", new_speed);
         }
         else
         {
-            LOG_ENGINE("New left speed too high: ");
+            LOG_ENGINE_F("New left speed too high: %d\n", new_speed);
         }
-        LOG_ENGINE_NL(new_speed);
     }
 
     void set_speed_right(size_t new_speed)
@@ -337,75 +322,145 @@ namespace driving
             speed_right = new_speed;
             if (direction_right != engine_direction::STOP)
                 enable_speed_right();
-            LOG_ENGINE("New right speed: ");
+            LOG_ENGINE_F("New right speed: %d\n", new_speed);
         }
         else
         {
-            LOG_ENGINE("New right speed too high: ");
+            LOG_ENGINE_F("New right speed too high: %d\n", new_speed);
         }
-        LOG_ENGINE_NL(new_speed);
-    }
-
-    void set_speed_both(size_t new_speed)
-    {
-        set_speed_left(new_speed);
-        set_speed_right(new_speed);
     }
 
     void forward(const CommandBuffer &b)
     {
-        check_engine_modifiers(b.word_at(1), forward_both, forward_left, forward_right);
+        forward();
+    }
+
+    void forward_left(const CommandBuffer &b)
+    {
+        forward_left();
+    }
+
+    void forward_right(const CommandBuffer &b)
+    {
+        forward_right();
     }
 
     void backward(const CommandBuffer &b)
     {
-        check_engine_modifiers(b.word_at(1), backward_both, backward_left, backward_right);
+        backward();
+    }
+
+    void backward_left(const CommandBuffer &b)
+    {
+        backward_left();
+    }
+
+    void backward_right(const CommandBuffer &b)
+    {
+        backward_right();
     }
 
     void stop(const CommandBuffer &b)
     {
-        check_engine_modifiers(b.word_at(1), stop_both, stop_left, stop_right);
+        stop();
     }
 
-    void rotate(const CommandBuffer &b)
+    void stop_left(const CommandBuffer &b)
     {
-        void (*null_fun)() = nullptr;
-        check_engine_modifiers(b.word_at(1), null_fun, rotate_left, rotate_right);
+        stop_left();
+    }
+
+    void stop_right(const CommandBuffer &b)
+    {
+        stop_right();
+    }
+
+    void rotate_left(const CommandBuffer &b)
+    {
+        rotate_left();
+    }
+
+    void rotate_right(const CommandBuffer &b)
+    {
+        rotate_right();
     }
 
     void slower(const CommandBuffer &b)
     {
-        check_engine_modifiers(b.word_at(1), stop_both, stop_left, stop_right);
+        slower();
+    }
+
+    void slower_left(const CommandBuffer &b)
+    {
+        slower_left();
+    }
+
+    void slower_right(const CommandBuffer &b)
+    {
+        slower_right();
     }
 
     void faster(const CommandBuffer &b)
     {
-        check_engine_modifiers(b.word_at(1), faster_both, faster_left, faster_right);
+        faster();
+    }
+
+    void faster_left(const CommandBuffer &b)
+    {
+        faster_left();
+    }
+
+    void faster_right(const CommandBuffer &b)
+    {
+        faster_right();
     }
 
     void keep_speed(const CommandBuffer &b)
     {
-        check_engine_modifiers(b.word_at(1), keep_speed_both, keep_speed_left, keep_speed_right);
+        keep_speed();
+    }
+
+    void keep_speed_left(const CommandBuffer &b)
+    {
+        keep_speed_left();
+    }
+
+    void keep_speed_right(const CommandBuffer &b)
+    {
+        keep_speed_right();
     }
 
     void set_speed(const CommandBuffer &b)
     {
-        const char *command = b.word_at(1);
-        Integer new_speed = b.int_at(2);
-
-        // check if new_speed is in bounderies
-        if (command && new_speed.success && new_speed.value > 0 && static_cast<size_t>(new_speed.value) < SPEED_MAX)
-            check_engine_modifiers(command, set_speed_both, set_speed_left, set_speed_right, static_cast<int>(new_speed.value));
+        auto new_speed = b.int_at(1);
+        if (new_speed.success && new_speed.i >= 0 && static_cast<size_t>(new_speed.i) <= SPEED_MAX)
+            // logging info will happen inside next function
+            set_speed(static_cast<size_t>(new_speed.i));
         else
         {
-            LOG_ENGINE_NL("Wrong parameters");
-            LOG_ENGINE("Command: ");
-            LOG_ENGINE_NL(command ? command : "NULL");
-            LOG_ENGINE("Number: ");
-            if (new_speed.success)
-                LOG_ENGINE_NL(new_speed.value);
-            else
-                LOG_ENGINE_NL("NULL");
+            LOG_ENGINE_F("Wrong new speed parameters - success: %d, val: %d\n", new_speed.success, new_speed.i);
+        }
+    }
+
+    void set_speed_left(const CommandBuffer &b)
+    {
+        auto new_speed = b.int_at(1);
+        if (new_speed.success && new_speed.i >= 0 && static_cast<size_t>(new_speed.i) <= SPEED_MAX)
+            set_speed_left(static_cast<size_t>(new_speed.i));
+        else
+        {
+            LOG_ENGINE_F("Wrong new speed parameters - success: %d, val: %d\n", new_speed.success, new_speed.i);
+        }
+    }
+
+    void set_speed_right(const CommandBuffer &b)
+    {
+        auto new_speed = b.int_at(1);
+        if (new_speed.success && new_speed.i > 0 && static_cast<size_t>(new_speed.i) <= SPEED_MAX)
+            set_speed_right(static_cast<size_t>(new_speed.i));
+        else
+        {
+            LOG_ENGINE_F("Wrong new speed parameters - success: %d, val: %d\n", new_speed.success, new_speed.i);
         }
     }
 

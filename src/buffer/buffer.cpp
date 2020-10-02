@@ -39,8 +39,8 @@ bool CommandBuffer::push_back(const char *string, size_t length)
         // if char can't be pushed -> break the loop
         // return if last char was added successfully
         for (size_t i = 0; i < length && if_added; i++)
-           if_added = push_back(string[i]);
-        
+            if_added = push_back(string[i]);
+
         return if_added;
     }
     return false;
@@ -53,7 +53,7 @@ void CommandBuffer::clear()
     LOG_BUFFER_NL("Cleared buffer");
 }
 
-Integer CommandBuffer::int_at(size_t seeked_index) const
+Value CommandBuffer::int_at(size_t seeked_index) const
 {
     const char *number_ptr = word_at(seeked_index);
 
@@ -97,16 +97,16 @@ Integer CommandBuffer::int_at(size_t seeked_index) const
         // it has to be numeric
         if (at_least_one_digit && m_buffer[index] == DEFAULT_FILL && valid_number)
         {
-            LOG_BUFFER("Integer: ");
+            LOG_BUFFER("Value: ");
             LOG_BUFFER_NL(atoi(number_ptr));
 
-            return {atoi(number_ptr), true};
+            return Value(atoi(number_ptr), true);
         }
     }
     return {NOT_FOUND, false};
 }
 
-Float CommandBuffer::float_at(size_t seeked_index) const
+Value CommandBuffer::float_at(size_t seeked_index) const
 {
     const char *number_ptr = word_at(seeked_index);
     if (number_ptr)
@@ -162,7 +162,7 @@ Float CommandBuffer::float_at(size_t seeked_index) const
 
             // check if everything is ok
             if (at_least_one_digit && m_buffer[index] == DEFAULT_FILL && valid_number)
-                return {(float)atof(number_ptr), true};
+                return Value((float)atof(number_ptr), true);
         }
     }
     // in case if failure return error
@@ -213,4 +213,31 @@ bool CommandBuffer::is_full() const
 const char *CommandBuffer::c_ptr() const
 {
     return m_buffer;
+}
+
+size_t CommandBuffer::read_stream(Stream &stream)
+{
+    if (stream.available())
+    {
+        unsigned long start = millis();
+        bool foundEnd = false;
+        // when null or \r or \n is found, we end the loop
+        while (!foundEnd && !is_full() && millis() - start < TIMEOUT)
+        {
+            if (stream.available())
+            {
+                char c = (char)stream.read();
+                if (c == '\0' || c == '\r' || c == '\n')
+                    foundEnd = true;
+                else
+                    push_back(c);
+            }
+        }
+        LOG_BUFFER_NL(' ');
+        LOG_BUFFER("Read characters: ");
+        LOG_BUFFER_NL(length());
+        LOG_BUFFER_NL(c_ptr());
+        return length();
+    }
+    return 0;
 }

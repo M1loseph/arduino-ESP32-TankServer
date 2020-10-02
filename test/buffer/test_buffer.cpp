@@ -118,13 +118,13 @@ void test_positive_numbers()
     TEST_ASSERT_TRUE(b.push_back(text_buffer));
 
     TEST_ASSERT_TRUE(b.int_at(0).success);
-    TEST_ASSERT_EQUAL_INT(numbers[0], b.int_at(0).value);
+    TEST_ASSERT_EQUAL_INT(numbers[0], b.int_at(0).i);
 
     TEST_ASSERT_FALSE(b.int_at(1).success);
     TEST_ASSERT_FALSE(b.int_at(2).success);
 
     TEST_ASSERT_TRUE(b.int_at(3).success);
-    TEST_ASSERT_EQUAL_INT(numbers[3], b.int_at(3).value);
+    TEST_ASSERT_EQUAL_INT(numbers[3], b.int_at(3).i);
 
     TEST_ASSERT_FALSE(b.int_at(4).success);
 
@@ -150,8 +150,8 @@ void test_long_positive_numbers()
 
     for (size_t i = 0; i < sizeof(numbers) / sizeof(int); i++)
     {
-        TEST_ASSERT_TRUE(b.int_at(i).value);
-        TEST_ASSERT_EQUAL(numbers[i], b.int_at(i).value);
+        TEST_ASSERT_TRUE(b.int_at(i).i);
+        TEST_ASSERT_EQUAL(numbers[i], b.int_at(i).i);
     }
 }
 
@@ -175,13 +175,13 @@ void test_negative_numbers()
     TEST_ASSERT_TRUE(b.push_back(text_buffer));
 
     TEST_ASSERT_TRUE(b.int_at(0).success);
-    TEST_ASSERT_EQUAL_INT(numbers[0], b.int_at(0).value);
+    TEST_ASSERT_EQUAL_INT(numbers[0], b.int_at(0).i);
 
     TEST_ASSERT_FALSE(b.int_at(1).success);
     TEST_ASSERT_FALSE(b.int_at(2).success);
 
     TEST_ASSERT_TRUE(b.int_at(3).success);
-    TEST_ASSERT_EQUAL_INT(numbers[3], b.int_at(3).value);
+    TEST_ASSERT_EQUAL_INT(numbers[3], b.int_at(3).i);
 
     TEST_ASSERT_FALSE(b.int_at(4).success);
 
@@ -208,7 +208,7 @@ void test_floats()
     for (size_t i = 0; i < sizeof(floats) / sizeof(float); i++)
     {
         TEST_ASSERT_TRUE(b.float_at(i).success);
-        TEST_ASSERT_EQUAL_FLOAT(floats[i], b.float_at(i).value);
+        TEST_ASSERT_EQUAL_FLOAT(floats[i], b.float_at(i).f);
     }
 
     // and make sure that unwanted trash is not recognized as a float
@@ -231,7 +231,7 @@ void test_negative_floats()
     for (size_t i = 0; i < sizeof(floats) / sizeof(float); i++)
     {
         TEST_ASSERT_TRUE(b.float_at(i).success);
-        TEST_ASSERT_EQUAL_FLOAT(floats[i], b.float_at(i).value);
+        TEST_ASSERT_EQUAL_FLOAT(floats[i], b.float_at(i).f);
     }
 
     // and make sure that unwanted trash is not recognized as a float
@@ -254,14 +254,14 @@ void test_positive_and_negative_floats_and_ints()
     for (size_t i = 0; i < sizeof(ints) / sizeof(int); i++)
     {
         TEST_ASSERT_TRUE(b.int_at(i).success);
-        TEST_ASSERT_EQUAL_INT(ints[i], b.int_at(i).value);
+        TEST_ASSERT_EQUAL_INT(ints[i], b.int_at(i).i);
     }
 
     // same goes for floats
     for (size_t i = sizeof(ints) / sizeof(int); i < sizeof(ints) / sizeof(int) + sizeof(floats) / sizeof(float); i++)
     {
         TEST_ASSERT_TRUE(b.float_at(i).success);
-        TEST_ASSERT_EQUAL_FLOAT(floats[i - sizeof(ints) / sizeof(int)], b.float_at(i).value);
+        TEST_ASSERT_EQUAL_FLOAT(floats[i - sizeof(ints) / sizeof(int)], b.float_at(i).f);
     }
 }
 
@@ -274,9 +274,9 @@ void test_real_life_command()
 
     TEST_ASSERT_EQUAL_CHAR_ARRAY(command, b.command(), strlen(b.command()));
     TEST_ASSERT_FALSE(b.int_at(0).success);
-    TEST_ASSERT_EQUAL_INT(20, b.int_at(1).value);
-    TEST_ASSERT_EQUAL_INT(30, b.int_at(2).value);
-    TEST_ASSERT_EQUAL_INT(40, b.int_at(3).value);
+    TEST_ASSERT_EQUAL_INT(20, b.int_at(1).i);
+    TEST_ASSERT_EQUAL_INT(30, b.int_at(2).i);
+    TEST_ASSERT_EQUAL_INT(40, b.int_at(3).i);
     TEST_ASSERT_FALSE(b.int_at(4).success);
 
     b.clear();

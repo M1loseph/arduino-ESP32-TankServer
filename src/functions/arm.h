@@ -10,49 +10,29 @@ namespace arm
 {
     namespace commands
     {
-        extern const char *SET_ANGLE;
-        extern const char *BASE;
-        extern const char *SHOULDER;
-        extern const char *ELBOW;
-        extern const char *WRIST;
-        extern const char *ROTATION;
-        extern const char *CLAW;
-
-        namespace modifiers
-        {
-            extern const char *MINUS;
-            extern const char *PLUS;
-            extern const char *STOP;
-        } // namespace modifiers
-    }     // namespace commands
-
-    enum class servo_direction
-    {
-        MINUS,
-        PLUS,
-        STOP
-    };
+        extern const char *SERVO_MINUS;
+        extern const char *SERVO_PLUS;
+        extern const char *SERVO_STOP;
+        extern const char *SERVO_ANGLE;
+    } // namespace commands
 
     typedef struct
     {
         const uchar MIN_ANGLE;
         const uchar MAX_ANGLE;
         uchar current_angle;
-        uchar pin;
-        servo_direction direction;
+        uchar destination_angle;
+        uchar extern_module_pin;
     } servo_data;
 
     extern Adafruit_PWMServoDriver pwm;
-    extern servo_data SERVOS[];
 
     void init_arm();
 
-    void move_base(const CommandBuffer &b);
-    void move_shoulder(const CommandBuffer &b);
-    void move_elbow(const CommandBuffer &b);
-    void move_wrist(const CommandBuffer &b);
-    void move_rotation(const CommandBuffer &b);
-    void move_claw(const CommandBuffer &b);
+    void arm_minus(const CommandBuffer &b);
+    void arm_plus(const CommandBuffer &b);
+    void arm_stop(const CommandBuffer &b);
+    void arm_angle(const CommandBuffer &b);
 
     void update_servos_movement();
 

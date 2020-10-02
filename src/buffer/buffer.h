@@ -3,33 +3,40 @@
 
 #include "typedefs.h"
 
-struct Integer
+// value extreacted from buffer -> contains error code
+struct Value
 {
-    int value;
-    bool success;
-};
+    Value(int i, bool success) : i(i),
+                                 success(success)
+    {
+    }
 
-struct Float
-{
-    float value;
-    bool success;
-};
+    Value(float f, bool success) : f(f),
+                                   success(success)
+    {
+    }
 
+    union
+    {
+        const float f;
+        const int i;
+    };
+    const bool success;
+};
 
 class CommandBuffer
 {
 public:
-
     bool push_back(char c);
     // return true if every char in the string could fit into buffer
     // false if at least one could not fit
-    bool push_back(const char* string, size_t length = 0);
+    bool push_back(const char *string, size_t length = 0);
     void clear();
-    //                               0       1      2      3     
+    //                               0       1      2      3
     // expected format of commands: "command number number number..."
     // number of spaces doesn't matter (but must be at least one)
-    Integer int_at(size_t seeked_index) const;
-    Float float_at(size_t seeked_index) const;
+    Value int_at(size_t seeked_index) const;
+    Value float_at(size_t seeked_index) const;
     // when no command is found, returns nullptr
     const char *word_at(size_t seeked_index) const;
     const char *command() const;
@@ -37,11 +44,13 @@ public:
     bool is_full() const;
     // pointer to the beggining of the buffer
     const char *c_ptr() const;
+    size_t read_stream(Stream &stream);
 
     static constexpr char DEFAULT_FILL = '\0';
     static constexpr char FLOAT_SEPARATOR = '.';
-    static constexpr size_t MAX_LENGTH = 100U;
+    static constexpr size_t MAX_LENGTH = 200U;
     static constexpr int NOT_FOUND = 0;
+    static constexpr int TIMEOUT = 20;
 
 private:
     size_t m_current_length = 0;

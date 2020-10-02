@@ -18,9 +18,15 @@
 
 namespace webserver
 {
+
+    // ================
+    // VARIABLES
+    // ================
+
     AsyncWebServer web_server(HTTP_PORT);
     AsyncWebSocket web_socket(WEB_SOCKET_ROOT);
     DNSServer dns;
+    CommandBuffer ws_buffer;
 
     const char *WEB_SOCKET_ROOT = "/ws";
     const char *SSID = "TankWiFi";
@@ -78,15 +84,15 @@ namespace webserver
                 // 1st case -> entire message was sent in a single frame
                 if (frame->final && frame->index == 0 && frame->len == len)
                 {
-                    // wait untill we get the resourse
-                    while (xSemaphoreTake(global_parser::semaphore, (TickType_t)100) != pdTRUE)
-                        ;
                     // we care only about text data
                     for (size_t i = 0; i < len; i++)
-                        global_parser::parser.get_buff().push_back((char)data[i]);
+                        ws_buffer.push_back((char)data[i]);
 
-                    global_parser::parser.exec_buffer();
+                    // wait for semaphore
+                    while (xSemaphoreTake(global_parser::semaphore, (TickType_t)100) != pdTRUE);
+                        global_parser::parser.exec_buffer(ws_buffer);
                     xSemaphoreGive(global_parser::semaphore);
+                    ws_buffer.clear();
                 }
                 // else
                 // {

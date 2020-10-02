@@ -14,37 +14,10 @@
 
 #endif
 
-unsigned Parser::read_stream(Stream &stream)
-{
-    if (stream.available())
-    {
-        unsigned long start = millis();
-        bool foundEnd = false;
-        // when null or \r or \n is found, we end the loop
-        while (!foundEnd && !m_buffer.is_full() && millis() - start < TIMEOUT)
-        {
-            if (stream.available())
-            {
-                char c = (char)stream.read();
-                if (c == '\0' || c == '\r' || c == '\n')
-                    foundEnd = true;
-                else
-                    m_buffer.push_back(c);
-            }
-        }
-        LOG_PARSER_NL(' ');
-        LOG_PARSER("Read characters: ");
-        LOG_PARSER_NL(m_buffer.length());
-        LOG_PARSER_NL(m_buffer.c_ptr());
-        return m_buffer.length();
-    }
-    return 0;
-}
-
-bool Parser::exec_buffer()
+bool Parser::exec_buffer(const CommandBuffer &b, size_t command_pos)
 {
     bool if_executed = false;
-    const char *command = m_buffer.command();
+    const char *command = b.word_at(command_pos);
     // check if there was any command
     if (command)
     {
@@ -53,11 +26,10 @@ bool Parser::exec_buffer()
         {
             LOG_PARSER("Executing ");
             LOG_PARSER_NL(event->command);
-            event->fun(m_buffer);
+            event->fun(b);
             if_executed = true;
         }
     }
-    m_buffer.clear();
     return if_executed;
 }
 
@@ -81,12 +53,7 @@ bool Parser::add_event(const char *command, Event fun, unsigned interval)
     return false;
 }
 
-CommandBuffer &Parser::get_buff()
-{
-    return m_buffer;
-}
-
-void Parser::exec_intervals()
+void Parser::exec_intervals(const CommandBuffer& b)
 {
     for (size_t i = 0; i < m_current_events; i++)
     {
@@ -96,7 +63,7 @@ void Parser::exec_intervals()
         auto &event = m_events[i];
         if (event.interval != 0 && millis() - event.lastUpdate > event.interval)
         {
-            event.fun(m_buffer);
+            event.fun(b);
             event.lastUpdate = millis();
         }
     }

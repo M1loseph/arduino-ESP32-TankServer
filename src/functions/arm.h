@@ -4,7 +4,6 @@
 #include <Arduino.h>
 #include <buffer/buffer.h>
 #include <Adafruit_PWMServoDriver.h>
-#include "typedefs.h"
 
 namespace arm
 {
@@ -18,11 +17,11 @@ namespace arm
 
     typedef struct
     {
-        const uchar MIN_ANGLE;
-        const uchar MAX_ANGLE;
-        uchar current_angle;
-        uchar destination_angle;
-        uchar extern_module_pin;
+        const uint8_t MIN_ANGLE;
+        const uint8_t MAX_ANGLE;
+        uint8_t current_angle;
+        uint8_t destination_angle;
+        uint8_t extern_module_pin;
     } servo_data;
 
     extern Adafruit_PWMServoDriver pwm;

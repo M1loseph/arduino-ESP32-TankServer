@@ -3,8 +3,6 @@
 
 #include <Arduino.h>
 #include "buffer/buffer.h"
-#include "typedefs.h"
-#include "debug.h"
 
 namespace driving
 {

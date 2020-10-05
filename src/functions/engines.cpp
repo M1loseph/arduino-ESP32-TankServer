@@ -1,4 +1,5 @@
 #include "engines.h"
+#include "debug.h"
 
 #if ENGINE_DEBUG
 
@@ -45,23 +46,23 @@ namespace driving
         const char *SPEED_RIGHT = "SPEED_RIGHT";
     } // namespace commands
 
-    constexpr uchar PIN_FRONT_RIGHT = 33;
-    constexpr uchar PIN_BACK_RIGHT = 25;
-    constexpr uchar PIN_FRONT_LEFT = 27;
-    constexpr uchar PIN_BACK_LEFT = 26;
+    constexpr uint8_t PIN_FRONT_RIGHT = 33;
+    constexpr uint8_t PIN_BACK_RIGHT = 25;
+    constexpr uint8_t PIN_FRONT_LEFT = 27;
+    constexpr uint8_t PIN_BACK_LEFT = 26;
 
-    constexpr uchar PIN_SPEED_LEFT = 14;
-    constexpr uchar PIN_SPEED_RIGHT = 32;
+    constexpr uint8_t PIN_SPEED_LEFT = 14;
+    constexpr uint8_t PIN_SPEED_RIGHT = 32;
 
     constexpr size_t SPEED_MAX = 1023U;
     constexpr size_t SPEED_DEFAULT = 700U;
     constexpr size_t SPEED_CHANGE_INTERVAL = 5U;
 
 #ifdef ESP32
-    constexpr uchar PWM_CHANNEL_LEFT = 1U;
-    constexpr uchar PWM_CHANNEL_RIGHT = 2U;
+    constexpr uint8_t PWM_CHANNEL_LEFT = 1U;
+    constexpr uint8_t PWM_CHANNEL_RIGHT = 2U;
     // in bits
-    constexpr uchar PWM_RESOLUTION = 10U;
+    constexpr uint8_t PWM_RESOLUTION = 10U;
     // Hz
     constexpr size_t PWM_FREQUENCY = 1000U;
 #endif

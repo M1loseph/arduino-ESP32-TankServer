@@ -29,20 +29,20 @@ namespace arm
     const char *SERVO_ANGLE = "ARM_ANGLE";
   } // namespace commands
 
-  constexpr size_t PULSE_MS_MIN = 600;
-  constexpr size_t PULSE_MS_MAX = 2500;
-  constexpr uchar PULSES_FREQUENCY = 50;
+  constexpr uint32_t PULSE_MS_MIN = 600U;
+  constexpr uint32_t PULSE_MS_MAX = 2500U;
+  constexpr uint8_t PULSES_FREQUENCY = 50U;
 
-  constexpr size_t SERVO_TIMEOUT = 20;
+  constexpr uint32_t SERVO_TIMEOUT = 20U;
 
   Adafruit_PWMServoDriver pwm;
 
-  servo_data base{5, 165, 90, 0, 90};
-  servo_data shoulder{40, 150, 90, 1, 90};
-  servo_data elbow{0, 130, 90, 2, 90};
-  servo_data wrist{70, 180, 90, 3, 90};
-  servo_data rotation{0, 180, 90, 4, 90};
-  servo_data claw{60, 115, 80, 5, 80};
+  servo_data base{5, 165, 90, 90, 0};
+  servo_data shoulder{40, 150, 90, 90, 1};
+  servo_data elbow{0, 130, 90, 90, 2};
+  servo_data wrist{70, 180, 90, 90, 3};
+  servo_data rotation{0, 180, 90, 90, 4};
+  servo_data claw{60, 115, 80, 80, 5};
 
   // makes it easier to use some functions
   servo_data *arm[] = {

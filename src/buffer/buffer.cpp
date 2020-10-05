@@ -29,7 +29,7 @@ bool CommandBuffer::push_back(char c)
     return false;
 }
 
-bool CommandBuffer::push_back(const char *string, size_t length)
+bool CommandBuffer::push_back(const char *string, uint32_t length)
 {
     if (string)
     {
@@ -38,7 +38,7 @@ bool CommandBuffer::push_back(const char *string, size_t length)
         // iterate over antire string
         // if char can't be pushed -> break the loop
         // return if last char was added successfully
-        for (size_t i = 0; i < length && if_added; i++)
+        for (uint32_t i = 0; i < length && if_added; i++)
             if_added = push_back(string[i]);
 
         return if_added;
@@ -53,14 +53,14 @@ void CommandBuffer::clear()
     LOG_BUFFER_NL("Cleared buffer");
 }
 
-Value CommandBuffer::int_at(size_t seeked_index) const
+Value CommandBuffer::int_at(uint32_t seeked_index) const
 {
     const char *number_ptr = word_at(seeked_index);
 
     if (number_ptr)
     {
         // index of the ptr that has been returned
-        size_t index = number_ptr - m_buffer;
+        uint32_t index = number_ptr - m_buffer;
 
         bool at_least_one_digit = false;
         bool valid_number = true;
@@ -106,13 +106,13 @@ Value CommandBuffer::int_at(size_t seeked_index) const
     return {NOT_FOUND, false};
 }
 
-Value CommandBuffer::float_at(size_t seeked_index) const
+Value CommandBuffer::float_at(uint32_t seeked_index) const
 {
     const char *number_ptr = word_at(seeked_index);
     if (number_ptr)
     {
         // index of the ptr that has been returned
-        size_t index = number_ptr - m_buffer;
+        uint32_t index = number_ptr - m_buffer;
 
         // check if number starts with -
         // if so, then it's negative
@@ -169,10 +169,10 @@ Value CommandBuffer::float_at(size_t seeked_index) const
     return {NOT_FOUND, false};
 }
 
-const char *CommandBuffer::word_at(size_t seeked_index) const
+const char *CommandBuffer::word_at(uint32_t seeked_index) const
 {
-    size_t i = 0;
-    for (size_t word = 0; word < seeked_index && i < length(); word++)
+    uint32_t i = 0;
+    for (uint32_t word = 0; word < seeked_index && i < length(); word++)
     {
         // jump over NULLs
         while (i < length() && m_buffer[i] == DEFAULT_FILL)
@@ -200,7 +200,7 @@ const char *CommandBuffer::command() const
     return word_at(0U);
 }
 
-size_t CommandBuffer::length() const
+uint32_t CommandBuffer::length() const
 {
     return m_current_length;
 }
@@ -215,7 +215,7 @@ const char *CommandBuffer::c_ptr() const
     return m_buffer;
 }
 
-size_t CommandBuffer::read_stream(Stream &stream)
+uint32_t CommandBuffer::read_stream(Stream &stream)
 {
     if (stream.available())
     {

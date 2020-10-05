@@ -7,7 +7,6 @@
 #include <SPIFFSEditor.h>
 #include <DNSServer.h>
 #include <ArduinoOTA.h>
-#include "typedefs.h"
 
 namespace webserver
 {
@@ -15,7 +14,7 @@ namespace webserver
     extern AsyncWebSocket web_socket;
     extern DNSServer dns;
 
-    constexpr uchar HTTP_PORT = 80;
+    constexpr uint8_t HTTP_PORT = 80;
 
     extern const char *WEB_SOCKET_ROOT;
     extern const char *SSID;

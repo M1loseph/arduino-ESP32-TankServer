@@ -31,13 +31,14 @@ namespace leds
         const char *LED_ANIMATION_FORWARD = "LED_ANIMATION_FORWARD";
         const char *LED_ANIMATION_BACKWARD = "LED_ANIMATION_BACKWARD";
         const char *LED_STOP = "LED_STOP";
+        const char *LED_CLEAR = "LED_CLEAR";
 
         const char *LED_SET_BRIGHTNESS = "LED_SET_BRIGHTNESS";
         const char *LED_SET_ANIMATION_SPEED = "LED_SET_ANIMATION_SPEED";
     } // namespace commands
 
-    constexpr size_t NUM_LEDS = 90;
-    constexpr uchar DATA_PIN = 19;
+    constexpr uint32_t NUM_LEDS = 90U;
+    constexpr uint8_t DATA_PIN = 19U;
     constexpr EOrder COLOR_ODER = GRB;
 
     CRGB leds[NUM_LEDS];
@@ -53,36 +54,36 @@ namespace leds
     // CONFIG
     // ================
 
-    uchar brightness = 100U;
-    size_t animation_index = 0;
-    size_t animation_speed = 50U;
-    size_t pol_anime_interval = 20U;
+    uint8_t brightness = 100U;
+    uint32_t animation_index = 0;
+    uint32_t animation_speed = 50U;
+    uint32_t pol_anime_interval = 20U;
     animation_direction direction = animation_direction::STOP;
 
     namespace animations
     {
-        CRGB polish(size_t index)
+        CRGB polish(uint32_t index)
         {
             // evety 10 leds swap between white and red
             return (index % pol_anime_interval) < (pol_anime_interval / 2) ? CRGB::White : CRGB::Red;
         }
 
-        CRGB rainbow(size_t index)
+        CRGB rainbow(uint32_t index)
         {
             const uint8_t h = static_cast<uint8_t>((index * 255U) / NUM_LEDS);
             LOG_LEDS_NL(h);
             return CHSV(h, 255, 255);
         }
 
-        CRGB random(size_t index)
+        CRGB random(uint32_t index)
         {
             // creates totally random color (even int size matches)
             return CRGB(esp_random());
         }
 
-        CRGB custom_buffer[NUM_LEDS];
+        CRGB custom_buffer[NUM_LEDS] = {CRGB::Black};
 
-        CRGB custom(size_t index)
+        CRGB custom(uint32_t index)
         {
             return custom_buffer[index];
         }
@@ -90,7 +91,7 @@ namespace leds
 
     // no idea why it's formated this way, it sucks
     CRGB(*current_animation)
-    (size_t index) = nullptr;
+    (uint32_t index) = nullptr;
 
     // ================
     // PRIVATE
@@ -99,12 +100,13 @@ namespace leds
     static void show_leds()
     {
         if (current_animation)
-        {
-            for (size_t i = 0; i < NUM_LEDS; i++)
+            for (uint32_t i = 0; i < NUM_LEDS; i++)
                 leds[i] = current_animation(i + animation_index);
+        else
+            for (uint32_t i = 0; i < NUM_LEDS; i++)
+                leds[i] = CRGB::Black;
 
-            FastLED.show();
-        }
+        FastLED.show();
     }
 
     // ================
@@ -115,7 +117,6 @@ namespace leds
     {
         FastLED.addLeds<WS2812B, DATA_PIN, COLOR_ODER>(leds, NUM_LEDS);
         FastLED.setBrightness(brightness);
-        current_animation = &animations::rainbow;
         show_leds();
     }
 
@@ -197,7 +198,7 @@ namespace leds
         if (new_speed.success && new_speed.i >= 0)
         {
             LOG_LEDS_F("New animation speed: %d\n", new_speed.i);
-            animation_speed = static_cast<size_t>(new_speed.i);
+            animation_speed = static_cast<uint32_t>(new_speed.i);
         }
         else
         {
@@ -208,6 +209,12 @@ namespace leds
     void stop_animation(const CommandBuffer &b)
     {
         direction = animation_direction::STOP;
+    }
+
+    void clear_animation(const CommandBuffer &b)
+    {
+        current_animation = nullptr;
+        show_leds();
     }
 
     void animate_forward(const CommandBuffer &b)

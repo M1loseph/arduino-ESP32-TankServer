@@ -1,5 +1,6 @@
 #include "engines.h"
 #include "debug.h"
+#include "global_parser.h"
 
 #if ENGINE_DEBUG
 
@@ -470,6 +471,8 @@ namespace driving
         static unsigned long last_update = millis();
         if (millis() - last_update > SPEED_CHANGE_INTERVAL)
         {
+            while (xSemaphoreTake(global_parser::semaphore, (TickType_t)10) != pdTRUE)
+                ;
             if (speed_controll_left == speed_controll::SLOWER)
                 if (speed_left > 0U)
                     set_speed_left(speed_left - 1);
@@ -486,6 +489,7 @@ namespace driving
                 if (speed_right < SPEED_MAX)
                     set_speed_right(speed_right + 1);
 
+            xSemaphoreGive(global_parser::semaphore);
             last_update = millis();
             LOG_ENGINE_NL("Updated Speed");
         }

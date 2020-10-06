@@ -1,5 +1,6 @@
 #include "leds.h"
 #include "debug.h"
+#include "global_parser.h"
 
 #if LEDS_DEBUG
 
@@ -38,7 +39,7 @@ namespace leds
     } // namespace commands
 
     constexpr uint32_t NUM_LEDS = 90U;
-    constexpr uint8_t DATA_PIN = 19U;
+    constexpr uint8_t DATA_PIN = 4U;
     constexpr EOrder COLOR_ODER = GRB;
 
     CRGB leds[NUM_LEDS];
@@ -233,6 +234,8 @@ namespace leds
 
         if (direction != animation_direction::STOP && current_animation && millis() - last_measute > animation_speed)
         {
+            while (xSemaphoreTake(global_parser::semaphore, (TickType_t)10) != pdTRUE)
+                ;
             LOG_LEDS_NL("Updating animation...");
             if (direction == animation_direction::FORWARD)
             {
@@ -248,6 +251,8 @@ namespace leds
 
             LOG_LEDS_F("Animation index: %d\n", animation_index);
             show_leds();
+
+            xSemaphoreGive(global_parser::semaphore);
             last_measute = millis();
         }
     }

@@ -1,5 +1,6 @@
 #include "arm.h"
 #include "debug.h"
+#include "global_parser.h"
 
 #if ARM_DEBUG
 
@@ -41,8 +42,8 @@ namespace arm
   servo_data shoulder{40, 150, 90, 90, 1};
   servo_data elbow{0, 130, 90, 90, 2};
   servo_data wrist{70, 180, 90, 90, 3};
-  servo_data rotation{0, 180, 90, 90, 4};
-  servo_data claw{60, 115, 80, 80, 5};
+  servo_data rotation{0, 180, 90, 90, 7};
+  servo_data claw{60, 115, 80, 80, 11};
 
   // makes it easier to use some functions
   servo_data *arm[] = {
@@ -67,19 +68,15 @@ namespace arm
     pwm.writeMicroseconds(servo.extern_module_pin, pulse);
   }
 
-  // static void set_angle(servo_data &servo, const CommandBuffer &b)
-  // {
-  //   auto new_angle = b.int_at(2);
-  //   if (new_angle.success && new_angle.i >= servo.MIN_ANGLE && new_angle.i <= servo.MAX_ANGLE)
-  //   {
-  //     servo.current_angle = new_angle.i;
-  //     send_angle(servo);
-  //   }
-  //   else
-  //   {
-  //     LOG_ARM_F("Angle error - success: %d, angle: %d, servo: %d", new_angle.success, new_angle.i, servo.extern_module_pin);
-  //   }
-  // }
+  // assumes servo is at 1st position
+  static servo_data *get_servo_from_buffer(const CommandBuffer &b)
+  {
+    auto arm_index = b.int_at(1);
+    if (arm_index.success && arm_index.i >= 0 && arm_index.i < ARRAY_LENGTH(arm))
+      return arm[arm_index.i];
+
+    return nullptr;
+  }
 
   // ================
   // EXPORT
@@ -95,40 +92,56 @@ namespace arm
       send_angle(*servo);
   }
 
-  void arm_minus(const CommandBuffer &b)
+  void servo_minus(const CommandBuffer &b)
   {
-  }
-
-  void arm_plus(const CommandBuffer &b)
-  {
-  }
-
-  void arm_stop(const CommandBuffer &b)
-  {
-  }
-
-  void arm_angle(const CommandBuffer &b)
-  {
-    auto arm_index = b.int_at(1);
-    if (arm_index.success && arm_index.i >= 0 && arm_index.i < ARRAY_LENGTH(arm))
+    servo_data *servo = get_servo_from_buffer(b);
+    if (servo)
     {
-      servo_data &servo = *(arm[arm_index.i]);
-      auto new_angle = b.int_at(2);
-      // now let's check if angle is in bounds
-      if (new_angle.success && new_angle.i >= servo.MIN_ANGLE && new_angle.i <= servo.MAX_ANGLE)
-      {
-        servo.current_angle = new_angle.i;
-        send_angle(servo);
-      }
-      else
-      {
-        LOG_ARM_F("Angle error - success: %d, angle: %d, servo: %d", new_angle.success, new_angle.i, arm_index.i);
-      }
+      servo->destination_angle = servo->MIN_ANGLE;
+      LOG_ARM_F("Servo at index %d moving to %d", servo->extern_module_pin, servo->destination_angle);
     }
     else
+      LOG_ARM_NL("Wrong servo index");
+  }
+
+  void servo_plus(const CommandBuffer &b)
+  {
+    servo_data *servo = get_servo_from_buffer(b);
+    if (servo)
     {
-      LOG_ARM_F("Wrong servo index - success: %d, index: %d", arm_index.success, arm_index.i);
+      servo->destination_angle = servo->MAX_ANGLE;
+      LOG_ARM_F("Servo at index %d moving to %d", servo->extern_module_pin, servo->destination_angle);
     }
+    else
+      LOG_ARM_NL("Wrong servo index");
+  }
+
+  void servo_stop(const CommandBuffer &b)
+  {
+    servo_data *servo = get_servo_from_buffer(b);
+    if (servo)
+    {
+      servo->destination_angle = servo->current_angle;
+      LOG_ARM_F("Servo at index %d stopping at angle %d", servo->extern_module_pin, servo->current_angle);
+    }
+    else
+      LOG_ARM_NL("Wrong servo index");
+  }
+
+  void servo_angle(const CommandBuffer &b)
+  {
+    servo_data *servo = get_servo_from_buffer(b);
+    if (servo)
+    {
+      auto new_angle = b.int_at(2);
+      // now let's check if angle is in bounds
+      if (new_angle.success && new_angle.i >= servo->MIN_ANGLE && new_angle.i <= servo->MAX_ANGLE)
+        servo->destination_angle = new_angle.i;
+      else
+        LOG_ARM_F("Angle error - success: %d, angle: %d, servo: %d", new_angle.success, new_angle.i, servo->extern_module_pin);
+    }
+    else
+      LOG_ARM_NL("Wrong servo index");
   }
 
   void update_servos_movement()
@@ -136,7 +149,9 @@ namespace arm
     static unsigned long timer = millis();
     if (millis() - timer > SERVO_TIMEOUT)
     {
-      for (const auto &servo : arm)
+      while (xSemaphoreTake(global_parser::semaphore, (TickType_t)10) != pdTRUE)
+        ;
+      for (auto &servo : arm)
       {
         bool send_changes = false;
         if (servo->destination_angle > servo->current_angle && servo->current_angle < servo->MAX_ANGLE)
@@ -152,6 +167,7 @@ namespace arm
         if (send_changes)
           send_angle(*servo);
       }
+      xSemaphoreGive(global_parser::semaphore);
       timer = millis();
     }
   }

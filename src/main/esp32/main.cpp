@@ -1,6 +1,7 @@
 #if defined(ESP32) || defined(ESP8266)
 #ifndef UNIT_TEST
 
+// https://www.youtube.com/watch?v=c0tMGlJVmkw
 // https://www.youtube.com/watch?v=7h2bE2vNoaY
 // I've been using ESP32 Devkit V1 30 pin version
 // ESP8266 hasn't been implemented yet
@@ -10,13 +11,6 @@
 #endif
 
 #include <Arduino.h>
-// #include <OneWire.h>
-// #include <DallasTemperature.h>
-// #include <I2Cdev.h>
-// #include <MPU6050.h>
-// #include <SPI.h>
-// #include <SD.h>
-
 #include "debug.h"
 
 #include "functions/global_parser.h"
@@ -25,6 +19,7 @@
 #include "functions/arm.h"
 #include "functions/leds.h"
 #include "functions/mp3.h"
+#include "functions/sd_card.h"
 
 // ==============
 // SETUP AND LOOP
@@ -54,6 +49,9 @@ void setup()
 
   LOG_NL("Initing mp3...");
   mp3::init_mp3();
+
+  LOG_NL("Initing SD card...");
+  LOG_F("Initing SD: %s", sd_card::init_sd_card() ? "successful" : "error");
 
   LOG_NL("Adding events...");
   bool if_added = true;
@@ -104,12 +102,12 @@ void setup()
   LOG_F("Adding LED events: %s\n", if_added ? "successful" : "error");
 
   // arm events
-  // global_parser::parser.add_event(arm::commands::BASE, arm::move_base);
-  // global_parser::parser.add_event(arm::commands::SHOULDER, arm::move_shoulder);
-  // global_parser::parser.add_event(arm::commands::ELBOW, arm::move_elbow);
-  // global_parser::parser.add_event(arm::commands::WRIST, arm::move_wrist);
-  // global_parser::parser.add_event(arm::commands::ROTATION, arm::move_rotation);
-  // global_parser::parser.add_event(arm::commands::CLAW, arm::move_claw);
+  if_added &= global_parser::parser.add_event(arm::commands::SERVO_ANGLE, arm::servo_angle);
+  if_added &= global_parser::parser.add_event(arm::commands::SERVO_MINUS, arm::servo_minus);
+  if_added &= global_parser::parser.add_event(arm::commands::SERVO_PLUS, arm::servo_plus);
+  if_added &= global_parser::parser.add_event(arm::commands::SERVO_STOP, arm::servo_stop);
+
+  LOG_F("Adding ARM events: %s", if_added ? "successful" : "error");
 
   // mp3 events
   if_added &= global_parser::parser.add_event(mp3::commands::MP3_PROPAGANDA, mp3::propaganda);
@@ -148,6 +146,7 @@ void loop()
   webserver::dns.processNextRequest();
   webserver::web_socket.cleanupClients();
   leds::update_led_animation();
+  arm::update_servos_movement();
 #ifdef SMART_TANK_DEBUG
   // JUST FOR DEBUG
   if (serial_buffer.read_stream(Serial))

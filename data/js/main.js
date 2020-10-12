@@ -7,34 +7,34 @@ const GAMEPAD_INTERVAL = 33
 let webSocket = new WebSocket(WS_ADDRESS);
 
 
-webSocket.onopen = function(e) {
+webSocket.onopen = function (e) {
     console.log("Connected to WS server");
     console.log(e);
 };
 
 
-webSocket.onerror = function(e) {
+webSocket.onerror = function (e) {
     console.log("Error while connecting to WS server");
     console.log(e);
 };
 
 
-webSocket.onmessage = function(e) {
+webSocket.onmessage = function (e) {
     console.log("Received message from server");
     console.log(e);
 };
 
 
 // logging function to see if gamepad has been conneted
-window.addEventListener("gamepadconnected", function(e) {
+window.addEventListener("gamepadconnected", function (e) {
     let gp = navigator.getGamepads()[e.gamepad.index];
     "Gamepad connected at index %d: %s. %d buttons, %d axes.",
-    gp.index, gp.id, gp.buttons.length, gp.axes.length
+        gp.index, gp.id, gp.buttons.length, gp.axes.length
 });
 
 
 // checking gamepad info every few milliseconds
-setInterval(function() {
+setInterval(function () {
     let gamepadState = get_gamepad_info();
     if (gamepadState) {
         let messages;

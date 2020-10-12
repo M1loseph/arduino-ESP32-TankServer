@@ -51,7 +51,7 @@ void setup()
   mp3::init_mp3();
 
   LOG_NL("Initing SD card...");
-  LOG_F("Initing SD: %s", sd_card::init_sd_card() ? "successful" : "error");
+  LOG_F("Initing SD: %s\n", sd_card::init_sd_card() ? "successful" : "error");
 
   LOG_NL("Adding events...");
   bool if_added = true;
@@ -89,8 +89,8 @@ void setup()
   // led events
   if_added &= global_parser::parser.add_event(leds::commands::LED_ANIMATION_BACKWARD, leds::animate_backward);
   if_added &= global_parser::parser.add_event(leds::commands::LED_ANIMATION_FORWARD, leds::animate_forward);
-  if_added &= global_parser::parser.add_event(leds::commands::LED_CREATE_CUSTOM, leds::create_custom_animation);
-  if_added &= global_parser::parser.add_event(leds::commands::LED_CUSTOM, leds::custom_animation);
+  if_added &= global_parser::parser.add_event(leds::commands::LED_SET_CUSTOM_COLOR, leds::create_custom_animation);
+  if_added &= global_parser::parser.add_event(leds::commands::LED_CUSTOM_COLOR, leds::custom_animation);
   if_added &= global_parser::parser.add_event(leds::commands::LED_EUROBEAT, leds::eurobeat_animation);
   if_added &= global_parser::parser.add_event(leds::commands::LED_POLISH, leds::polish_animation);
   if_added &= global_parser::parser.add_event(leds::commands::LED_RANDOM, leds::random_animation);
@@ -107,7 +107,7 @@ void setup()
   if_added &= global_parser::parser.add_event(arm::commands::SERVO_PLUS, arm::servo_plus);
   if_added &= global_parser::parser.add_event(arm::commands::SERVO_STOP, arm::servo_stop);
 
-  LOG_F("Adding ARM events: %s", if_added ? "successful" : "error");
+  LOG_F("Adding ARM events: %s\n", if_added ? "successful" : "error");
 
   // mp3 events
   if_added &= global_parser::parser.add_event(mp3::commands::MP3_PROPAGANDA, mp3::propaganda);
@@ -145,8 +145,11 @@ void loop()
 {
   webserver::dns.processNextRequest();
   webserver::web_socket.cleanupClients();
+  // updating intervals
   leds::update_led_animation();
   arm::update_servos_movement();
+  driving::update_speed();
+
 #ifdef SMART_TANK_DEBUG
   // JUST FOR DEBUG
   if (serial_buffer.read_stream(Serial))

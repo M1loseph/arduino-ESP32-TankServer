@@ -1,0 +1,158 @@
+* {
+    margin: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100vh;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    padding: 16px;
+}
+
+html {
+    background-image: linear-gradient( 112.1deg, rgba(32, 38, 57, 1) 11.4%, rgba(63, 76, 119, 1) 70.2%);
+}
+
+#welcome-title {
+    font-size: 100px;
+    font-family: 'Courier New', Courier, monospace;
+    color: white;
+    text-align: center;
+}
+
+.sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 20px;
+}
+
+.element {
+    width: 100%;
+    padding: 8px;
+    text-decoration: none;
+    font-size: 25px;
+    text-align: left;
+    background-color: transparent;
+    color: #818181;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    cursor: pointer;
+    transition: 0.3s;
+    outline: none;
+    border: none;
+}
+
+.element:hover {
+    color: #f1f1f1;
+}
+
+.element:active {
+    background-color: green;
+    color: white;
+}
+
+.dropdown-container {
+    display: none;
+    background-color: #262626;
+    padding-left: 8px;
+}
+
+.caret-down {
+    float: right;
+    display: inline;
+    padding-right: 8px;
+}
+
+.openbtn {
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #111;
+    color: white;
+    padding: 10px 15px;
+    display: block;
+    border: none;
+}
+
+.openbtn:hover {
+    background-color: #444;
+}
+
+#main-screen {
+    height: 100%;
+    width: 100%;
+}
+
+.modal {
+    /* Hidden by default */
+    display: none;
+    /* Stay in place */
+    position: fixed;
+    /* Sit on top */
+    z-index: 1;
+    top: 0;
+    left: 0;
+    /* Full width */
+    width: 100%;
+    /* Full height */
+    height: 100%;
+    /* Enable scroll if needed */
+    overflow: auto;
+    /* Fallback color */
+    background-color: rgb(0, 0, 0);
+    /* Black w/ opacity */
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.dialog-window {
+    padding: 10px 10px;
+    position: absolute;
+    display: none;
+    height: min(60vh, 60vw);
+    width: min(60vh, 60vw);
+    top: 50%;
+    left: 50%;
+    margin-left: calc(min(60vh, 60vw) / -2);
+    margin-top: calc(min(60vh, 60vw) / -2);
+    z-index: 3;
+    background: rgba(63, 76, 119, 1);
+    border-radius: 30px;
+    border-style: solid;
+    border-color: rgb(44, 53, 83);
+    border-width: 2px;
+}
+
+#color-picker {
+    position: relative;
+    border: none;
+    border-radius: 20px;
+    width: 70%;
+    height: 70%;
+    margin-left: 15%;
+    margin-top: 15%;
+    margin-bottom: 0;
+}
+
+#send-color {
+    border-radius: 20px;
+    background-color: rgba(0, 0, 0, 0.2);
+    text-align: center;
+    padding: 0;
+    font-size: 100%;
+    text-transform: uppercase;
+    height: 15%;
+}
+
+#send-color:hover {
+    background-color: green;
+}

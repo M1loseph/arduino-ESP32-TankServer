@@ -3,27 +3,99 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="descritpion" content="A simple website to controll the tank">
     <title>Tank webserver</title>
-    <link rel="stylesheet" href="styles.css">
-    <!--To prevent favico GET-->
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <link rel="stylesheet" href="./styles/styles.css">
+    <script type="module" src="./js/main.js"></script>
 </head>
 
 <body>
-    <h1 id="gamepad">Podłącz gamepada</h1>
-    <p id="status">Tutaj będzie info o </p>
+    <div id="main-screen">
 
-    <!--
-        Tego poniżej nie dotykamy, to jest świętość nad świętościami, do tego działa xD
-        Jeżeli cokolwiek tam napiszesz, runą mury babilonu, prezydent Adnrzej Duda będzie rządził trzecią kadencję,
-        a wszystkie kotki w okolicy 3 km przestaną być puszyste :((((
-        Sam plik możesz dotykać (chyba)
-    -->
-    <script type="module" src="main.js">
+        <div id="sidebar" class="sidebar">
+            <button class="dropdown-button element">Music
+                <span class="caret-down">&#9660;</span>
+            </button>
+            <div class="dropdown-container">
+                <button class="element">JoJo Propaganda</button>
+                <button class="element">Mighty Polish Tank</button>
+                <button class="element">Forever Young</button>
+                <button class="element">Revenge</button>
+                <button class="element">Silhouette</button>
+                <button class="element">The Bad Touch</button>
+                <button class="element">Hero</button>
+                <button class="element">Gas Gas Gas</button>
+                <button class="element">Running in the 90s</button>
+                <button class="element">Deja vu</button>
+                <button class="element">Running in the 90s short</button>
+                <button class="element">Deja vu short</button>
+                <button class="element">True Survivor</button>
+            </div>
+
+            <button class="dropdown-button element">LED
+                <span class="caret-down">&#9660;</span>
+            </button>
+            <div class="dropdown-container">
+                <button class="element">Eurobeat</button>
+                <button class="element">Polish Flag Anime</button>
+                <button class="element" onclick="openColorPickerDialog()">Set Custom Color</button>
+            </div>
+        </div>
+
+        <div class="modal"></div>
+        <button id="openbtn" class="openbtn">☰ Open Configuration</button>
+        <h1 id="welcome-title">Welcome to the<br/>Tank Website</h1>
+        <div id="color-picker-dialog" class="dialog-window">
+            <input type="color" id="color-picker">
+            <button id="send-color" class="element">Send Color</button>
+        </div>
+    </div>
+
+
+
+    <script>
+        Array.from(document.getElementsByClassName('dropdown-button')).forEach(element => {
+
+            element.onclick = function(event) {
+
+                // this.classList.toggle('active');
+                let dropdownContent = this.nextElementSibling;
+                if (dropdownContent.style.display === 'block') {
+                    dropdownContent.style.display = 'none';
+                } else {
+                    dropdownContent.style.display = 'block';
+                }
+            }
+        });
+
+        let mainScreen = document.getElementById('main-screen');
+        let sidebar = document.getElementById('sidebar');
+        let openButton = document.getElementById('openbtn');
+        let welcomeTitle = document.getElementById('welcome-title');
+
+        let colorDialog = document.getElementById('color-picker-dialog');
+
+        function closeSidebar(event) {
+            console.log("closing sidebar");
+            console.log(event.target);
+            if (event.target === this || event.target == welcomeTitle) {
+                sidebar.style.width = '0px';
+            }
+        }
+
+        function openSidebar(event) {
+            console.log("opening sidebar")
+            sidebar.style.width = '300px';
+            mainScreen.onclick = closeSidebar;
+        }
+
+        function openColorPickerDialog(event) {
+            colorDialog.style.display = "block";
+        }
+
+        openButton.onclick = openSidebar;
     </script>
-    <!--
-        Od tego momentu możesz znowu macać, co ci się żywnie podoba
-    -->
 </body>
 
 </html>

@@ -26,9 +26,9 @@ namespace leds
     {
         const char *LED_POLISH = "LED_POLISH";
         const char *LED_EUROBEAT = "LED_EUROBEAT";
-        const char *LED_CUSTOM = "LED_CUSTOM";
+        const char *LED_CUSTOM_COLOR = "LED_CUSTOM_COLOR";
         const char *LED_RANDOM = "LED_RANDOM";
-        const char *LED_CREATE_CUSTOM = "LED_CREATE_CUSTOM";
+        const char *LED_SET_CUSTOM_COLOR = "LED_SET_CUSTOM_COLOR";
         const char *LED_ANIMATION_FORWARD = "LED_ANIMATION_FORWARD";
         const char *LED_ANIMATION_BACKWARD = "LED_ANIMATION_BACKWARD";
         const char *LED_STOP = "LED_STOP";
@@ -82,11 +82,11 @@ namespace leds
             return CRGB(esp_random());
         }
 
-        CRGB custom_buffer[NUM_LEDS] = {CRGB::Black};
+        CRGB custom_color = CRGB::Black;
 
         CRGB custom(uint32_t index)
         {
-            return custom_buffer[index];
+            return custom_color;
         }
     } // namespace animations
 
@@ -151,30 +151,32 @@ namespace leds
 
     void create_custom_animation(const CommandBuffer &b)
     {
-        auto index = b.int_at(1);
-        auto red = b.int_at(2);
-        auto green = b.int_at(3);
-        auto blue = b.int_at(4);
+        auto red = b.int_at(1);
+        auto green = b.int_at(2);
+        auto blue = b.int_at(3);
 
-        if (index.success && red.success && green.success && blue.success)
+        if (red.success && green.success && blue.success)
         {
             // check if all collors are in bounds
-            if (red.i >= 0 && green.i >= 0 && blue.i >= 0 && red.i < 256 && green.i < 256 && blue.i < 256 && index.i >= 0 && index.i < NUM_LEDS)
+            if (red.i >= 0 && green.i >= 0 && blue.i >= 0 && red.i < 256 && green.i < 256 && blue.i < 256)
             {
                 // cast it to remove compiler warnings -> we checked everything beforehand anyway
-                animations::custom_buffer[index.i] = CRGB(
+                animations::custom_color = CRGB(
                     static_cast<uint8_t>(red.i),
                     static_cast<uint8_t>(green.i),
                     static_cast<uint8_t>(blue.i));
+                
+                if(current_animation)
+                    show_leds();
             }
             else
             {
-                LOG_LEDS_F("Parameter out of bouns - i: %d, r: %d, g: %d, b: %d", index.success, red.success, green.success, blue.success);
+                LOG_LEDS_F("Parameter out of bouns - r: %d, g: %d, b: %d", red.i, green.i, blue.i);
             }
         }
         else
         {
-            LOG_LEDS_F("At least one wrong parameter - i: %d, r: %d, g: %d, b: %d", index.success, red.success, green.success, blue.success);
+            LOG_LEDS_F("At least one wrong parameter - r: %d, g: %d, b: %d", red.success, green.success, blue.success);
         }
     }
 

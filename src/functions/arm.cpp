@@ -39,11 +39,11 @@ namespace arm
   Adafruit_PWMServoDriver pwm;
 
   servo_data base{5, 165, 90, 90, 0};
-  servo_data shoulder{40, 150, 90, 90, 1};
-  servo_data elbow{0, 130, 90, 90, 2};
-  servo_data wrist{70, 180, 90, 90, 3};
-  servo_data rotation{0, 180, 90, 90, 7};
-  servo_data claw{60, 115, 80, 80, 11};
+  servo_data shoulder{40, 150, 90, 90, 3};
+  servo_data elbow{0, 130, 90, 90, 7};
+  servo_data wrist{70, 180, 90, 90, 8};
+  servo_data rotation{0, 180, 90, 90, 12};
+  servo_data claw{60, 115, 80, 80, 15};
 
   // makes it easier to use some functions
   servo_data *arm[] = {
@@ -86,7 +86,7 @@ namespace arm
   {
     Wire.begin();
     pwm.begin();
-    pwm.setOscillatorFrequency(27000000);
+    pwm.setOscillatorFrequency(27000000U);
     pwm.setPWMFreq(PULSES_FREQUENCY); // Analog servos run at ~50 Hz updates
     for (const auto &servo : arm)
       send_angle(*servo);

@@ -1,6 +1,7 @@
 #include "webserver.h"
 #include "debug.h"
 #include "global_parser.h"
+#include "engines.h"
 
 #if WEB_SERVER_DEBUG
 
@@ -40,31 +41,31 @@ namespace webserver
     void init_web_server()
     {
         web_server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-            request->send(SPIFFS, "/index.html");
+            request->send(SPIFFS, "/index.html", "text/html");
         });
 
         web_server.on("/index.html", HTTP_GET, [](AsyncWebServerRequest *request) {
-            request->send(SPIFFS, "/index.html");
+            request->send(SPIFFS, "/index.html", "text/html");
         });
 
         web_server.on("/main.js", HTTP_GET, [](AsyncWebServerRequest *request) {
-            request->send(SPIFFS, "/main.js");
+            request->send(SPIFFS, "/main.js", "text/javascript");
         });
 
         web_server.on("/styles.css", HTTP_GET, [](AsyncWebServerRequest *request) {
-            request->send(SPIFFS, "/styles.css");
+            request->send(SPIFFS, "/styles.css", "text/css");
         });
 
         web_server.on("/configs.js", HTTP_GET, [](AsyncWebServerRequest *request) {
-            request->send(SPIFFS, "/configs.js");
+            request->send(SPIFFS, "/configs.js", "text/javascript");
         });
 
         web_server.on("/gamepad_processing.js", HTTP_GET, [](AsyncWebServerRequest *request) {
-            request->send(SPIFFS, "/gamepad_processing.js");
+            request->send(SPIFFS, "/gamepad_processing.js", "text/javascript");
         });
 
         web_server.on("/tank_commands.js", HTTP_GET, [](AsyncWebServerRequest *request) {
-            request->send(SPIFFS, "/tank_commands.js");
+            request->send(SPIFFS, "/tank_commands.js", "text/javascript");
         });
     }
 
@@ -89,8 +90,9 @@ namespace webserver
                         ws_buffer.push_back((char)data[i]);
 
                     // wait for semaphore
-                    while (xSemaphoreTake(global_parser::semaphore, (TickType_t)100) != pdTRUE);
-                        global_parser::parser.exec_buffer(ws_buffer);
+                    while (xSemaphoreTake(global_parser::semaphore, (TickType_t)100) != pdTRUE)
+                        ;
+                    global_parser::parser.exec_buffer(ws_buffer);
                     xSemaphoreGive(global_parser::semaphore);
                     ws_buffer.clear();
                 }
@@ -123,10 +125,6 @@ namespace webserver
             LOG_WEBSERVER_F("ws[%u] connect\n", client->id());
             client->ping();
         }
-        else if (type == WS_EVT_DISCONNECT)
-        {
-            LOG_WEBSERVER_F("ws[%u] disconnect\n", client->id());
-        }
         else if (type == WS_EVT_ERROR)
         {
             LOG_WEBSERVER_F("ws[%u] error(%u): %s\n", client->id(), *((uint16_t *)arg), (char *)data);
@@ -136,6 +134,14 @@ namespace webserver
             LOG_WEBSERVER_F("ws[%u] pong[%u]: %s\n", client->id(), len, (len) ? (char *)data : "");
         }
 #endif // WEB_SERVER_DEBUG
+        else if (type == WS_EVT_DISCONNECT)
+        {
+            LOG_WEBSERVER_F("ws[%u] disconnect\n", client->id());
+            size_t clients = server->getClients().length();
+            // if client count is 0 -> stop the tank
+            if (!clients)
+                driving::stop();
+        }
     }
 
     void init_dns()

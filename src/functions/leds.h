@@ -10,9 +10,9 @@ namespace leds
     {
         extern const char *LED_POLISH;
         extern const char *LED_EUROBEAT;
-        extern const char *LED_CUSTOM;
+        extern const char *LED_CUSTOM_COLOR;
         extern const char *LED_RANDOM;
-        extern const char *LED_CREATE_CUSTOM;
+        extern const char *LED_SET_CUSTOM_COLOR;
         extern const char *LED_ANIMATION_FORWARD;
         extern const char *LED_ANIMATION_BACKWARD;
         extern const char *LED_STOP;

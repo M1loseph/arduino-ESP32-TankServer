@@ -209,10 +209,5 @@ html {
     width: calc(100%);
     padding: 16px;
     box-sizing: border-box;
-}
-
-#welcome-title {
-    font-size: 100px;
-    color: white;
     text-align: center;
 }

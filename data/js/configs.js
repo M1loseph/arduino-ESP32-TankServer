@@ -92,25 +92,25 @@ const DEFAULT_CONFIG = {
     ], debugMessages.COMB_PRESSED, null, debugMessages.COMB_RELEASED, null)]
 };
 
-const DEBUG_DRIVING_CONFIG = {
+const DEBUG_ENGINES_CONFIG = {
     axesPosition: [],
     axesNumeric: [],
     buttons: [
-        new ButtonBehaviour(GAMEPAD.LT, COMMANDS.DRIVING.FORWARD_LEFT, null, null, null),
-        new ButtonBehaviour(GAMEPAD.LB, COMMANDS.DRIVING.BACKWARD_LEFT, null, null, null),
-        new ButtonBehaviour(GAMEPAD.RT, COMMANDS.DRIVING.FORWARD_RIGHT, null, null, null),
-        new ButtonBehaviour(GAMEPAD.RB, COMMANDS.DRIVING.BACKWARD_RIGHT, null, null, null),
+        new ButtonBehaviour(GAMEPAD.LT, COMMANDS.ENGINES.FORWARD_LEFT, null, null, null),
+        new ButtonBehaviour(GAMEPAD.LB, COMMANDS.ENGINES.BACKWARD_LEFT, null, null, null),
+        new ButtonBehaviour(GAMEPAD.RT, COMMANDS.ENGINES.FORWARD_RIGHT, null, null, null),
+        new ButtonBehaviour(GAMEPAD.RB, COMMANDS.ENGINES.BACKWARD_RIGHT, null, null, null),
     ],
     combinations: [
         new ButtonCombination([
             [GAMEPAD.LT, false],
             [GAMEPAD.LB, false]
-        ], COMMANDS.DRIVING.STOP_LEFT, null, null, null),
+        ], COMMANDS.ENGINES.STOP_LEFT, null, null, null),
         new ButtonCombination([
             [GAMEPAD.RT, false],
             [GAMEPAD.RB, false]
-        ], COMMANDS.DRIVING.STOP_RIGHT, null, null, null)
+        ], COMMANDS.ENGINES.STOP_RIGHT, null, null, null)
     ]
 };
 
-export { DEFAULT_CONFIG, DEBUG_DRIVING_CONFIG };
+export { DEFAULT_CONFIG, DEBUG_ENGINES_CONFIG };

@@ -27,9 +27,7 @@ webSocket.onmessage = e => {
 function sendWS(message) {
     console.log(message);
     if (webSocket.readyState === WebSocket.OPEN) {
-        messages.forEach(m => {
-            webSocket.send(m);
-        });
+        webSocket.send(message);
     }
 }
 

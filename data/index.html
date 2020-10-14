@@ -85,14 +85,14 @@
         <div id="modal" class="modal hidden-modal" onclick="closeDialogs()"></div>
 
         <button class="openbtn" onclick="openSidebar()">☰ Open Configuration</button>
-        <h1 id="welcome-title">Welcome to the<br/>Tank Website</h1>
+        <img id="gamepad-image" src="./images/controller.svg" alt="Gamepad image" width="1000">
 
         <div id="color-picker-dialog" class="dialog-window hidden-dialog">
             <div class="dialog-content">
                 <span class="dialog-title">Choose New Color</span>
                 <input id="led-color-picker" class="dialog-color-picker" type="color">
             </div>
-            <button class="dialog-button">Set</button>
+            <button class="dialog-button" onclick="sendColor()">Set</button>
         </div>
 
         <div id="speed-dialog" class="dialog-window hidden-dialog">
@@ -101,7 +101,7 @@
                 <span id="speed-slider-label" class="slider-label"></span>
                 <input id="speed-slider" class="dialog-slider" type="range" min="0" max="1023" value="700">
             </div>
-            <button class="dialog-button">Set</button>
+            <button class="dialog-button" onclick="sendSpeed()">Set</button>
         </div>
 
         <div id="volume-dialog" class="dialog-window hidden-dialog">
@@ -110,7 +110,7 @@
                 <span id="volume-slider-label" class="slider-label"></span>
                 <input id="volume-slider" class="dialog-slider" type="range" min="0" max="30" value="15">
             </div>
-            <button class="dialog-button">Set</button>
+            <button class="dialog-button" onclick="sendVolume()">Set</button>
         </div>
 
         <div id="brightness-dialog" class="dialog-window hidden-dialog">
@@ -119,7 +119,7 @@
                 <span id="brightness-slider-label" class="slider-label"></span>
                 <input id="brightness-slider" class="dialog-slider" type="range" min="0" max="255" value="100">
             </div>
-            <button class="dialog-button">Set</button>
+            <button class="dialog-button" onclick="sendBrightness()">Set</button>
         </div>
 
         <div id="interval-dialog" class="dialog-window hidden-dialog">
@@ -128,7 +128,7 @@
                 <span id="interval-slider-label" class="slider-label"></span>
                 <input id="interval-slider" class="dialog-slider" type="range" min="1" max="1000" value="30">
             </div>
-            <button class="dialog-button">Set</button>
+            <button class="dialog-button" onclick="sendInterval()">Set</button>
         </div>
     </div>
     <script type="module" src="./js/main.js"></script>

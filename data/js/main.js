@@ -1,6 +1,7 @@
 import { sendWS } from './websocket.js';
 import { getGamepadInfo, processGamepad } from './gamepad_processing.js';
 import { COMMANDS } from './tank_commands.js';
+import { DEFAULT_CONFIG, DEBUG_ENGINES_CONFIG } from './configs.js';
 
 // checking gamepad info every few milliseconds
 const GAMEPAD_INTERVAL = 33;
@@ -12,8 +13,7 @@ setInterval(function () {
         let messages;
         let functions;
 
-        [messages, functions] = processGamepad(gamepadState, DEBUG_DRIVING_CONFIG);
-        console.log(messages);
+        [messages, functions] = processGamepad(gamepadState, DEBUG_ENGINES_CONFIG);
         functions.forEach(f => f());
         messages.forEach(m => {
             sendWS(m);
@@ -28,7 +28,7 @@ Array.from(document.getElementsByClassName('dropdown-button')).forEach(sidebarEl
     }
 });
 
-let mainScreen = document.getElementById('main-screen');
+let gamepadImage = document.getElementById('gamepad-image');
 let sidebar = document.getElementById('sidebar');
 let welcomeTitle = document.getElementById('welcome-title');
 let modal = document.getElementById('modal');
@@ -67,8 +67,7 @@ intervalSlider.onchange = () => intervalLabel.textContent = intervalSlider.value
 
 function closeSidebar(event) {
     console.log('trying to close the sidebar...');
-    console.log(event.target);
-    if (event.target === mainScreen || event.target === welcomeTitle) {
+    if (event.target === gamepadImage || event.target === welcomeTitle) {
         sidebar.classList.add('hidden-sidebar');
         console.log('closing sidebar...');
     }
@@ -119,6 +118,40 @@ function closeDialogs() {
     speedDialog.classList.add('hidden-dialog');
 }
 
+function sendColor() {
+    let hexColor = ledColorPicker.value;
+    // remove 1st char
+    hexColor = hexColor.substring(1);
+
+    let RGBHex = hexColor.match(/.{1,2}/g);
+    let RGB = [
+        parseInt(RGBHex[0], 16),
+        parseInt(RGBHex[1], 16),
+        parseInt(RGBHex[2], 16),
+    ];
+    sendWS(COMMANDS.LED.SET_CUSTOM_COLOR + ' ' + RGB[0] + ' ' + RGB[1] + ' ' + RGB[2]);
+}
+
+function sendSpeed() {
+    let message = COMMANDS.ENGINES.SPEED + ' ' + speedSlider.value;
+    sendWS(message);
+}
+
+function sendVolume() {
+    let message = COMMANDS.MP3.SET_VOLUME + ' ' + volumeSlider.value;
+    sendWS(message);
+}
+
+function sendBrightness() {
+    let message = COMMANDS.LED.SET_BRIGHTNESS + ' ' + brightnessSlider.value;
+    sendWS(message);
+}
+
+function sendInterval() {
+    let message = COMMANDS.LED.SET_ANIMATION_INTERVAL + ' ' + intervalSlider.value;
+    sendWS(message);
+}
+
 // export it to html
 window.sendWS = sendWS;
 window.closeSidebar = closeSidebar;
@@ -129,4 +162,11 @@ window.openBrightnessDialog = openBrightnessDialog;
 window.openIntervalDialog = openIntervalDialog;
 window.closeDialogs = closeDialogs;
 window.openVolumeDialog = openVolumeDialog;
+
+window.sendColor = sendColor;
+window.sendSpeed = sendSpeed;
+window.sendVolume = sendVolume;
+window.sendBrightness = sendBrightness;
+window.sendInterval = sendInterval;
+
 window.COMMANDS = COMMANDS;

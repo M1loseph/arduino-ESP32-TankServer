@@ -4,8 +4,6 @@ function processGamepad(current, currentConfig) {
 
     let messages = [];
     let functions = [];
-    // console.log(gamepad);
-    // console.log(previous);
 
     if (previous !== null) {
 
@@ -28,7 +26,7 @@ function processGamepad(current, currentConfig) {
         });
 
         currentConfig.axesNumeric.forEach(numericBeh => {
-            console.log(numericBeh);
+            // TODO => IMPLEMENT
         });
 
         currentConfig.buttons.forEach(buttonBeh => {

@@ -149,7 +149,7 @@ namespace leds
         show_leds();
     }
 
-    void create_custom_animation(const CommandBuffer &b)
+    void set_custom_animation(const CommandBuffer &b)
     {
         auto red = b.int_at(1);
         auto green = b.int_at(2);
@@ -166,8 +166,9 @@ namespace leds
                     static_cast<uint8_t>(green.i),
                     static_cast<uint8_t>(blue.i));
                 
-                if(current_animation)
-                    show_leds();
+                custom_animation(b);
+
+                LOG_F("New color - r: %d, g %d, b%d",  red.i, green.i, blue.i);
             }
             else
             {
@@ -211,22 +212,26 @@ namespace leds
 
     void stop_animation(const CommandBuffer &b)
     {
+        LOG_LEDS_NL("Stop animation");
         direction = animation_direction::STOP;
     }
 
     void turn_off_leds(const CommandBuffer &b)
     {
+        LOG_LEDS_NL("Turn off leds");
         current_animation = nullptr;
         show_leds();
     }
 
     void animate_forward(const CommandBuffer &b)
     {
+        LOG_LEDS_NL("Animate forward");
         direction = animation_direction::FORWARD;
     }
 
     void animate_backward(const CommandBuffer &b)
     {
+        LOG_LEDS_NL("Animate backward");
         direction = animation_direction::BACKWARD;
     }
 

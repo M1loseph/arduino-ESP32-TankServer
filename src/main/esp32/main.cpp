@@ -89,7 +89,7 @@ void setup()
   // led events
   if_added &= global_parser::parser.add_event(leds::commands::LED_ANIMATION_BACKWARD, leds::animate_backward);
   if_added &= global_parser::parser.add_event(leds::commands::LED_ANIMATION_FORWARD, leds::animate_forward);
-  if_added &= global_parser::parser.add_event(leds::commands::LED_SET_CUSTOM_COLOR, leds::create_custom_animation);
+  if_added &= global_parser::parser.add_event(leds::commands::LED_SET_CUSTOM_COLOR, leds::set_custom_animation);
   if_added &= global_parser::parser.add_event(leds::commands::LED_CUSTOM_COLOR, leds::custom_animation);
   if_added &= global_parser::parser.add_event(leds::commands::LED_EUROBEAT, leds::eurobeat_animation);
   if_added &= global_parser::parser.add_event(leds::commands::LED_POLISH, leds::polish_animation);

@@ -27,7 +27,7 @@ namespace leds
     void eurobeat_animation(const CommandBuffer &b);
     void custom_animation(const CommandBuffer &b);
     void random_animation(const CommandBuffer &b);
-    void create_custom_animation(const CommandBuffer &b);
+    void set_custom_animation(const CommandBuffer &b);
     void set_brightness(const CommandBuffer &b);
     void set_animation_interval(const CommandBuffer &b);
     void stop_animation(const CommandBuffer &b);

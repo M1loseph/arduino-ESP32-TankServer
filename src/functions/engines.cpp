@@ -72,11 +72,11 @@ namespace engines
     // CONFIG
     // ================
 
-    speed_controll speed_controll_left;
-    speed_controll speed_controll_right;
+    speed_controll speed_controll_left = speed_controll::KEEP_SPEED;
+    speed_controll speed_controll_right = speed_controll::KEEP_SPEED;
 
-    engine_direction direction_left;
-    engine_direction direction_right;
+    engine_direction direction_left = engine_direction::STOP;
+    engine_direction direction_right = engine_direction::STOP;
 
     size_t speed_left = SPEED_DEFAULT;
     size_t speed_right = SPEED_DEFAULT;
@@ -475,23 +475,34 @@ namespace engines
                 ;
             if (speed_controll_left == speed_controll::SLOWER)
                 if (speed_left > 0U)
+                {
                     set_speed_left(speed_left - 1);
+                    LOG_ENGINE_F("New left speed: %d\n", speed_left);
+                }
 
             if (speed_controll_right == speed_controll::SLOWER)
                 if (speed_right > 0U)
+                {
                     set_speed_right(speed_right - 1);
+                    LOG_ENGINE_F("New right speed: %d\n", speed_right);
+                }
 
             if (speed_controll_left == speed_controll::FASTER)
                 if (speed_left < SPEED_MAX)
+                {
                     set_speed_left(speed_left + 1);
+                    LOG_ENGINE_F("New left speed: %d\n", speed_left);
+                }
 
             if (speed_controll_right == speed_controll::FASTER)
                 if (speed_right < SPEED_MAX)
+                {
                     set_speed_right(speed_right + 1);
+                    LOG_ENGINE_F("New right speed: %d\n", speed_right);
+                }
 
             xSemaphoreGive(global_parser::semaphore);
             last_update = millis();
-            LOG_ENGINE_NL("Updated Speed");
         }
     }
 

@@ -48,25 +48,38 @@ namespace webserver
             request->send(SPIFFS, "/index.html", "text/html");
         });
 
-        web_server.on("/main.js", HTTP_GET, [](AsyncWebServerRequest *request) {
-            request->send(SPIFFS, "/main.js", "text/javascript");
+        web_server.on("/js/main.js", HTTP_GET, [](AsyncWebServerRequest *request) {
+            request->send(SPIFFS, "/js/main.js", "text/javascript");
         });
 
-        web_server.on("/styles.css", HTTP_GET, [](AsyncWebServerRequest *request) {
-            request->send(SPIFFS, "/styles.css", "text/css");
+        web_server.on("/styles/styles.css", HTTP_GET, [](AsyncWebServerRequest *request) {
+            request->send(SPIFFS, "/styles/styles.css", "text/css");
         });
 
-        web_server.on("/configs.js", HTTP_GET, [](AsyncWebServerRequest *request) {
-            request->send(SPIFFS, "/configs.js", "text/javascript");
+        web_server.on("/js/configs.js", HTTP_GET, [](AsyncWebServerRequest *request) {
+            request->send(SPIFFS, "/js/configs.js", "text/javascript");
         });
 
-        web_server.on("/gamepad_processing.js", HTTP_GET, [](AsyncWebServerRequest *request) {
-            request->send(SPIFFS, "/gamepad_processing.js", "text/javascript");
+        web_server.on("/js/gamepad_processing.js", HTTP_GET, [](AsyncWebServerRequest *request) {
+            request->send(SPIFFS, "/js/gamepad_processing.js", "text/javascript");
         });
 
-        web_server.on("/tank_commands.js", HTTP_GET, [](AsyncWebServerRequest *request) {
-            request->send(SPIFFS, "/tank_commands.js", "text/javascript");
+        web_server.on("/js/tank_commands.js", HTTP_GET, [](AsyncWebServerRequest *request) {
+            request->send(SPIFFS, "/js/tank_commands.js", "text/javascript");
         });
+
+        web_server.on("/js/websocket.js", HTTP_GET, [](AsyncWebServerRequest *request) {
+            request->send(SPIFFS, "/js/websocket.js", "text/javascript");
+        });
+
+        web_server.on("/images/controller.svg", HTTP_GET, [](AsyncWebServerRequest *request) {
+            request->send(SPIFFS, "/images/controller.svg", "image/svg+xml");
+        });
+
+        web_server.on("/favicon.ico", HTTP_GET, [](AsyncWebServerRequest *request) {
+            request->send(SPIFFS, "/favicon.ico", "image/png");
+        });
+
     }
 
     void init_web_socket()

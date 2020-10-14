@@ -15,11 +15,11 @@ namespace leds
         extern const char *LED_SET_CUSTOM_COLOR;
         extern const char *LED_ANIMATION_FORWARD;
         extern const char *LED_ANIMATION_BACKWARD;
-        extern const char *LED_STOP;
-        extern const char *LED_CLEAR;
+        extern const char *LED_ANIMATION_STOP;
+        extern const char *LED_OFF;
 
         extern const char *LED_SET_BRIGHTNESS;
-        extern const char *LED_SET_ANIMATION_SPEED;
+        extern const char *LED_SET_ANIMATION_INTERVAL;
     } // namespace commands
 
     void init_leds();
@@ -29,9 +29,9 @@ namespace leds
     void random_animation(const CommandBuffer &b);
     void create_custom_animation(const CommandBuffer &b);
     void set_brightness(const CommandBuffer &b);
-    void set_animation_speed(const CommandBuffer &b);
+    void set_animation_interval(const CommandBuffer &b);
     void stop_animation(const CommandBuffer &b);
-    void clear_animation(const CommandBuffer &b);
+    void turn_off_leds(const CommandBuffer &b);
     void animate_forward(const CommandBuffer &b);
     void animate_backward(const CommandBuffer &b);
     void update_led_animation();

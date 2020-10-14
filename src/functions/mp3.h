@@ -10,6 +10,7 @@ namespace mp3
     {
         extern const char *MP3_PROPAGANDA;
         extern const char *MP3_MIGHTY_POLISH_TANK;
+        extern const char *MP3_WINDOWS_XP;
         extern const char *MP3_HIGH_GROUND;
         extern const char *MP3_FINE_ADDITION;
         extern const char *MP3_I_DONT_LIKE_SAND;
@@ -17,7 +18,7 @@ namespace mp3
         extern const char *MP3_IM_THE_SENATE;
         extern const char *MP3_FOREVER_YOUNG;
         extern const char *MP3_REVENGE;
-        extern const char *MP3_NARUTO;
+        extern const char *MP3_SILHOUETTE;
         extern const char *MP3_THE_BAD_TOUCH;
         extern const char *MP3_HERO;
         extern const char *MP3_GAS_GAS_GAS;
@@ -26,11 +27,10 @@ namespace mp3
         extern const char *MP3_RUNNING_IN_THE_90S_SHORT;
         extern const char *MP3_DEJA_VU_SHORT;
         extern const char *MP3_TRUE_SURVIVOR;
-        extern const char *MP3_WINDOWS_XP;
 
         extern const char *MP3_STOP;
-        extern const char *SET_VOLUME;
-        extern const char *RESUME;
+        extern const char *MP3_RESUME;
+        extern const char *MP3_SET_VOLUME;
     } // namespace commands
 
     void init_mp3();
@@ -48,7 +48,7 @@ namespace mp3
     void im_the_senate(const CommandBuffer &b);
     void forever_young(const CommandBuffer &b);
     void revenge(const CommandBuffer &b);
-    void naruto(const CommandBuffer &b);
+    void silhouette(const CommandBuffer &b);
     void the_bad_touch(const CommandBuffer &b);
     void hero(const CommandBuffer &b);
     void gas_gas_gas(const CommandBuffer &b);

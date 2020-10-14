@@ -31,11 +31,11 @@ namespace leds
         const char *LED_SET_CUSTOM_COLOR = "LED_SET_CUSTOM_COLOR";
         const char *LED_ANIMATION_FORWARD = "LED_ANIMATION_FORWARD";
         const char *LED_ANIMATION_BACKWARD = "LED_ANIMATION_BACKWARD";
-        const char *LED_STOP = "LED_STOP";
-        const char *LED_CLEAR = "LED_CLEAR";
+        const char *LED_ANIMATION_STOP = "LED_ANIMATION_STOP";
+        const char *LED_OFF = "LED_OFF";
 
         const char *LED_SET_BRIGHTNESS = "LED_SET_BRIGHTNESS";
-        const char *LED_SET_ANIMATION_SPEED = "LED_SET_ANIMATION_SPEED";
+        const char *LED_SET_ANIMATION_INTERVAL = "LED_SET_ANIMATION_INTERVAL";
     } // namespace commands
 
     constexpr uint32_t NUM_LEDS = 90U;
@@ -57,7 +57,7 @@ namespace leds
 
     uint8_t brightness = 100U;
     uint32_t animation_index = 0;
-    uint32_t animation_speed = 50U;
+    uint32_t animation_interval = 50U;
     uint32_t pol_anime_interval = 20U;
     animation_direction direction = animation_direction::STOP;
 
@@ -195,17 +195,17 @@ namespace leds
         }
     }
 
-    void set_animation_speed(const CommandBuffer &b)
+    void set_animation_interval(const CommandBuffer &b)
     {
-        auto new_speed = b.int_at(1);
-        if (new_speed.success && new_speed.i >= 0)
+        auto new_interval = b.int_at(1);
+        if (new_interval.success && new_interval.i >= 0)
         {
-            LOG_LEDS_F("New animation speed: %d\n", new_speed.i);
-            animation_speed = static_cast<uint32_t>(new_speed.i);
+            LOG_LEDS_F("New animation interval: %d\n", new_interval.i);
+            animation_interval = static_cast<uint32_t>(new_interval.i);
         }
         else
         {
-            LOG_LEDS_F("Wrong data - succ: %d, speed: %d\n", new_speed.success, new_speed.i);
+            LOG_LEDS_F("Wrong data - succ: %d, speed: %d\n", new_interval.success, new_interval.i);
         }
     }
 
@@ -214,7 +214,7 @@ namespace leds
         direction = animation_direction::STOP;
     }
 
-    void clear_animation(const CommandBuffer &b)
+    void turn_off_leds(const CommandBuffer &b)
     {
         current_animation = nullptr;
         show_leds();
@@ -234,7 +234,7 @@ namespace leds
     {
         static unsigned long last_measute = millis();
 
-        if (direction != animation_direction::STOP && current_animation && millis() - last_measute > animation_speed)
+        if (direction != animation_direction::STOP && current_animation && millis() - last_measute > animation_interval)
         {
             while (xSemaphoreTake(global_parser::semaphore, (TickType_t)10) != pdTRUE)
                 ;

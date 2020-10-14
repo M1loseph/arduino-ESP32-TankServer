@@ -36,7 +36,7 @@ void setup()
 #endif // SMART_TANK_DEBUG
 
   LOG_NL("Initing engine pins...");
-  driving::init_engines();
+  engines::init_engines();
 
   LOG_NL("Initing global semaphore...");
   global_parser::init_global_semaphore();
@@ -55,36 +55,36 @@ void setup()
 
   LOG_NL("Adding events...");
   bool if_added = true;
-  // driving events
-  if_added &= global_parser::parser.add_event(driving::commands::FORWARD, driving::forward);
-  if_added &= global_parser::parser.add_event(driving::commands::FORWARD_LEFT, driving::forward_left);
-  if_added &= global_parser::parser.add_event(driving::commands::FORWARD_RIGHT, driving::forward_right);
+  // engines events
+  if_added &= global_parser::parser.add_event(engines::commands::FORWARD, engines::forward);
+  if_added &= global_parser::parser.add_event(engines::commands::FORWARD_LEFT, engines::forward_left);
+  if_added &= global_parser::parser.add_event(engines::commands::FORWARD_RIGHT, engines::forward_right);
 
-  if_added &= global_parser::parser.add_event(driving::commands::BACKWARD, driving::backward);
-  if_added &= global_parser::parser.add_event(driving::commands::BACKWARD_LEFT, driving::backward_left);
-  if_added &= global_parser::parser.add_event(driving::commands::BACKWARD_RIGHT, driving::backward_right);
+  if_added &= global_parser::parser.add_event(engines::commands::BACKWARD, engines::backward);
+  if_added &= global_parser::parser.add_event(engines::commands::BACKWARD_LEFT, engines::backward_left);
+  if_added &= global_parser::parser.add_event(engines::commands::BACKWARD_RIGHT, engines::backward_right);
 
-  if_added &= global_parser::parser.add_event(driving::commands::STOP, driving::stop);
-  if_added &= global_parser::parser.add_event(driving::commands::STOP_LEFT, driving::stop_left);
-  if_added &= global_parser::parser.add_event(driving::commands::STOP_RIGHT, driving::stop_right);
+  if_added &= global_parser::parser.add_event(engines::commands::STOP, engines::stop);
+  if_added &= global_parser::parser.add_event(engines::commands::STOP_LEFT, engines::stop_left);
+  if_added &= global_parser::parser.add_event(engines::commands::STOP_RIGHT, engines::stop_right);
 
-  if_added &= global_parser::parser.add_event(driving::commands::FASTER, driving::faster);
-  if_added &= global_parser::parser.add_event(driving::commands::FASTER_LEFT, driving::faster_left);
-  if_added &= global_parser::parser.add_event(driving::commands::FASTER_RIGHT, driving::faster_right);
+  if_added &= global_parser::parser.add_event(engines::commands::FASTER, engines::faster);
+  if_added &= global_parser::parser.add_event(engines::commands::FASTER_LEFT, engines::faster_left);
+  if_added &= global_parser::parser.add_event(engines::commands::FASTER_RIGHT, engines::faster_right);
 
-  if_added &= global_parser::parser.add_event(driving::commands::SLOWER, driving::slower);
-  if_added &= global_parser::parser.add_event(driving::commands::SLOWER_LEFT, driving::slower_left);
-  if_added &= global_parser::parser.add_event(driving::commands::SLOWER_RIGHT, driving::slower_right);
+  if_added &= global_parser::parser.add_event(engines::commands::SLOWER, engines::slower);
+  if_added &= global_parser::parser.add_event(engines::commands::SLOWER_LEFT, engines::slower_left);
+  if_added &= global_parser::parser.add_event(engines::commands::SLOWER_RIGHT, engines::slower_right);
 
-  if_added &= global_parser::parser.add_event(driving::commands::KEEP_SPEED, driving::keep_speed);
-  if_added &= global_parser::parser.add_event(driving::commands::KEEP_SPEED_LEFT, driving::keep_speed_left);
-  if_added &= global_parser::parser.add_event(driving::commands::KEEP_SPEED_RIGHT, driving::keep_speed_right);
+  if_added &= global_parser::parser.add_event(engines::commands::KEEP_SPEED, engines::keep_speed);
+  if_added &= global_parser::parser.add_event(engines::commands::KEEP_SPEED_LEFT, engines::keep_speed_left);
+  if_added &= global_parser::parser.add_event(engines::commands::KEEP_SPEED_RIGHT, engines::keep_speed_right);
 
-  if_added &= global_parser::parser.add_event(driving::commands::SPEED, driving::set_speed);
-  if_added &= global_parser::parser.add_event(driving::commands::SPEED_LEFT, driving::set_speed_left);
-  if_added &= global_parser::parser.add_event(driving::commands::SPEED_RIGHT, driving::set_speed_right);
+  if_added &= global_parser::parser.add_event(engines::commands::SPEED, engines::set_speed);
+  if_added &= global_parser::parser.add_event(engines::commands::SPEED_LEFT, engines::set_speed_left);
+  if_added &= global_parser::parser.add_event(engines::commands::SPEED_RIGHT, engines::set_speed_right);
 
-  LOG_F("Adding driving events: %s\n", if_added ? "successful" : "error");
+  LOG_F("Adding engines events: %s\n", if_added ? "successful" : "error");
 
   // led events
   if_added &= global_parser::parser.add_event(leds::commands::LED_ANIMATION_BACKWARD, leds::animate_backward);
@@ -94,10 +94,10 @@ void setup()
   if_added &= global_parser::parser.add_event(leds::commands::LED_EUROBEAT, leds::eurobeat_animation);
   if_added &= global_parser::parser.add_event(leds::commands::LED_POLISH, leds::polish_animation);
   if_added &= global_parser::parser.add_event(leds::commands::LED_RANDOM, leds::random_animation);
-  if_added &= global_parser::parser.add_event(leds::commands::LED_CLEAR, leds::clear_animation);
-  if_added &= global_parser::parser.add_event(leds::commands::LED_SET_ANIMATION_SPEED, leds::set_animation_speed);
+  if_added &= global_parser::parser.add_event(leds::commands::LED_OFF, leds::turn_off_leds);
+  if_added &= global_parser::parser.add_event(leds::commands::LED_SET_ANIMATION_INTERVAL, leds::set_animation_interval);
   if_added &= global_parser::parser.add_event(leds::commands::LED_SET_BRIGHTNESS, leds::set_brightness);
-  if_added &= global_parser::parser.add_event(leds::commands::LED_STOP, leds::stop_animation);
+  if_added &= global_parser::parser.add_event(leds::commands::LED_ANIMATION_STOP, leds::stop_animation);
 
   LOG_F("Adding LED events: %s\n", if_added ? "successful" : "error");
 
@@ -119,7 +119,7 @@ void setup()
   if_added &= global_parser::parser.add_event(mp3::commands::MP3_IM_THE_SENATE, mp3::im_the_senate);
   if_added &= global_parser::parser.add_event(mp3::commands::MP3_FOREVER_YOUNG, mp3::forever_young);
   if_added &= global_parser::parser.add_event(mp3::commands::MP3_REVENGE, mp3::revenge);
-  if_added &= global_parser::parser.add_event(mp3::commands::MP3_NARUTO, mp3::naruto);
+  if_added &= global_parser::parser.add_event(mp3::commands::MP3_SILHOUETTE, mp3::silhouette);
   if_added &= global_parser::parser.add_event(mp3::commands::MP3_THE_BAD_TOUCH, mp3::the_bad_touch);
   if_added &= global_parser::parser.add_event(mp3::commands::MP3_HERO, mp3::hero);
   if_added &= global_parser::parser.add_event(mp3::commands::MP3_GAS_GAS_GAS, mp3::gas_gas_gas);
@@ -130,8 +130,8 @@ void setup()
   if_added &= global_parser::parser.add_event(mp3::commands::MP3_TRUE_SURVIVOR, mp3::true_survivor);
   if_added &= global_parser::parser.add_event(mp3::commands::MP3_WINDOWS_XP, mp3::windows_xp);
   if_added &= global_parser::parser.add_event(mp3::commands::MP3_STOP, mp3::stop_playing);
-  if_added &= global_parser::parser.add_event(mp3::commands::SET_VOLUME, mp3::set_volume);
-  if_added &= global_parser::parser.add_event(mp3::commands::RESUME, mp3::resume);
+  if_added &= global_parser::parser.add_event(mp3::commands::MP3_SET_VOLUME, mp3::set_volume);
+  if_added &= global_parser::parser.add_event(mp3::commands::MP3_RESUME, mp3::resume);
 
   LOG_F("Adding MP3 events: %s\n", if_added ? "successful" : "error");
 
@@ -148,7 +148,7 @@ void loop()
   // updating intervals
   leds::update_led_animation();
   arm::update_servos_movement();
-  driving::update_speed();
+  engines::update_speed();
 
 #ifdef SMART_TANK_DEBUG
   // JUST FOR DEBUG

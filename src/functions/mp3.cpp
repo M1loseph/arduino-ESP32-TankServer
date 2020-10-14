@@ -26,6 +26,7 @@ namespace mp3
     {
         const char *MP3_PROPAGANDA = "MP3_PROPAGANDA";
         const char *MP3_MIGHTY_POLISH_TANK = "MP3_MIGHTY_POLISH_TANK";
+        const char *MP3_WINDOWS_XP = "MP3_WINDOWS_XP";
         const char *MP3_HIGH_GROUND = "MP3_HIGH_GROUND";
         const char *MP3_FINE_ADDITION = "MP3_FINE_ADDITION";
         const char *MP3_I_DONT_LIKE_SAND = "MP3_I_DONT_LIKE_SAND";
@@ -33,7 +34,7 @@ namespace mp3
         const char *MP3_IM_THE_SENATE = "MP3_IM_THE_SENATE";
         const char *MP3_FOREVER_YOUNG = "MP3_FOREVER_YOUNG";
         const char *MP3_REVENGE = "MP3_REVENGE";
-        const char *MP3_NARUTO = "MP3_NARUTO";
+        const char *MP3_SILHOUETTE = "MP3_SILHOUETTE";
         const char *MP3_THE_BAD_TOUCH = "MP3_THE_BAD_TOUCH";
         const char *MP3_HERO = "MP3_HERO";
         const char *MP3_GAS_GAS_GAS = "MP3_GAS_GAS_GAS";
@@ -42,11 +43,10 @@ namespace mp3
         const char *MP3_RUNNING_IN_THE_90S_SHORT = "MP3_RUNNING_IN_THE_90S_SHORT";
         const char *MP3_DEJA_VU_SHORT = "MP3_DEJA_VU_SHORT";
         const char *MP3_TRUE_SURVIVOR = "MP3_TRUE_SURVIVOR";
-        const char *MP3_WINDOWS_XP = "MP3_WINDOWS_XP";
 
         const char *MP3_STOP = "MP3_STOP";
-        const char *SET_VOLUME = "SET_VOLUME";
-        const char *RESUME = "RESUME";
+        const char *MP3_RESUME = "MP3_RESUME";
+        const char *MP3_SET_VOLUME = "MP3_SET_VOLUME";
     } // namespace commands
 
     // ================
@@ -145,7 +145,7 @@ namespace mp3
         mp3.playSpecific(3, 9);
     }
 
-    void naruto(const CommandBuffer &b)
+    void silhouette(const CommandBuffer &b)
     {
         LOG_MP3_NL("Playing naruto opening");
         mp3.playSpecific(3, 10);

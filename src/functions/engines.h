@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include "buffer/buffer.h"
 
-namespace driving
+namespace engines
 {
     namespace commands
     {
@@ -124,6 +124,6 @@ namespace driving
 
     void update_speed();
 
-} // namespace driving
+} // namespace engines
 
 #endif // __ENGINES_H__

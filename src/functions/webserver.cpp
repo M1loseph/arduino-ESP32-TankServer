@@ -140,13 +140,12 @@ namespace webserver
             size_t clients = server->getClients().length();
             // if client count is 0 -> stop the tank
             if (!clients)
-                driving::stop();
+                engines::stop();
         }
     }
 
     void init_dns()
     {
-        // TODO => doesn't always work
         dns.start(53, "*", WiFi.softAPIP());
     }
 

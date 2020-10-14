@@ -1,4 +1,4 @@
-import { COMMANDS } from './tank_commands.js'
+import { COMMANDS } from './tank_commands.js';
 
 const GAMEPAD = {
     LT: 6,
@@ -111,6 +111,6 @@ const DEBUG_DRIVING_CONFIG = {
             [GAMEPAD.RB, false]
         ], COMMANDS.DRIVING.STOP_RIGHT, null, null, null)
     ]
-}
+};
 
-export { DEFAULT_CONFIG, DEBUG_DRIVING_CONFIG }
+export { DEFAULT_CONFIG, DEBUG_DRIVING_CONFIG };

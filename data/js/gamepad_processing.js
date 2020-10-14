@@ -1,6 +1,6 @@
 let previous = null;
 
-function process_gamepad(current, currentConfig) {
+function processGamepad(current, currentConfig) {
 
     let messages = [];
     let functions = [];
@@ -77,7 +77,7 @@ function process_gamepad(current, currentConfig) {
     return [messages, functions];
 }
 
-function get_gamepad_info() {
+function getGamepadInfo() {
     const gamepads = navigator.getGamepads();
     if (gamepads[0]) {
         const gamepadState = {
@@ -106,4 +106,4 @@ function get_gamepad_info() {
     return null;
 }
 
-export { get_gamepad_info, process_gamepad }
+export { getGamepadInfo , processGamepad };

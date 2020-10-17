@@ -3,7 +3,7 @@
 This is a project of a remote-controlled tank that is based on the ESP 32 microcontroller. It boost as an access point and serves a static html website using http protocol.
 
 ## Current functionalities
-- remote controll using gamepad controller
+- remote controll of engines and 6 DOF arm using gamepad controller
 - LED configuration using website UI
 - playing music and Star Wars quotes using the same UI
   

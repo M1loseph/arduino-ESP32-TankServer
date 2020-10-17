@@ -24,10 +24,10 @@ namespace arm
 
   namespace commands
   {
-    const char *SERVO_MINUS = "ARM_MINUS";
-    const char *SERVO_PLUS = "ARM_PLUS";
-    const char *SERVO_STOP = "ARM_STOP";
-    const char *SERVO_ANGLE = "ARM_ANGLE";
+    const char *SERVO_MINUS = "SERVO_MINUS";
+    const char *SERVO_PLUS = "SERVO_PLUS";
+    const char *SERVO_STOP = "SERVO_STOP";
+    const char *SERVO_ANGLE = "SERVO_ANGLE";
   } // namespace commands
 
   constexpr uint32_t PULSE_MS_MIN = 600U;
@@ -98,7 +98,7 @@ namespace arm
     if (servo)
     {
       servo->destination_angle = servo->MIN_ANGLE;
-      LOG_ARM_F("Servo at index %d moving to %d", servo->extern_module_pin, servo->destination_angle);
+      LOG_ARM_F("Servo at index %d moving to %d\n", servo->extern_module_pin, servo->destination_angle);
     }
     else
       LOG_ARM_NL("Wrong servo index");
@@ -110,7 +110,7 @@ namespace arm
     if (servo)
     {
       servo->destination_angle = servo->MAX_ANGLE;
-      LOG_ARM_F("Servo at index %d moving to %d", servo->extern_module_pin, servo->destination_angle);
+      LOG_ARM_F("Servo at index %d moving to %d\n", servo->extern_module_pin, servo->destination_angle);
     }
     else
       LOG_ARM_NL("Wrong servo index");
@@ -122,7 +122,7 @@ namespace arm
     if (servo)
     {
       servo->destination_angle = servo->current_angle;
-      LOG_ARM_F("Servo at index %d stopping at angle %d", servo->extern_module_pin, servo->current_angle);
+      LOG_ARM_F("Servo at index %d stopping at angle %d\n", servo->extern_module_pin, servo->current_angle);
     }
     else
       LOG_ARM_NL("Wrong servo index");
@@ -138,7 +138,7 @@ namespace arm
       if (new_angle.success && new_angle.i >= servo->MIN_ANGLE && new_angle.i <= servo->MAX_ANGLE)
         servo->destination_angle = new_angle.i;
       else
-        LOG_ARM_F("Angle error - success: %d, angle: %d, servo: %d", new_angle.success, new_angle.i, servo->extern_module_pin);
+        LOG_ARM_F("Angle error - success: %d, angle: %d, servo: %d\n", new_angle.success, new_angle.i, servo->extern_module_pin);
     }
     else
       LOG_ARM_NL("Wrong servo index");

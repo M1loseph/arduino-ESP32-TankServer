@@ -80,37 +80,62 @@ const debugMessages = {
 // needs to have 4 arrays
 // 1st axesPosition
 // 2nd axesNumeric
-// 2nd buttons
-// 3rd combinations
+// 3rd buttons
+// 4th combinations
 const DEFAULT_CONFIG = {
-    axesPosition: [new AxisPositionEvent(GAMEPAD.AXIS_LEFT_VER, 0.5, debugMessages.POSITIVE, () => console.log("POSITIVE FUN"), debugMessages.IDLE, () => console.log("IDLE FUN"), debugMessages.NEGATIVE, () => console.log("NEGATIVE FUN"))],
-    axesNumeric: [],
-    buttons: [new ButtonBehaviour(GAMEPAD.Y, debugMessages.PRESSED, () => console.log("PRESSED FUN!"), debugMessages.RELEASED, () => console.log("RELEASED FUN!"))],
-    combinations: [new ButtonCombination([
-        [GAMEPAD.X, true],
-        [GAMEPAD.A, true]
-    ], debugMessages.COMB_PRESSED, null, debugMessages.COMB_RELEASED, null)]
-};
+    axesPosition: [
+        new AxisPositionEvent(GAMEPAD.AXIS_LEFT_HOR, 0.7,
+            COMMANDS.ARM.SERVO_MINUS + COMMANDS.ARM.INDEXSES.BASE, null,
+            COMMANDS.ARM.SERVO_STOP + COMMANDS.ARM.INDEXSES.BASE, null,
+            COMMANDS.ARM.SERVO_PLUS + COMMANDS.ARM.INDEXSES.BASE, null),
+        
+        new AxisPositionEvent(GAMEPAD.AXIS_LEFT_VER, 0.7,
+            COMMANDS.ARM.SERVO_PLUS + COMMANDS.ARM.INDEXSES.SHOULDER, null,
+            COMMANDS.ARM.SERVO_STOP + COMMANDS.ARM.INDEXSES.SHOULDER, null,
+            COMMANDS.ARM.SERVO_MINUS + COMMANDS.ARM.INDEXSES.SHOULDER, null),
 
-const DEBUG_ENGINES_CONFIG = {
-    axesPosition: [],
+        new AxisPositionEvent(GAMEPAD.AXIS_RIGHT_HOR, 0.7,
+            COMMANDS.ARM.SERVO_PLUS + COMMANDS.ARM.INDEXSES.ROTATION, null,
+            COMMANDS.ARM.SERVO_STOP + COMMANDS.ARM.INDEXSES.ROTATION, null,
+            COMMANDS.ARM.SERVO_MINUS + COMMANDS.ARM.INDEXSES.ROTATION, null),
+
+        new AxisPositionEvent(GAMEPAD.AXIS_RIGHT_VER, 0.7,
+            COMMANDS.ARM.SERVO_PLUS + COMMANDS.ARM.INDEXSES.CLAW, null,
+            COMMANDS.ARM.SERVO_STOP + COMMANDS.ARM.INDEXSES.CLAW, null,
+            COMMANDS.ARM.SERVO_MINUS + COMMANDS.ARM.INDEXSES.CLAW, null),
+    ],
     axesNumeric: [],
     buttons: [
         new ButtonBehaviour(GAMEPAD.LT, COMMANDS.ENGINES.FORWARD_LEFT, null, null, null),
         new ButtonBehaviour(GAMEPAD.LB, COMMANDS.ENGINES.BACKWARD_LEFT, null, null, null),
         new ButtonBehaviour(GAMEPAD.RT, COMMANDS.ENGINES.FORWARD_RIGHT, null, null, null),
         new ButtonBehaviour(GAMEPAD.RB, COMMANDS.ENGINES.BACKWARD_RIGHT, null, null, null),
+        new ButtonBehaviour(GAMEPAD.A, COMMANDS.ARM.SERVO_MINUS + COMMANDS.ARM.INDEXSES.ELBOW, null, null, null),
+        new ButtonBehaviour(GAMEPAD.X, COMMANDS.ARM.SERVO_PLUS + COMMANDS.ARM.INDEXSES.ELBOW, null, null, null),
+        new ButtonBehaviour(GAMEPAD.Y, COMMANDS.ARM.SERVO_PLUS + COMMANDS.ARM.INDEXSES.WRIST, null, null, null),
+        new ButtonBehaviour(GAMEPAD.B, COMMANDS.ARM.SERVO_MINUS + COMMANDS.ARM.INDEXSES.WRIST, null, null, null),
     ],
     combinations: [
         new ButtonCombination([
             [GAMEPAD.LT, false],
             [GAMEPAD.LB, false]
         ], COMMANDS.ENGINES.STOP_LEFT, null, null, null),
+
         new ButtonCombination([
             [GAMEPAD.RT, false],
             [GAMEPAD.RB, false]
-        ], COMMANDS.ENGINES.STOP_RIGHT, null, null, null)
+        ], COMMANDS.ENGINES.STOP_RIGHT, null, null, null),
+
+        new ButtonCombination([
+            [GAMEPAD.X, false],
+            [GAMEPAD.A, false]
+        ], COMMANDS.ARM.SERVO_STOP + COMMANDS.ARM.INDEXSES.ELBOW, null, null, null),
+
+        new ButtonCombination([
+            [GAMEPAD.Y, false],
+            [GAMEPAD.B, false]
+        ], COMMANDS.ARM.SERVO_STOP + COMMANDS.ARM.INDEXSES.WRIST, null, null, null)
     ]
 };
 
-export { DEFAULT_CONFIG, DEBUG_ENGINES_CONFIG };
+export { DEFAULT_CONFIG };

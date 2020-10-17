@@ -1,7 +1,7 @@
 import { sendWS } from './websocket.js';
 import { getGamepadInfo, processGamepad } from './gamepad_processing.js';
 import { COMMANDS } from './tank_commands.js';
-import { DEFAULT_CONFIG, DEBUG_ENGINES_CONFIG } from './configs.js';
+import { DEFAULT_CONFIG } from './configs.js';
 
 // checking gamepad info every few milliseconds
 const GAMEPAD_INTERVAL = 33;
@@ -13,7 +13,7 @@ setInterval(function () {
         let messages;
         let functions;
 
-        [messages, functions] = processGamepad(gamepadState, DEBUG_ENGINES_CONFIG);
+        [messages, functions] = processGamepad(gamepadState, DEFAULT_CONFIG);
         functions.forEach(f => f());
         messages.forEach(m => {
             sendWS(m);

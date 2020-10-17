@@ -68,6 +68,15 @@ const COMMANDS = {
         SERVO_PLUS: 'SERVO_PLUS',
         SERVO_STOP: 'SERVO_STOP',
         SERVO_ANGLE: 'SERVO_ANGLE',
+
+        INDEXSES: {
+            BASE: ' 0',
+            SHOULDER: ' 1',
+            ELBOW: ' 2',
+            WRIST: ' 3',
+            ROTATION: ' 4',
+            CLAW: ' 5',
+        }
     },
 }
 

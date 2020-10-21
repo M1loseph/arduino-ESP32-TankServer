@@ -304,7 +304,7 @@ namespace engines
 
     void set_speed_left(size_t new_speed)
     {
-        if (new_speed < SPEED_MAX)
+        if (new_speed <= SPEED_MAX)
         {
             speed_left = new_speed;
             if (direction_left != engine_direction::STOP)
@@ -319,7 +319,7 @@ namespace engines
 
     void set_speed_right(size_t new_speed)
     {
-        if (new_speed < SPEED_MAX)
+        if (new_speed <= SPEED_MAX)
         {
             speed_right = new_speed;
             if (direction_right != engine_direction::STOP)

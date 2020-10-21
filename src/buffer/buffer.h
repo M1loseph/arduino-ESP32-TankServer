@@ -1,5 +1,6 @@
 #ifndef __BUFFER_H__
 #define __BUFFER_H__
+#include <Arduino.h>
 
 // value extreacted from buffer -> contains error code
 struct Value

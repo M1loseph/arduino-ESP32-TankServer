@@ -150,15 +150,21 @@ void loop()
   arm::update_servos_movement();
   engines::update_speed();
 
+  if (xSemaphoreTake(global_parser::semaphore, (TickType_t)10U) == pdTRUE)
+  {
+    global_parser::parser.exec_intervals();
+    xSemaphoreGive(global_parser::semaphore);
+  }
+
 #ifdef SMART_TANK_DEBUG
   // JUST FOR DEBUG
   if (serial_buffer.read_stream(Serial))
   {
     // wait for mutex
-    while (xSemaphoreTake(global_parser::semaphore, (TickType_t)10) != pdTRUE)
+    while (xSemaphoreTake(global_parser::semaphore, (TickType_t)10U) != pdTRUE)
       ;
 
-    global_parser::parser.exec_buffer(serial_buffer);
+    global_parser::parser.exec_buffer(&serial_buffer);
     xSemaphoreGive(global_parser::semaphore);
     serial_buffer.clear();
   }

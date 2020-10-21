@@ -14,23 +14,27 @@
 
 #endif
 
-bool Parser::exec_buffer(const CommandBuffer &b, size_t command_pos)
+bool Parser::exec_buffer(const CommandBuffer *buffer, size_t command_pos)
 {
-    bool if_executed = false;
-    const char *command = b.word_at(command_pos);
-    // check if there was any command
-    if (command)
+    if (buffer)
     {
-        auto *event = get_event(command);
-        if (event)
+        bool if_executed = false;
+        const char *command = buffer->word_at(command_pos);
+        // check if there was any command
+        if (command)
         {
-            LOG_PARSER("Executing ");
-            LOG_PARSER_NL(event->command);
-            event->fun(b);
-            if_executed = true;
+            auto *event = get_event(command);
+            if (event)
+            {
+                LOG_PARSER("Executing ");
+                LOG_PARSER_NL(event->command);
+                event->fun(buffer);
+                if_executed = true;
+            }
         }
+        return if_executed;
     }
-    return if_executed;
+    return false;
 }
 
 bool Parser::add_event(const char *command, Event fun, unsigned interval)
@@ -53,7 +57,7 @@ bool Parser::add_event(const char *command, Event fun, unsigned interval)
     return false;
 }
 
-void Parser::exec_intervals(const CommandBuffer& b)
+void Parser::exec_intervals()
 {
     for (size_t i = 0; i < m_current_events; i++)
     {
@@ -63,7 +67,7 @@ void Parser::exec_intervals(const CommandBuffer& b)
         auto &event = m_events[i];
         if (event.interval != 0 && millis() - event.lastUpdate > event.interval)
         {
-            event.fun(b);
+            event.fun(nullptr);
             event.lastUpdate = millis();
         }
     }

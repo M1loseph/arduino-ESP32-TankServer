@@ -11,22 +11,22 @@
 int test_int = 0;
 bool test_bool = false;
 
-void set_test_bool_false(const CommandBuffer &)
+void set_test_bool_false(const CommandBuffer *)
 {
     test_bool = false;
 }
 
-void set_test_bool_true(const CommandBuffer &)
+void set_test_bool_true(const CommandBuffer *)
 {
     test_bool = true;
 }
 
-void incr(const CommandBuffer &)
+void incr(const CommandBuffer *)
 {
     test_int++;
 }
 
-void decr(const CommandBuffer &)
+void decr(const CommandBuffer *)
 {
     test_int--;
 }
@@ -90,7 +90,7 @@ void test_execute_command_found()
     // start with false
     test_bool = false;
     TEST_ASSERT_FALSE(test_bool);
-    TEST_ASSERT_TRUE(parser.exec_buffer(b));
+    TEST_ASSERT_TRUE(parser.exec_buffer(&b));
     // after executing funtion the variable should be true
     TEST_ASSERT_TRUE(test_bool);
 }
@@ -108,7 +108,7 @@ void test_execute_command_not_found()
 
     test_bool = false;
     TEST_ASSERT_FALSE(test_bool);
-    TEST_ASSERT_FALSE(parser.exec_buffer(b));
+    TEST_ASSERT_FALSE(parser.exec_buffer(&b));
     TEST_ASSERT_FALSE(test_bool);
 }
 
@@ -161,23 +161,23 @@ void test_real_life_example()
     TEST_ASSERT_TRUE(p.add_event(unit_test_commands::TWO, decr));
 
     TEST_ASSERT_TRUE(b.push_back(unit_test_commands::ONE));
-    TEST_ASSERT_TRUE(p.exec_buffer(b));
-    TEST_ASSERT_FALSE(p.exec_buffer(b, 1));
+    TEST_ASSERT_TRUE(p.exec_buffer(&b));
+    TEST_ASSERT_FALSE(p.exec_buffer(&b, 1));
     b.clear();
-    TEST_ASSERT_FALSE(p.exec_buffer(b));
+    TEST_ASSERT_FALSE(p.exec_buffer(&b));
     // after the first exec the buffer should be empty
     TEST_ASSERT_EQUAL_INT(test_int, 1);
 
     b.push_back(unit_test_commands::THREE);
-    TEST_ASSERT_FALSE(p.exec_buffer(b));
-    TEST_ASSERT_FALSE(p.exec_buffer(b, 1));
+    TEST_ASSERT_FALSE(p.exec_buffer(&b));
+    TEST_ASSERT_FALSE(p.exec_buffer(&b, 1));
     b.clear();
     // nothing should have happened
     TEST_ASSERT_EQUAL_INT(test_int, 1);
 
     b.push_back(unit_test_commands::TWO);
-    TEST_ASSERT_TRUE(p.exec_buffer(b));
-    TEST_ASSERT_TRUE(p.exec_buffer(b));
+    TEST_ASSERT_TRUE(p.exec_buffer(&b));
+    TEST_ASSERT_TRUE(p.exec_buffer(&b));
     // in should be -1 now
     TEST_ASSERT_EQUAL_INT(test_int, -1);
 }

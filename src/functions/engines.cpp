@@ -332,137 +332,158 @@ namespace engines
         }
     }
 
-    void forward(const CommandBuffer &b)
+    void forward(const CommandBuffer *b)
     {
         forward();
     }
 
-    void forward_left(const CommandBuffer &b)
+    void forward_left(const CommandBuffer *b)
     {
         forward_left();
     }
 
-    void forward_right(const CommandBuffer &b)
+    void forward_right(const CommandBuffer *b)
     {
         forward_right();
     }
 
-    void backward(const CommandBuffer &b)
+    void backward(const CommandBuffer *b)
     {
         backward();
     }
 
-    void backward_left(const CommandBuffer &b)
+    void backward_left(const CommandBuffer *b)
     {
         backward_left();
     }
 
-    void backward_right(const CommandBuffer &b)
+    void backward_right(const CommandBuffer *b)
     {
         backward_right();
     }
 
-    void stop(const CommandBuffer &b)
+    void stop(const CommandBuffer *b)
     {
         stop();
     }
 
-    void stop_left(const CommandBuffer &b)
+    void stop_left(const CommandBuffer *b)
     {
         stop_left();
     }
 
-    void stop_right(const CommandBuffer &b)
+    void stop_right(const CommandBuffer *b)
     {
         stop_right();
     }
 
-    void rotate_left(const CommandBuffer &b)
+    void rotate_left(const CommandBuffer *b)
     {
         rotate_left();
     }
 
-    void rotate_right(const CommandBuffer &b)
+    void rotate_right(const CommandBuffer *b)
     {
         rotate_right();
     }
 
-    void slower(const CommandBuffer &b)
+    void slower(const CommandBuffer *b)
     {
         slower();
     }
 
-    void slower_left(const CommandBuffer &b)
+    void slower_left(const CommandBuffer *b)
     {
         slower_left();
     }
 
-    void slower_right(const CommandBuffer &b)
+    void slower_right(const CommandBuffer *b)
     {
         slower_right();
     }
 
-    void faster(const CommandBuffer &b)
+    void faster(const CommandBuffer *b)
     {
         faster();
     }
 
-    void faster_left(const CommandBuffer &b)
+    void faster_left(const CommandBuffer *b)
     {
         faster_left();
     }
 
-    void faster_right(const CommandBuffer &b)
+    void faster_right(const CommandBuffer *b)
     {
         faster_right();
     }
 
-    void keep_speed(const CommandBuffer &b)
+    void keep_speed(const CommandBuffer *b)
     {
         keep_speed();
     }
 
-    void keep_speed_left(const CommandBuffer &b)
+    void keep_speed_left(const CommandBuffer *b)
     {
         keep_speed_left();
     }
 
-    void keep_speed_right(const CommandBuffer &b)
+    void keep_speed_right(const CommandBuffer *b)
     {
         keep_speed_right();
     }
 
-    void set_speed(const CommandBuffer &b)
+    void set_speed(const CommandBuffer *b)
     {
-        auto new_speed = b.int_at(1);
-        if (new_speed.success && new_speed.i >= 0 && static_cast<size_t>(new_speed.i) <= SPEED_MAX)
-            // logging info will happen inside next function
-            set_speed(static_cast<size_t>(new_speed.i));
+        if (b)
+        {
+            auto new_speed = b->int_at(1);
+            if (new_speed.success && new_speed.i >= 0 && static_cast<size_t>(new_speed.i) <= SPEED_MAX)
+                // logging info will happen inside next function
+                set_speed(static_cast<size_t>(new_speed.i));
+            else
+            {
+                LOG_ENGINE_F("Wrong new speed parameters - success: %d, val: %d\n", new_speed.success, new_speed.i);
+            }
+        }
         else
         {
-            LOG_ENGINE_F("Wrong new speed parameters - success: %d, val: %d\n", new_speed.success, new_speed.i);
+            LOG_ENGINE_NL("Abort set speed - buffer was null");
         }
     }
 
-    void set_speed_left(const CommandBuffer &b)
+    void set_speed_left(const CommandBuffer *b)
     {
-        auto new_speed = b.int_at(1);
-        if (new_speed.success && new_speed.i >= 0 && static_cast<size_t>(new_speed.i) <= SPEED_MAX)
-            set_speed_left(static_cast<size_t>(new_speed.i));
+        if (b)
+        {
+            auto new_speed = b->int_at(1);
+            if (new_speed.success && new_speed.i >= 0 && static_cast<size_t>(new_speed.i) <= SPEED_MAX)
+                set_speed_left(static_cast<size_t>(new_speed.i));
+            else
+            {
+                LOG_ENGINE_F("Wrong new speed parameters - success: %d, val: %d\n", new_speed.success, new_speed.i);
+            }
+        }
         else
         {
-            LOG_ENGINE_F("Wrong new speed parameters - success: %d, val: %d\n", new_speed.success, new_speed.i);
+            LOG_ENGINE_NL("Abort set speed left - buffer was null");
         }
     }
 
-    void set_speed_right(const CommandBuffer &b)
+    void set_speed_right(const CommandBuffer *b)
     {
-        auto new_speed = b.int_at(1);
-        if (new_speed.success && new_speed.i > 0 && static_cast<size_t>(new_speed.i) <= SPEED_MAX)
-            set_speed_right(static_cast<size_t>(new_speed.i));
+        if (b)
+        {
+            auto new_speed = b->int_at(1);
+            if (new_speed.success && new_speed.i > 0 && static_cast<size_t>(new_speed.i) <= SPEED_MAX)
+                set_speed_right(static_cast<size_t>(new_speed.i));
+            else
+            {
+                LOG_ENGINE_F("Wrong new speed parameters - success: %d, val: %d\n", new_speed.success, new_speed.i);
+            }
+        }
         else
         {
-            LOG_ENGINE_F("Wrong new speed parameters - success: %d, val: %d\n", new_speed.success, new_speed.i);
+            LOG_ENGINE_NL("Abort set speed right - buffer was null");
         }
     }
 

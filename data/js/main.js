@@ -28,9 +28,11 @@ Array.from(document.getElementsByClassName('dropdown-button')).forEach(sidebarEl
     }
 });
 
+let mainScreen = document.getElementById('main-screen');
 let gamepadImage = document.getElementById('gamepad-image');
+let gamepadContainer = document.getElementById('gamepad-container');
+
 let sidebar = document.getElementById('sidebar');
-let welcomeTitle = document.getElementById('welcome-title');
 let modal = document.getElementById('modal');
 
 // elements from LED color picker dialog
@@ -65,9 +67,16 @@ let intervalLabel = document.getElementById('interval-slider-label');
 intervalLabel.textContent = intervalSlider.value + MILLIS;
 intervalSlider.onchange = () => intervalLabel.textContent = intervalSlider.value + MILLIS;
 
+let sidebarCloseElements = [
+    gamepadImage,
+    mainScreen,
+    gamepadContainer,
+];
+
 function closeSidebar(event) {
     console.log('trying to close the sidebar...');
-    if (event.target === gamepadImage || event.target === welcomeTitle) {
+    console.log(event.target);
+    if (sidebarCloseElements.some(e => e === event.target)) {
         sidebar.classList.add('hidden-sidebar');
         console.log('closing sidebar...');
     }
@@ -152,6 +161,12 @@ function sendInterval() {
     sendWS(message);
 }
 
+// logging function to see if gamepad has been conneted
+window.addEventListener("gamepadconnected", function (e) {
+    console.log(navigator.getGamepads()[e.gamepad.index]);
+});
+
+
 // export it to html
 window.sendWS = sendWS;
 window.closeSidebar = closeSidebar;
@@ -170,3 +185,7 @@ window.sendBrightness = sendBrightness;
 window.sendInterval = sendInterval;
 
 window.COMMANDS = COMMANDS;
+
+// $(document).ready(() => {
+
+// });

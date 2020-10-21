@@ -121,115 +121,136 @@ namespace leds
         show_leds();
     }
 
-    void polish_animation(const CommandBuffer &b)
+    void polish_animation(const CommandBuffer *b)
     {
         LOG_LEDS_NL("Set polish animation");
         current_animation = &animations::polish;
         show_leds();
     }
 
-    void eurobeat_animation(const CommandBuffer &b)
+    void eurobeat_animation(const CommandBuffer *b)
     {
         LOG_LEDS_NL("Set eurobeat animation");
         current_animation = &animations::rainbow;
         show_leds();
     }
 
-    void custom_animation(const CommandBuffer &b)
+    void custom_animation(const CommandBuffer *b)
     {
         LOG_LEDS_NL("Set custiom animation");
         current_animation = &animations::custom;
         show_leds();
     }
 
-    void random_animation(const CommandBuffer &b)
+    void random_animation(const CommandBuffer *b)
     {
         LOG_LEDS_NL("Set random animation");
         current_animation = &animations::random;
         show_leds();
     }
 
-    void set_custom_animation(const CommandBuffer &b)
+    void set_custom_animation(const CommandBuffer *b)
     {
-        auto red = b.int_at(1);
-        auto green = b.int_at(2);
-        auto blue = b.int_at(3);
-
-        if (red.success && green.success && blue.success)
+        if (b)
         {
-            // check if all collors are in bounds
-            if (red.i >= 0 && green.i >= 0 && blue.i >= 0 && red.i < 256 && green.i < 256 && blue.i < 256)
-            {
-                // cast it to remove compiler warnings -> we checked everything beforehand anyway
-                animations::custom_color = CRGB(
-                    static_cast<uint8_t>(red.i),
-                    static_cast<uint8_t>(green.i),
-                    static_cast<uint8_t>(blue.i));
-                
-                custom_animation(b);
+            auto red = b->int_at(1);
+            auto green = b->int_at(2);
+            auto blue = b->int_at(3);
 
-                LOG_F("New color - r: %d, g %d, b%d",  red.i, green.i, blue.i);
+            if (red.success && green.success && blue.success)
+            {
+                // check if all collors are in bounds
+                if (red.i >= 0 && green.i >= 0 && blue.i >= 0 && red.i < 256 && green.i < 256 && blue.i < 256)
+                {
+                    // cast it to remove compiler warnings -> we checked everything beforehand anyway
+                    animations::custom_color = CRGB(
+                        static_cast<uint8_t>(red.i),
+                        static_cast<uint8_t>(green.i),
+                        static_cast<uint8_t>(blue.i));
+
+                    custom_animation(b);
+
+                    LOG_F("New color - r: %d, g %d, b%d", red.i, green.i, blue.i);
+                }
+                else
+                {
+                    LOG_LEDS_F("Parameter out of bouns - r: %d, g: %d, b: %d", red.i, green.i, blue.i);
+                }
             }
             else
             {
-                LOG_LEDS_F("Parameter out of bouns - r: %d, g: %d, b: %d", red.i, green.i, blue.i);
+                LOG_LEDS_F("At least one wrong parameter - r: %d, g: %d, b: %d", red.success, green.success, blue.success);
             }
         }
         else
         {
-            LOG_LEDS_F("At least one wrong parameter - r: %d, g: %d, b: %d", red.success, green.success, blue.success);
+            LOG_LEDS_NL("Abort set custom color - buffer was null");
         }
     }
 
-    void set_brightness(const CommandBuffer &b)
+    void set_brightness(const CommandBuffer *b)
     {
-        auto new_brighntess = b.int_at(1);
-        if (new_brighntess.success && new_brighntess.i >= 0 && new_brighntess.i < 256)
+        if (b)
         {
-            LOG_LEDS_F("New brightness: %d\n", new_brighntess.i);
-            FastLED.setBrightness(static_cast<uint8_t>(new_brighntess.i));
-            show_leds();
+            auto new_brighntess = b->int_at(1);
+            if (new_brighntess.success && new_brighntess.i >= 0 && new_brighntess.i < 256)
+            {
+                LOG_LEDS_F("New brightness: %d\n", new_brighntess.i);
+                FastLED.setBrightness(static_cast<uint8_t>(new_brighntess.i));
+                show_leds();
+            }
+            else
+            {
+                LOG_LEDS_F("Wrong data - succ: %d, brigness: %d\n", new_brighntess.success, new_brighntess.i);
+            }
         }
         else
         {
-            LOG_LEDS_F("Wrong data - succ: %d, brigness: %d\n", new_brighntess.success, new_brighntess.i);
+            LOG_LEDS_NL("Abort set brightness - buffer was null");
         }
     }
 
-    void set_animation_interval(const CommandBuffer &b)
+    void set_animation_interval(const CommandBuffer *b)
     {
-        auto new_interval = b.int_at(1);
-        if (new_interval.success && new_interval.i >= 0)
+        if (b)
         {
-            LOG_LEDS_F("New animation interval: %d\n", new_interval.i);
-            animation_interval = static_cast<uint32_t>(new_interval.i);
+            auto new_interval = b->int_at(1);
+            if (new_interval.success && new_interval.i >= 0)
+            {
+                LOG_LEDS_F("New animation interval: %d\n", new_interval.i);
+                animation_interval = static_cast<uint32_t>(new_interval.i);
+            }
+            else
+            {
+                LOG_LEDS_F("Wrong data - succ: %d, speed: %d\n", new_interval.success, new_interval.i);
+            }
         }
         else
         {
-            LOG_LEDS_F("Wrong data - succ: %d, speed: %d\n", new_interval.success, new_interval.i);
+            LOG_LEDS_NL("Abort set animation interval - buffer was null");
         }
     }
 
-    void stop_animation(const CommandBuffer &b)
+    void stop_animation(const CommandBuffer *b)
     {
         LOG_LEDS_NL("Stop animation");
         direction = animation_direction::STOP;
     }
 
-    void turn_off_leds(const CommandBuffer &b)
+    void turn_off_leds(const CommandBuffer *b)
     {
         LOG_LEDS_NL("Turn off leds");
         current_animation = nullptr;
         show_leds();
     }
 
-    void animate_forward(const CommandBuffer &b)
+    void animate_forward(const CommandBuffer *b)
     {
         LOG_LEDS_NL("Animate forward");
         direction = animation_direction::FORWARD;
     }
 
-    void animate_backward(const CommandBuffer &b)
+    void animate_backward(const CommandBuffer *b)
     {
         LOG_LEDS_NL("Animate backward");
         direction = animation_direction::BACKWARD;

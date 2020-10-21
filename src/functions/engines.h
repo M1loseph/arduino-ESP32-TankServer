@@ -60,36 +60,36 @@ namespace engines
 
     void init_engines();
 
-    void forward(const CommandBuffer &b);
-    void forward_left(const CommandBuffer &b);
-    void forward_right(const CommandBuffer &b);
+    void forward(const CommandBuffer *b);
+    void forward_left(const CommandBuffer *b);
+    void forward_right(const CommandBuffer *b);
 
-    void backward(const CommandBuffer &b);
-    void backward_left(const CommandBuffer &b);
-    void backward_right(const CommandBuffer &b);
+    void backward(const CommandBuffer *b);
+    void backward_left(const CommandBuffer *b);
+    void backward_right(const CommandBuffer *b);
 
-    void stop(const CommandBuffer &b);
-    void stop_left(const CommandBuffer &b);
-    void stop_right(const CommandBuffer &b);
+    void stop(const CommandBuffer *b);
+    void stop_left(const CommandBuffer *b);
+    void stop_right(const CommandBuffer *b);
 
-    void rotate_left(const CommandBuffer &b);
-    void rotate_right(const CommandBuffer &b);
+    void rotate_left(const CommandBuffer *b);
+    void rotate_right(const CommandBuffer *b);
 
-    void slower(const CommandBuffer &b);
-    void slower_left(const CommandBuffer &b);
-    void slower_right(const CommandBuffer &b);
+    void slower(const CommandBuffer *b);
+    void slower_left(const CommandBuffer *b);
+    void slower_right(const CommandBuffer *b);
 
-    void faster(const CommandBuffer &b);
-    void faster_left(const CommandBuffer &b);
-    void faster_right(const CommandBuffer &b);
+    void faster(const CommandBuffer *b);
+    void faster_left(const CommandBuffer *b);
+    void faster_right(const CommandBuffer *b);
 
-    void keep_speed(const CommandBuffer &b);
-    void keep_speed_left(const CommandBuffer &b);
-    void keep_speed_right(const CommandBuffer &b);
+    void keep_speed(const CommandBuffer *b);
+    void keep_speed_left(const CommandBuffer *b);
+    void keep_speed_right(const CommandBuffer *b);
 
-    void set_speed(const CommandBuffer &b);
-    void set_speed_left(const CommandBuffer &b);
-    void set_speed_right(const CommandBuffer &b);
+    void set_speed(const CommandBuffer *b);
+    void set_speed_left(const CommandBuffer *b);
+    void set_speed_right(const CommandBuffer *b);
 
     void forward();
     void forward_left();

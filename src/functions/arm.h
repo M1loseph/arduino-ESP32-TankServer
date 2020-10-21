@@ -28,10 +28,10 @@ namespace arm
 
     void init_arm();
 
-    void servo_minus(const CommandBuffer &b);
-    void servo_plus(const CommandBuffer &b);
-    void servo_stop(const CommandBuffer &b);
-    void servo_angle(const CommandBuffer &b);
+    void servo_minus(const CommandBuffer *b);
+    void servo_plus(const CommandBuffer *b);
+    void servo_stop(const CommandBuffer *b);
+    void servo_angle(const CommandBuffer *b);
 
     void update_servos_movement();
 

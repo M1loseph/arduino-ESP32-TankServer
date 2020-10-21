@@ -35,29 +35,29 @@ namespace mp3
 
     void init_mp3();
 
-    void stop_playing(const CommandBuffer &b);
-    void set_volume(const CommandBuffer &b);
-    void resume(const CommandBuffer& b);
+    void stop_playing(const CommandBuffer *b);
+    void set_volume(const CommandBuffer *b);
+    void resume(const CommandBuffer* b);
 
-    void propaganda(const CommandBuffer &b);
-    void mighty_polish_tank(const CommandBuffer &b);
-    void high_ground(const CommandBuffer &b);
-    void fine_addition(const CommandBuffer &b);
-    void i_dont_like_sand(const CommandBuffer &b);
-    void hello_there(const CommandBuffer &b);
-    void im_the_senate(const CommandBuffer &b);
-    void forever_young(const CommandBuffer &b);
-    void revenge(const CommandBuffer &b);
-    void silhouette(const CommandBuffer &b);
-    void the_bad_touch(const CommandBuffer &b);
-    void hero(const CommandBuffer &b);
-    void gas_gas_gas(const CommandBuffer &b);
-    void running_in_the_90s(const CommandBuffer &b);
-    void deja_vu(const CommandBuffer &b);
-    void running_in_the_90s_short(const CommandBuffer &b);
-    void deja_vu_short(const CommandBuffer &b);
-    void true_survivor(const CommandBuffer &b);
-    void windows_xp(const CommandBuffer &b);
+    void propaganda(const CommandBuffer *b);
+    void mighty_polish_tank(const CommandBuffer *b);
+    void high_ground(const CommandBuffer *b);
+    void fine_addition(const CommandBuffer *b);
+    void i_dont_like_sand(const CommandBuffer *b);
+    void hello_there(const CommandBuffer *b);
+    void im_the_senate(const CommandBuffer *b);
+    void forever_young(const CommandBuffer *b);
+    void revenge(const CommandBuffer *b);
+    void silhouette(const CommandBuffer *b);
+    void the_bad_touch(const CommandBuffer *b);
+    void hero(const CommandBuffer *b);
+    void gas_gas_gas(const CommandBuffer *b);
+    void running_in_the_90s(const CommandBuffer *b);
+    void deja_vu(const CommandBuffer *b);
+    void running_in_the_90s_short(const CommandBuffer *b);
+    void deja_vu_short(const CommandBuffer *b);
+    void true_survivor(const CommandBuffer *b);
+    void windows_xp(const CommandBuffer *b);
 
 } // namespace mp3
 

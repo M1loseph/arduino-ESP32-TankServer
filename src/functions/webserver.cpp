@@ -24,14 +24,13 @@ namespace webserver
     // VARIABLES
     // ================
 
-    AsyncWebServer web_server(HTTP_PORT);
-    AsyncWebSocket web_socket(WEB_SOCKET_ROOT);
-    DNSServer dns;
-    CommandBuffer ws_buffer;
-
     const char *WEB_SOCKET_ROOT = "/ws";
     const char *SSID = "TankWiFi";
     const char *PASSWORD = "eurobeat";
+
+    AsyncWebServer web_server(HTTP_PORT);
+    AsyncWebSocket web_socket(WEB_SOCKET_ROOT);
+    DNSServer dns;
 
     void init_access_point()
     {
@@ -80,6 +79,9 @@ namespace webserver
             request->send(SPIFFS, "/favicon.ico", "image/png");
         });
 
+        web_server.on("/js/jquery-3.5.1.min.js", HTTP_GET, [](AsyncWebServerRequest* request) {
+            request->send(SPIFFS, "/js/jquery-3.5.1.min.js");
+        });
     }
 
     void init_web_socket()
@@ -98,16 +100,16 @@ namespace webserver
                 // 1st case -> entire message was sent in a single frame
                 if (frame->final && frame->index == 0 && frame->len == len)
                 {
+                    CommandBuffer ws_buffer;
                     // we care only about text data
                     for (size_t i = 0; i < len; i++)
                         ws_buffer.push_back((char)data[i]);
 
                     // wait for semaphore
-                    while (xSemaphoreTake(global_parser::semaphore, (TickType_t)100) != pdTRUE)
+                    while (xSemaphoreTake(global_parser::semaphore, (TickType_t)10U) != pdTRUE)
                         ;
-                    global_parser::parser.exec_buffer(ws_buffer);
+                    global_parser::parser.exec_buffer(&ws_buffer);
                     xSemaphoreGive(global_parser::semaphore);
-                    ws_buffer.clear();
                 }
                 // else
                 // {

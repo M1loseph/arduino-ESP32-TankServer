@@ -16,7 +16,6 @@ namespace webserver
 
     constexpr uint8_t HTTP_PORT = 80;
 
-    extern const char *WEB_SOCKET_ROOT;
     extern const char *SSID;
     extern const char *PASSWORD;
 

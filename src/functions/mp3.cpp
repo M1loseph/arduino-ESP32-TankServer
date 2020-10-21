@@ -65,141 +65,149 @@ namespace mp3
         mp3.playSpecific(4, 19);
     }
 
-    void stop_playing(const CommandBuffer &b)
+    void stop_playing(const CommandBuffer *b)
     {
         LOG_MP3_NL("Stop playback");
         mp3.playStop();
     }
 
-    void set_volume(const CommandBuffer &b)
+    void set_volume(const CommandBuffer *b)
     {
-        auto new_volume = b.int_at(1);
-        if (new_volume.success && new_volume.i >= 0 && new_volume.i < mp3.volumeMax())
+        if (b)
         {
-            LOG_MP3_F("New volume: %d\n", new_volume.i);
-            mp3.volume(static_cast<uint8_t>(new_volume.i));
+            auto new_volume = b->int_at(1);
+            if (new_volume.success && new_volume.i >= 0 && new_volume.i <= mp3.volumeMax())
+            {
+                LOG_MP3_F("New volume: %d\n", new_volume.i);
+                mp3.volume(static_cast<uint8_t>(new_volume.i));
+            }
+            else
+            {
+                LOG_MP3_F("Wrong new volume - success: %d, value: %d\n", new_volume.success, new_volume.i);
+            }
         }
         else
         {
-            LOG_MP3_F("Wrong new volume - success: %d, value: %d\n", new_volume.success, new_volume.i);
+            LOG_MP3_NL("Abort set volume - buffer was null");
         }
+        
     }
 
-    void resume(const CommandBuffer &b)
+    void resume(const CommandBuffer *b)
     {
         LOG_MP3_NL("Resuming song");
         mp3.playStart();
     }
 
-    void propaganda(const CommandBuffer &b)
+    void propaganda(const CommandBuffer *b)
     {
         LOG_MP3_NL("Playing propaganda");
         mp3.playSpecific(1, 1);
     }
 
-    void mighty_polish_tank(const CommandBuffer &b)
+    void mighty_polish_tank(const CommandBuffer *b)
     {
         LOG_MP3_NL("Playing mighty polish tank");
         mp3.playSpecific(1, 2);
     }
 
-    void high_ground(const CommandBuffer &b)
+    void high_ground(const CommandBuffer *b)
     {
         LOG_MP3_NL("Playing high ground");
         mp3.playSpecific(2, 3);
     }
 
-    void fine_addition(const CommandBuffer &b)
+    void fine_addition(const CommandBuffer *b)
     {
         LOG_MP3_NL("Playing fine addition");
         mp3.playSpecific(2, 4);
     }
 
-    void i_dont_like_sand(const CommandBuffer &b)
+    void i_dont_like_sand(const CommandBuffer *b)
     {
         LOG_MP3_NL("Playing i dont like sand");
         mp3.playSpecific(2, 5);
     }
 
-    void hello_there(const CommandBuffer &b)
+    void hello_there(const CommandBuffer *b)
     {
         LOG_MP3_NL("Playing hello there");
         mp3.playSpecific(2, 6);
     }
 
-    void im_the_senate(const CommandBuffer &b)
+    void im_the_senate(const CommandBuffer *b)
     {
         LOG_MP3_NL("Playing im the senate");
         mp3.playSpecific(2, 7);
     }
 
-    void forever_young(const CommandBuffer &b)
+    void forever_young(const CommandBuffer *b)
     {
         LOG_MP3_NL("Playing forever young");
         mp3.playSpecific(3, 8);
     }
 
-    void revenge(const CommandBuffer &b)
+    void revenge(const CommandBuffer *b)
     {
         LOG_MP3_NL("Playing revenge");
         mp3.playSpecific(3, 9);
     }
 
-    void silhouette(const CommandBuffer &b)
+    void silhouette(const CommandBuffer *b)
     {
         LOG_MP3_NL("Playing naruto opening");
         mp3.playSpecific(3, 10);
     }
 
-    void the_bad_touch(const CommandBuffer &b)
+    void the_bad_touch(const CommandBuffer *b)
     {
         LOG_MP3_NL("Playing the bad touch");
         mp3.playSpecific(3, 11);
     }
 
-    void hero(const CommandBuffer &b)
+    void hero(const CommandBuffer *b)
     {
         LOG_MP3_NL("Playing i need a hero");
         mp3.playSpecific(3, 12);
     }
 
-    void gas_gas_gas(const CommandBuffer &b)
+    void gas_gas_gas(const CommandBuffer *b)
     {
         LOG_MP3_NL("Playing gas gas gas");
         mp3.playSpecific(3, 13);
     }
 
-    void running_in_the_90s(const CommandBuffer &b)
+    void running_in_the_90s(const CommandBuffer *b)
     {
         LOG_MP3_NL("Playing running in the 90s");
         mp3.playSpecific(3, 14);
     }
 
-    void deja_vu(const CommandBuffer &b)
+    void deja_vu(const CommandBuffer *b)
     {
         LOG_MP3_NL("Playing deja vu");
         mp3.playSpecific(3, 15);
     }
 
-    void running_in_the_90s_short(const CommandBuffer &b)
+    void running_in_the_90s_short(const CommandBuffer *b)
     {
         LOG_MP3_NL("Playing running in the 90s - short version");
         mp3.playSpecific(3, 16);
     }
 
-    void deja_vu_short(const CommandBuffer &b)
+    void deja_vu_short(const CommandBuffer *b)
     {
         LOG_MP3_NL("Playing deja vu - short version");
         mp3.playSpecific(3, 17);
     }
 
-    void true_survivor(const CommandBuffer &b)
+    void true_survivor(const CommandBuffer *b)
     {
         LOG_MP3_NL("Playing true survivor");
         mp3.playSpecific(3, 18);
     }
 
-    void windows_xp(const CommandBuffer &b)
+    void windows_xp(const CommandBuffer *b)
     {
         LOG_MP3_NL("Playing windows starup song");
         mp3.playSpecific(4, 19);

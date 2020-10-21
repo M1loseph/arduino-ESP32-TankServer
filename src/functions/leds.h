@@ -23,17 +23,17 @@ namespace leds
     } // namespace commands
 
     void init_leds();
-    void polish_animation(const CommandBuffer &b);
-    void eurobeat_animation(const CommandBuffer &b);
-    void custom_animation(const CommandBuffer &b);
-    void random_animation(const CommandBuffer &b);
-    void set_custom_animation(const CommandBuffer &b);
-    void set_brightness(const CommandBuffer &b);
-    void set_animation_interval(const CommandBuffer &b);
-    void stop_animation(const CommandBuffer &b);
-    void turn_off_leds(const CommandBuffer &b);
-    void animate_forward(const CommandBuffer &b);
-    void animate_backward(const CommandBuffer &b);
+    void polish_animation(const CommandBuffer *b);
+    void eurobeat_animation(const CommandBuffer *b);
+    void custom_animation(const CommandBuffer *b);
+    void random_animation(const CommandBuffer *b);
+    void set_custom_animation(const CommandBuffer *b);
+    void set_brightness(const CommandBuffer *b);
+    void set_animation_interval(const CommandBuffer *b);
+    void stop_animation(const CommandBuffer *b);
+    void turn_off_leds(const CommandBuffer *b);
+    void animate_forward(const CommandBuffer *b);
+    void animate_backward(const CommandBuffer *b);
     void update_led_animation();
 } // namespace leds
 

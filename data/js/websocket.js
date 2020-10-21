@@ -17,13 +17,6 @@ webSocket.onmessage = e => {
     console.log(e);
 };
 
-// logging function to see if gamepad has been conneted
-// window.addEventListener("gamepadconnected", function (e) {
-//     let gp = navigator.getGamepads()[e.gamepad.index];
-//     "Gamepad connected at index %d: %s. %d buttons, %d axes.",
-//         gp.index, gp.id, gp.buttons.length, gp.axes.length
-// });
-
 function sendWS(message) {
     console.log(message);
     if (webSocket.readyState === WebSocket.OPEN) {

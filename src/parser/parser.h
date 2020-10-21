@@ -7,7 +7,7 @@
 class Parser
 {
 public:
-    typedef void (*Event)(const CommandBuffer &);
+    typedef void (*Event)(const CommandBuffer *);
     typedef struct
     {
         const char *command;
@@ -20,8 +20,8 @@ public:
     bool add_event(const char *command, Event function, size_t interval = Parser::IDLE_INTERVAL);
     bool set_interval(const char *command, size_t interval);
 
-    bool exec_buffer(const CommandBuffer &b, size_t command_pos = 0);
-    void exec_intervals(const CommandBuffer &b);
+    bool exec_buffer(const CommandBuffer *buffer, size_t command_pos = 0);
+    void exec_intervals();
 
     EventData *get_event(const char *command);
 

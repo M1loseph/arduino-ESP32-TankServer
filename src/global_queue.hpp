@@ -17,7 +17,7 @@ namespace global_queue
 
         bool push(DynamicJsonDocument **json)
         {
-            return xQueueSend(_queue, json, (TickType_t)0) == pdTRUE;
+            return xQueueSend(_queue, json, (TickType_t)0) == pdPASS;
         }
 
         bool read(DynamicJsonDocument **json)
@@ -29,7 +29,7 @@ namespace global_queue
         xQueueHandle _queue;
     };
 
-    static global_queue queue;
+    extern global_queue queue;
 } // namespace global_queue
 
 #endif // __GLOBAL_QUEUE_HPP__

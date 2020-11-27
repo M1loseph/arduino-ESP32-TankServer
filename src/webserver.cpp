@@ -8,12 +8,14 @@
 #define LOG_WEBSERVER(message) LOG(message)
 #define LOG_WEBSERVER_NL(message) LOG_NL(message)
 #define LOG_WEBSERVER_F(...) LOG_F(__VA_ARGS__)
+#define LOG_WEBSERVER_PRETTY(...) serializeJsonPretty(__VA_ARGS__); 
 
 #else
 
 #define LOG_WEBSERVER(message)
 #define LOG_WEBSERVER_NL(message)
 #define LOG_WEBSERVER_F(...)
+#define LOG_WEBSERVER_PRETTY(...) 
 
 #endif
 
@@ -120,6 +122,12 @@ void webserver::handle_web_socket(AsyncWebSocket *server, AsyncWebSocketClient *
             {
                 DynamicJsonDocument* json = new DynamicJsonDocument(256);
                 auto error = deserializeJson(*json, (const char*) data, len);
+                if(!error)
+                {
+                    LOG_WEBSERVER_PRETTY(*json, Serial)
+                    LOG_WEBSERVER_NL(' ');
+                }
+
                 if(error || !global_queue::queue.push(&json))
                 {
                     delete json;

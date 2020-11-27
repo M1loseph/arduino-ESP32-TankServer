@@ -160,7 +160,6 @@ void webserver::handle_web_socket(AsyncWebSocket *server, AsyncWebSocketClient *
     {
         LOG_WEBSERVER_F("ws[%u] disconnect\n", client->id());
         size_t clients = server->getClients().length();
-        // if client count is 0 -> stop the tank
         // if (!clients)
         //     json_parser::stop();
     }

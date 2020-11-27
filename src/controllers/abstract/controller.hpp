@@ -12,7 +12,7 @@ namespace json_parser
         {
             ok,
             not_permited,
-            no_match
+            error
         };
 
         controller(const char *name) : _name(name) {}
@@ -22,7 +22,7 @@ namespace json_parser
         {
             if (can_handle(json))
             {
-                return handle(json) ? handle_resoult::ok : handle_resoult::no_match;
+                return handle(json) ? handle_resoult::ok : handle_resoult::error;
             }
             return handle_resoult::not_permited;
         }

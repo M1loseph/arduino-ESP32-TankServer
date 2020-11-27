@@ -17,16 +17,27 @@
 
 namespace json_parser
 {
-    uint8_t parser::handle(const JsonObjectConst& json)
+    std::pair<uint8_t, uint8_t> parser::handle(const JsonObjectConst& json)
     {
+        uint8_t permited = 0;
+        uint8_t handled = 0;
         LOG_PARSER_NL("[parser] trying to handle...")
-        uint8_t count = 0;
         for (const auto &controller : _controllers)
         {
-            count += controller->try_handle(json) == controller::handle_resoult::ok;
+            auto res = controller->try_handle(json);
+            if(res == controller::handle_resoult::error)
+            {
+                permited++;
+            }
+
+            if(res == controller::handle_resoult::ok)
+            {
+                permited++;
+                handled++;
+            }
         }
-        LOG_PARSER_F("[parser] JSON handled %d times\n", count)
-        return count;
+        LOG_PARSER_F("[parser] permited: %d handled: %d\n", permited, handled)
+        return {permited, handled};
     }
 
     void parser::hadnle_updates()

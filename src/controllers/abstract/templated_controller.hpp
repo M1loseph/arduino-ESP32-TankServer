@@ -63,7 +63,7 @@ namespace json_parser
         {
             if (can_handle(json))
             {
-                return handle(json) ? handle_resoult::ok : handle_resoult::no_match;
+                return handle(json) ? handle_resoult::ok : handle_resoult::error;
             }
             return handle_resoult::not_permited;
         }
@@ -102,12 +102,11 @@ namespace json_parser
             if (json.containsKey(COMMAND_KEY))
             {
                 const char *command = json[COMMAND_KEY];
-                for (const auto &action : _events)
+                for (auto &action : _events)
                 {
-                    if (strcmp(action.command, command) == 0)
+                    if (!strcmp(action.command, command))
                     {
-                        (*static_cast<T*>(this).*action.fun)(&json);
-                        return true;
+                        return (*static_cast<T*>(this).*action.fun)(&json);
                     }
                 }
             }

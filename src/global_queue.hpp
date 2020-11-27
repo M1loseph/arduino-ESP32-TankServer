@@ -15,12 +15,12 @@ namespace global_queue
             return _queue != nullptr;
         }
 
-        bool push(DynamicJsonDocument *json)
+        bool push(DynamicJsonDocument **json)
         {
             return xQueueSend(_queue, json, (TickType_t)0) == pdTRUE;
         }
 
-        bool read(DynamicJsonDocument *&json)
+        bool read(DynamicJsonDocument **json)
         {
             return xQueueReceive(_queue, json, (TickType_t)0) == pdPASS;
         }

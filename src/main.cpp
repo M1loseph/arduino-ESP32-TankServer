@@ -45,7 +45,7 @@ void loop()
 {
     webserver::process_web();
     DynamicJsonDocument* json = nullptr;
-    if(global_queue::queue.read(json))
+    if(global_queue::queue.read(&json))
     {
         parser.handle(json->as<JsonObjectConst>());
         delete json;
@@ -56,7 +56,7 @@ void loop()
     {
         json = new DynamicJsonDocument(256);
         deserializeJson(*json, Serial);
-        global_queue::queue.push(json);
+        global_queue::queue.push(&json);
     }
 #endif // SMART_TANK_DEBUG
 }

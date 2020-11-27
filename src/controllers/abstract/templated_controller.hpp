@@ -94,7 +94,7 @@ namespace json_parser
             else
                 return false;
         }
-
+        std::vector<event_data> _events;
 
     private:
         bool handle(const JsonObjectConst& json) override
@@ -117,8 +117,6 @@ namespace json_parser
         static constexpr size_t IDLE_INTERVAL = 0U;
         static constexpr const char* CONTROLLER_KEY = "controller";
         static constexpr const char* COMMAND_KEY = "command";
-
-        std::vector<event_data> _events;
     };
 } // namespace parser
 #endif // __CONTROLLER_HPP__

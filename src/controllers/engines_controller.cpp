@@ -76,6 +76,7 @@ namespace json_parser
 #endif
         LOG_ENGINE_NL("[engine_controller] initialized engine pins")
 
+        _events.reserve(20U);
         bool if_added = true;
 
         if_added &= add_event(FORWARD, &engines_controller::forward);

@@ -120,7 +120,7 @@ void webserver::handle_web_socket(AsyncWebSocket *server, AsyncWebSocketClient *
             {
                 DynamicJsonDocument* json = new DynamicJsonDocument(256);
                 auto error = deserializeJson(*json, (const char*) data, len);
-                if(error || !global_queue::queue.push(json))
+                if(error || !global_queue::queue.push(&json))
                 {
                     delete json;
                 }
@@ -148,6 +148,14 @@ void webserver::handle_web_socket(AsyncWebSocket *server, AsyncWebSocketClient *
             // }
         }
     }
+    else if (type == WS_EVT_DISCONNECT)
+    {
+        LOG_WEBSERVER_F("ws[%u] disconnect\n", client->id());
+        size_t clients = server->getClients().length();
+        // if client count is 0 -> stop the tank
+        // if (!clients)
+        //     json_parser::stop();
+    }
 #if WEB_SERVER_DEBUG
     else if (type == WS_EVT_CONNECT)
     {
@@ -163,14 +171,6 @@ void webserver::handle_web_socket(AsyncWebSocket *server, AsyncWebSocketClient *
         LOG_WEBSERVER_F("ws[%u] pong[%u]: %s\n", client->id(), len, (len) ? (char *)data : "");
     }
 #endif // WEB_SERVER_DEBUG
-    else if (type == WS_EVT_DISCONNECT)
-    {
-        LOG_WEBSERVER_F("ws[%u] disconnect\n", client->id());
-        size_t clients = server->getClients().length();
-        // if client count is 0 -> stop the tank
-        // if (!clients)
-        //     json_parser::stop();
-    }
 }
 
 void webserver::init_dns()

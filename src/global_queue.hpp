@@ -4,40 +4,32 @@
 #include <ArduinoJson.h>
 #include <queue>
 
-class ipc_queue {
-
-    explicit ipc_queue()
+namespace global_queue
+{
+    class global_queue
     {
-        _mutex = xSemaphoreCreateMutex();
-    }
+    public:
+        bool initialize()
+        {
+            _queue = xQueueCreate(10, sizeof(DynamicJsonDocument *));
+            return _queue != nullptr;
+        }
 
-    void push(DynamicJsonDocument &&json)
-    {
-        while ((xSemaphoreTake(_mutex, (TickType_t)10)) != pdTRUE);
-        _queue.push(std::move(json));
-        xSemaphoreGive(_mutex);
-    }
+        bool push(DynamicJsonDocument *json)
+        {
+            return xQueueSend(_queue, json, (TickType_t)0) == pdTRUE;
+        }
 
-    bool empty()
-    {
-        while ((xSemaphoreTake(_mutex, (TickType_t)10)) != pdTRUE);
-        bool is_empty = _queue.empty();
-        xSemaphoreGive(_mutex);
-        return is_empty;
-    }
+        bool read(DynamicJsonDocument *&json)
+        {
+            return xQueueReceive(_queue, json, (TickType_t)0) == pdPASS;
+        }
 
-    DynamicJsonDocument dequeue()
-    {
-        while ((xSemaphoreTake(_mutex, (TickType_t)10)) != pdTRUE);
-        DynamicJsonDocument  json = std::move(_queue.back());
-        _queue.pop();
-        xSemaphoreGive(_mutex);
-        return json;
-    }
+    private:
+        xQueueHandle _queue;
+    };
 
-private:
-    xSemaphoreHandle _mutex;
-    std::queue<DynamicJsonDocument> _queue;
-};
+    static global_queue queue;
+} // namespace global_queue
 
 #endif // __GLOBAL_QUEUE_HPP__

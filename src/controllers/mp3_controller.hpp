@@ -12,7 +12,8 @@ namespace json_parser
     public:
         explicit mp3_controller();
         bool initialize() override;
-        void update() override;
+        void update() override
+        {}
 
     private:
         bool stop_playing(const JsonObjectConst *json);

@@ -10,8 +10,8 @@ namespace json_parser
     {
     public:
         explicit leds_controller();
-        void update() override;
         bool initialize() override;
+        void update() override;
 
     private:
         bool polish_animation(const JsonObjectConst *json);

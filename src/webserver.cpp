@@ -1,6 +1,7 @@
 #include <ArduinoJson.h>
 #include "webserver.hpp"
 #include "debug.hpp"
+#include "global_queue.hpp"
 
 #if WEB_SERVER_DEBUG
 
@@ -10,8 +11,8 @@
 
 #else
 
-#define LOG_ENGINE(message)
-#define LOG_ENGINE_NL(message)
+#define LOG_WEBSERVER(message)
+#define LOG_WEBSERVER_NL(message)
 #define LOG_WEBSERVER_F(...)
 
 #endif
@@ -22,24 +23,24 @@ DNSServer webserver::dns;
 
 void webserver::init_entire_web()
 {
-    LOG_NL("Initing file system...");
+    LOG_NL("[webserver] initing file system...")
     if (SPIFFS.begin())
     {
-        LOG_NL("Initing access points...");
+        LOG_NL("[webserver] initing access points...")
         init_access_point();
-        LOG_NL("Initing web server...");
+        LOG_NL("[webserver] initing web server...")
         init_web_server();
-        LOG_NL("Initing web socket...");
+        LOG_NL("[webserver] initing web socket...")
         init_web_socket();
-        LOG_NL("Initing DNS...");
+        LOG_NL("[webserver] initing DNS...")
         init_dns();
-        LOG_NL("Starting server...");
+        LOG_NL("[webserver] starting server...")
         web_server.begin();
-        LOG_NL("Good to go!");
+        LOG_NL("[webserver] good to go!")
     }
     else
     {
-        LOG_NL("Error occured while initing SPIFFS");
+        LOG_NL("[webserver] error occured while initing SPIFFS")
     }
 }
 
@@ -117,8 +118,12 @@ void webserver::handle_web_socket(AsyncWebSocket *server, AsyncWebSocketClient *
             // 1st case -> entire message was sent in a single frame
             if (frame->final && frame->index == 0 && frame->len == len)
             {
-                DynamicJsonDocument json(1024);
-                deserializeJson(json, (const char*) data, len);
+                DynamicJsonDocument* json = new DynamicJsonDocument(256);
+                auto error = deserializeJson(*json, (const char*) data, len);
+                if(error || !global_queue::queue.push(json))
+                {
+                    delete json;
+                }
             }
             // else
             // {

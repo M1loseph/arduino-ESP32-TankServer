@@ -11,8 +11,8 @@ namespace json_parser
     public:
 
         explicit engines_controller();
-        void update() override;
         bool initialize() override;
+        void update() override;
 
         enum class speed_controll
         {

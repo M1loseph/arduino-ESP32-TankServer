@@ -13,8 +13,8 @@ namespace json_parser
     public:
         explicit arm_controller();
 
-        void update() override;
         bool initialize() override;
+        void update() override;
 
     private:
         typedef struct

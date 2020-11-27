@@ -26,6 +26,7 @@ namespace json_parser
             }
             return handle_resoult::not_permited;
         }
+        inline const char *get_name() { return _name; }
 
         virtual void update() = 0;
         virtual bool initialize() = 0;

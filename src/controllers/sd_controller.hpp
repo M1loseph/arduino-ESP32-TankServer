@@ -9,8 +9,9 @@ namespace json_parser
     public:
 
         explicit sd_controller();
-        void update() override;
         bool initialize() override;
+        void update() override
+        {}
 
     private:
         bool can_handle(const JsonObjectConst &json) const override;

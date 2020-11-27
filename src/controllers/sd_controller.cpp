@@ -21,10 +21,6 @@ namespace json_parser
     {
     }
 
-    void sd_controller::update()
-    {
-    }
-
     bool sd_controller::initialize()
     {
         return SD.begin(CHIP_SELECT);

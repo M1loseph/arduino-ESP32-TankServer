@@ -14,7 +14,9 @@ namespace json_parser
     {
     public:
         uint8_t handle(const JsonObjectConst& json);
+        void hadnle_updates();
         bool add_controller(std::unique_ptr<controller>&& controller);
+        bool initialize_all();
 
     private:
         std::vector<std::unique_ptr<controller>> _controllers;

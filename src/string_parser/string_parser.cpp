@@ -2,15 +2,15 @@
 #include "string_parser.hpp"
 #include "debug.h"
 
-#if PARSER_DEBUG
+#if STRING_PARSER_DEBUG
 
-#define LOG_PARSER(message) LOG(message)
-#define LOG_PARSER_NL(message) LOG_NL(message)
+#define LOG_STRING_PARSER(message) LOG(message)
+#define LOG_STRING_PARSER_NL(message) LOG_NL(message)
 
 #else
 
-#define LOG_PARSER(message)
-#define LOG_PARSER_NL(message)
+#define LOG_STRING_PARSER(message)
+#define LOG_STRING_PARSER_NL(message)
 
 #endif
 
@@ -28,8 +28,8 @@ namespace string_parser
                 auto *event = get_event(command);
                 if (event)
                 {
-                    LOG_PARSER("Executing ")
-                    LOG_PARSER_NL(event->command)
+                    LOG_STRING_PARSER("Executing ")
+                    LOG_STRING_PARSER_NL(event->command)
                     event->fun(buffer);
                     if_executed = true;
                 }

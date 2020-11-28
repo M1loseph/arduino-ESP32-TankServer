@@ -27,7 +27,7 @@ namespace json_parser
         Serial2.begin(9600);
         mp3.begin();
         mp3.setSynchronous(false);
-        mp3.volume(volume);
+        mp3.volume(DEF_VOLUME);
         windows_xp(nullptr);
 
         bool if_added = true;

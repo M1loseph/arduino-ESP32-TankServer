@@ -40,8 +40,8 @@ namespace json_parser
         bool true_survivor(const JsonObjectConst *json);
         bool windows_xp(const JsonObjectConst *json);
 
+        static constexpr uint8_t DEF_VOLUME = 15U;
 
-    private:
         static constexpr const char *PROPAGANDA = "PROPAGANDA";
         static constexpr const char *MIGHTY_POLISH_TANK = "MIGHTY_POLISH_TANK";
         static constexpr const char *WINDOWS_XP = "WINDOWS_XP";
@@ -69,7 +69,6 @@ namespace json_parser
         static constexpr const char *VOLUME_KEY = "volume";
 
         MD_YX5300 mp3;
-        uint8_t volume = 15U;
     };
 } // namespace json_parser
 

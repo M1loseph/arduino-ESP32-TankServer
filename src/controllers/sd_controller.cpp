@@ -42,6 +42,8 @@ namespace json_parser
         {
             serializeJson(json, _file);
             LOG_SD_F("[%s] serialized JSON\n", _name)
+            _file.close();
+            return true;
         }
         LOG_SD_F("[%s] unable to open the file\n", _name)
         return false;

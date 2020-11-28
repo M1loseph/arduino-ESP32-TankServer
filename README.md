@@ -14,6 +14,3 @@ This is a project of a remote-controlled tank that is based on the ESP 32 microc
 
 ![alt text](./readme_images/indoor.jpg)
 ![alt text](./readme_images/outdoor.jpg)
-
-### Gamepad graphics source
-https://pixabay.com/vectors/controller-gamepad-xbox-video-games-1827840/

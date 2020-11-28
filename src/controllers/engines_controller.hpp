@@ -78,13 +78,13 @@ namespace json_parser
         const char *get_engine_from_json(const JsonObjectConst *json);
         size_t get_speed_from_json(const JsonObjectConst *json, bool *succ);
 
-        static constexpr const char *FORWARD = "FORWARD";
-        static constexpr const char *BACKWARD = "BACKWARD";
-        static constexpr const char *STOP = "STOP";
-        static constexpr const char *FASTER = "FASTER";
-        static constexpr const char *SLOWER = "SLOWER";
-        static constexpr const char *KEEP_SPEED = "KEEP_SPEED";
-        static constexpr const char *SPEED = "SPEED";
+        static constexpr const char *FORWARD = "forward";
+        static constexpr const char *BACKWARD = "backward";
+        static constexpr const char *STOP = "stop";
+        static constexpr const char *FASTER = "faster";
+        static constexpr const char *SLOWER = "slower";
+        static constexpr const char *KEEP_SPEED = "keep_speed";
+        static constexpr const char *SPEED = "speed";
 
         static constexpr const char *LEFT = "left";
         static constexpr const char *RIGHT = "right";

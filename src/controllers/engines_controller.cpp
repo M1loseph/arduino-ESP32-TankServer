@@ -383,22 +383,22 @@ namespace json_parser
                 if (new_speed <= SPEED_MAX)
                 {
                     (*succ) = true;
-                    LOG_ENGINE_F("[engine_controller] got speed %d\n", new_speed)
+                    LOG_ENGINE_F("[%s] got speed %d\n", _name, new_speed)
                     return new_speed;
                 }
                 else
                 {
-                    LOG_ENGINE_F("[engine_controller] too fast %d\n", new_speed)
+                    LOG_ENGINE_F("[%s] too fast %d\n", _name, new_speed)
                 }
             }
             else
             {
-                LOG_ENGINE_NL("[engine_controller] no speed key")
+                LOG_ENGINE_F("[%s] no speed key\n", _name)
             }
         }
         else
         {
-            LOG_ENGINE_NL("[engine_controller] no json")
+            LOG_ENGINE_F("[%s] no json\n", _name)
         }
         (*succ) = false;
         return 0U;

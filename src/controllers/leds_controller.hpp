@@ -40,18 +40,18 @@ namespace json_parser
             STOP,
         };
 
-        static constexpr const char *POLISH = "POLISH";
-        static constexpr const char *EUROBEAT = "EUROBEAT";
-        static constexpr const char *CUSTOM_COLOR = "CUSTOM_COLOR";
-        static constexpr const char *RANDOM = "RANDOM";
-        static constexpr const char *SET_CUSTOM_COLOR = "SET_CUSTOM_COLOR";
-        static constexpr const char *ANIMATION_FORWARD = "ANIMATION_FORWARD";
-        static constexpr const char *ANIMATION_BACKWARD = "ANIMATION_BACKWARD";
-        static constexpr const char *ANIMATION_STOP = "ANIMATION_STOP";
-        static constexpr const char *OFF = "OFF";
+        static constexpr const char *POLISH = "polish";
+        static constexpr const char *EUROBEAT = "eurobeat";
+        static constexpr const char *CUSTOM_COLOR = "custom_color";
+        static constexpr const char *RANDOM = "random";
+        static constexpr const char *SET_CUSTOM_COLOR = "set_custom_color";
+        static constexpr const char *ANIMATION_FORWARD = "animation_forward";
+        static constexpr const char *ANIMATION_BACKWARD = "animation_backward";
+        static constexpr const char *ANIMATION_STOP = "animation_stop";
+        static constexpr const char *OFF = "off";
 
-        static constexpr const char *SET_BRIGHTNESS = "SET_BRIGHTNESS";
-        static constexpr const char *SET_ANIMATION_INTERVAL = "SET_INTERVAL";
+        static constexpr const char *SET_BRIGHTNESS = "set_brightness";
+        static constexpr const char *SET_ANIMATION_INTERVAL = "set_interval";
 
         static constexpr const char *COLORS_KEY = "colors";
         static constexpr const char *BRIGHTNESS_KEY = "brightness";

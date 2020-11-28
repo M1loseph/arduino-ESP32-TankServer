@@ -42,29 +42,29 @@ namespace json_parser
 
         static constexpr uint8_t DEF_VOLUME = 15U;
 
-        static constexpr const char *PROPAGANDA = "PROPAGANDA";
-        static constexpr const char *MIGHTY_POLISH_TANK = "MIGHTY_POLISH_TANK";
-        static constexpr const char *WINDOWS_XP = "WINDOWS_XP";
-        static constexpr const char *HIGH_GROUND = "HIGH_GROUND";
-        static constexpr const char *FINE_ADDITION = "FINE_ADDITION";
-        static constexpr const char *I_DONT_LIKE_SAND = "I_DONT_LIKE_SAND";
-        static constexpr const char *HELLO_THERE = "HELLO_THERE";
-        static constexpr const char *IM_THE_SENATE = "IM_THE_SENATE";
-        static constexpr const char *FOREVER_YOUNG = "FOREVER_YOUNG";
-        static constexpr const char *REVENGE = "REVENGE";
-        static constexpr const char *SILHOUETTE = "SILHOUETTE";
-        static constexpr const char *THE_BAD_TOUCH = "THE_BAD_TOUCH";
-        static constexpr const char *HERO = "HERO";
-        static constexpr const char *GAS_GAS_GAS = "GAS_GAS_GAS";
-        static constexpr const char *RUNNING_IN_THE_90S = "RUNNING_IN_THE_90S";
-        static constexpr const char *DEJA_VU = "DEJA_VU";
-        static constexpr const char *RUNNING_IN_THE_90S_SHORT = "RUNNING_IN_THE_90S_SHORT";
-        static constexpr const char *DEJA_VU_SHORT = "DEJA_VU_SHORT";
-        static constexpr const char *TRUE_SURVIVOR = "TRUE_SURVIVOR";
+        static constexpr const char *PROPAGANDA = "propaganda";
+        static constexpr const char *MIGHTY_POLISH_TANK = "mighty_polish_tank";
+        static constexpr const char *WINDOWS_XP = "windows_xp";
+        static constexpr const char *HIGH_GROUND = "high_ground";
+        static constexpr const char *FINE_ADDITION = "fine_addition";
+        static constexpr const char *I_DONT_LIKE_SAND = "i_dont_like_sand";
+        static constexpr const char *HELLO_THERE = "hello_there";
+        static constexpr const char *IM_THE_SENATE = "im_the_senate";
+        static constexpr const char *FOREVER_YOUNG = "forever_young";
+        static constexpr const char *REVENGE = "revenge";
+        static constexpr const char *SILHOUETTE = "silhouette";
+        static constexpr const char *THE_BAD_TOUCH = "the_bad_touch";
+        static constexpr const char *HERO = "hero";
+        static constexpr const char *GAS_GAS_GAS = "gas_gas_gas";
+        static constexpr const char *RUNNING_IN_THE_90S = "running_in_the_90s";
+        static constexpr const char *DEJA_VU = "deja_vu";
+        static constexpr const char *RUNNING_IN_THE_90S_SHORT = "running_in_the_90s_short";
+        static constexpr const char *DEJA_VU_SHORT = "deja_vu_short";
+        static constexpr const char *TRUE_SURVIVOR = "true_survivor";
 
-        static constexpr const char *STOP = "STOP";
-        static constexpr const char *RESUME = "RESUME";
-        static constexpr const char *SET_VOLUME = "SET_VOLUME";
+        static constexpr const char *STOP = "stop";
+        static constexpr const char *RESUME = "resume";
+        static constexpr const char *SET_VOLUME = "set_volume";
 
         static constexpr const char *VOLUME_KEY = "volume";
 

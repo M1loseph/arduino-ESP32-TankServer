@@ -67,8 +67,8 @@ void webserver::init_web_server()
         request->send(SPIFFS, "/index.html", "text/html");
     });
 
-    web_server.on("/js/main.js", HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(SPIFFS, "/js/main.js", "text/javascript");
+    web_server.on("/js/index.js", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SPIFFS, "/js/index.js", "text/javascript");
     });
 
     web_server.on("/styles/styles.css", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -83,24 +83,12 @@ void webserver::init_web_server()
         request->send(SPIFFS, "/js/gamepad_processing.js", "text/javascript");
     });
 
-    web_server.on("/js/tank_commands.js", HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(SPIFFS, "/js/tank_commands.js", "text/javascript");
-    });
-
     web_server.on("/js/websocket.js", HTTP_GET, [](AsyncWebServerRequest *request) {
         request->send(SPIFFS, "/js/websocket.js", "text/javascript");
     });
 
-    web_server.on("/images/controller.svg", HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(SPIFFS, "/images/controller.svg", "image/svg+xml");
-    });
-
     web_server.on("/favicon.ico", HTTP_GET, [](AsyncWebServerRequest *request) {
         request->send(SPIFFS, "/favicon.ico", "image/png");
-    });
-
-    web_server.on("/js/jquery-3.5.1.min.js", HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(SPIFFS, "/js/jquery-3.5.1.min.js");
     });
 }
 
@@ -160,8 +148,17 @@ void webserver::handle_web_socket(AsyncWebSocket *server, AsyncWebSocketClient *
     {
         LOG_WEBSERVER_F("ws[%u] disconnect\n", client->id());
         size_t clients = server->getClients().length();
-        // if (!clients)
-        //     json_parser::stop();
+        if (!clients)
+        {
+            DynamicJsonDocument* json = new DynamicJsonDocument(256);
+            (*json)["controller"] = "engines";
+            (*json)["command"] = "STOP";
+            (*json)["engines"] = "both";
+            if(!global_queue::queue.push(&json))
+            {
+                delete json;
+            }
+        }
     }
 #if WEB_SERVER_DEBUG
     else if (type == WS_EVT_CONNECT)

@@ -2,6 +2,7 @@
 #define __WEBSERVER_H__
 
 #include <AsyncWebSocket.h>
+#include <ArduinoJson.h>
 #include <SPIFFS.h>
 #include <ESPAsyncWebServer.h>
 #include <SPIFFSEditor.h>
@@ -13,6 +14,7 @@ public:
     static void process_web();
 
 private:
+    static void send_or_delete(DynamicJsonDocument *json, const char* data, size_t len);
     static void handle_web_socket(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len);
     static void init_access_point();
     static void init_web_server();

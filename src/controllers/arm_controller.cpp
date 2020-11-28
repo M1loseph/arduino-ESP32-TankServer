@@ -122,7 +122,7 @@ namespace json_parser
         if (servo)
         {
             servo->destination_angle = servo->current_angle;
-            LOG_ARM_F("[%s] servo %S stopping at angle %d\n", _name, servo->NAME, servo->current_angle)
+            LOG_ARM_F("[%s] servo %s stopping at angle %d\n", _name, servo->NAME, servo->current_angle)
             return true;
         }
         return false;

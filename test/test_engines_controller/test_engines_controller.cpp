@@ -4,11 +4,14 @@
 
 json_parser::engines_controller ec;
 
-void test_not_permited()
+void test_permissions()
 {
     StaticJsonDocument<256> json;
+    TEST_ASSERT_EQUAL(json_parser::controller::handle_resoult::not_permited, ec.try_handle(json.as<JsonObjectConst>()));
     json["controller"] = "enginess";
-    TEST_ASSERT_EQUAL(json_parser::controller::handle_resoult::not_permited ,ec.try_handle(json.as<JsonObjectConst>()));
+    TEST_ASSERT_EQUAL(json_parser::controller::handle_resoult::not_permited, ec.try_handle(json.as<JsonObjectConst>()));
+    json["controller"] = "engines";
+    TEST_ASSERT_EQUAL(json_parser::controller::handle_resoult::error, ec.try_handle(json.as<JsonObjectConst>()));
 }
 
 void test_handle_error()
@@ -172,6 +175,8 @@ void setup()
     delay(2000);
     ec.initialize();
     UNITY_BEGIN();
+    RUN_TEST(test_permissions);
+    RUN_TEST(test_handle_error);
     RUN_TEST(test_forward_and_stop);
     RUN_TEST(test_backward_and_stop);
     RUN_TEST(test_faster_and_keep_speed);

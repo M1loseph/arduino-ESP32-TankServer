@@ -6,7 +6,6 @@
 #include <vector>
 #include <memory>
 #include <utility>
-#include <unity.h>
 #include "controllers/abstract/controller.hpp"
 
 namespace json_parser

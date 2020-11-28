@@ -21,12 +21,21 @@ namespace json_parser
             KEEP_SPEED
         };
 
-        enum class engine_direction
+        enum class direction
         {
             BACKWARD,
             FORWARD,
             STOP
         };
+
+        inline speed_controll get_speed_controll_left() { return _speed_controll_left; }
+        inline speed_controll get_speed_controll_right() { return _speed_controll_right; }
+
+        inline direction get_direction_left() { return _direction_left; }
+        inline direction get_direction_right() { return _direction_right; }
+
+        inline uint32_t get_speed_left() { return _speed_left; }
+        inline uint32_t get_speed_right() { return _speed_right; }
 
     private:
         void disable_speed_left();
@@ -111,8 +120,8 @@ namespace json_parser
         speed_controll _speed_controll_left = speed_controll::KEEP_SPEED;
         speed_controll _speed_controll_right = speed_controll::KEEP_SPEED;
 
-        engine_direction _direction_left = engine_direction::STOP;
-        engine_direction _direction_right = engine_direction::STOP;
+        direction _direction_left = direction::STOP;
+        direction _direction_right = direction::STOP;
 
         uint32_t _speed_left = SPEED_DEFAULT;
         uint32_t _speed_right = SPEED_DEFAULT;

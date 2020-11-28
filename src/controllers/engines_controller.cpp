@@ -124,7 +124,7 @@ namespace json_parser
         disable_speed_left();
         digitalWrite(PIN_FRONT_LEFT, HIGH);
         digitalWrite(PIN_BACK_LEFT, LOW);
-        _direction_left = engine_direction::FORWARD;
+        _direction_left = direction::FORWARD;
         enable_speed_left();
         LOG_ENGINE_NL("[engine_controller] forward left")
         return true;
@@ -135,7 +135,7 @@ namespace json_parser
         disable_speed_right();
         digitalWrite(PIN_FRONT_RIGHT, HIGH);
         digitalWrite(PIN_BACK_RIGHT, LOW);
-        _direction_right = engine_direction::FORWARD;
+        _direction_right = direction::FORWARD;
         enable_speed_right();
         LOG_ENGINE_NL("[engine_controller] forward right")
         return true;
@@ -154,7 +154,7 @@ namespace json_parser
         disable_speed_left();
         digitalWrite(PIN_FRONT_LEFT, LOW);
         digitalWrite(PIN_BACK_LEFT, HIGH);
-        _direction_left = engine_direction::BACKWARD;
+        _direction_left = direction::BACKWARD;
         enable_speed_left();
         LOG_ENGINE_NL("[engine_controller] backward left")
         return true;
@@ -165,7 +165,7 @@ namespace json_parser
         disable_speed_right();
         digitalWrite(PIN_FRONT_RIGHT, LOW);
         digitalWrite(PIN_BACK_RIGHT, HIGH);
-        _direction_right = engine_direction::BACKWARD;
+        _direction_right = direction::BACKWARD;
         enable_speed_right();
         LOG_ENGINE_NL("[engine_controller] backward right")
         return true;
@@ -184,7 +184,7 @@ namespace json_parser
         disable_speed_left();
         digitalWrite(PIN_FRONT_LEFT, LOW);
         digitalWrite(PIN_BACK_LEFT, LOW);
-        _direction_left = engine_direction::STOP;
+        _direction_left = direction::STOP;
         LOG_ENGINE_NL("[engine_controller] stop left")
         return true;
     }
@@ -194,7 +194,7 @@ namespace json_parser
         disable_speed_right();
         digitalWrite(PIN_FRONT_RIGHT, LOW);
         digitalWrite(PIN_BACK_RIGHT, LOW);
-        _direction_right = engine_direction::STOP;
+        _direction_right = direction::STOP;
         LOG_ENGINE_NL("[engine_controller] stop right")
         return true;
     }
@@ -288,7 +288,7 @@ namespace json_parser
             if (json->containsKey(SPEED_KEY))
             {
                 uint32_t new_speed = (*json)[SPEED_KEY];
-                if (new_speed < SPEED_MAX)
+                if (new_speed <= SPEED_MAX)
                 {
                     (*succ) = true;
                     LOG_ENGINE_F("[engine_controller] got speed %d\n", new_speed)

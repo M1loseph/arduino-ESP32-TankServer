@@ -21,12 +21,27 @@ namespace json_parser
     {
     }
 
+    arm_controller::servo_data *arm_controller::get_servo_by_name(const char *servo_name)
+    {
+        if (servo_name)
+        {
+            for (uint8_t i = 0; i < SERVOS; i++)
+            {
+                if (!strcmp(arm[i].NAME, servo_name))
+                {
+                    return arm + i;
+                }
+            }
+        }
+        return nullptr;
+    }
+
     void arm_controller::send_angle(uint8_t index)
     {
         if (index < SERVOS)
         {
             uint16_t pulse = static_cast<uint16_t>(map(arm[index].current_angle, 0, 180, PULSE_MS_MIN, PULSE_MS_MAX));
-            LOG_ARM_F("[%s] sending pulse %d to servo %d\n", _name, pulse, arm[index].extern_module_pin);
+            LOG_ARM_F("[%s] sending pulse %d to servo %s\n", _name, pulse, arm[index].NAME);
             _pwm.writeMicroseconds(arm[index].extern_module_pin, pulse);
         }
     }
@@ -38,14 +53,12 @@ namespace json_parser
             if (json->containsKey(NAME_KEY))
             {
                 const char *servo_name = (*json)[NAME_KEY];
-                for (uint8_t i = 0; i < SERVOS; i++)
+                auto servo = get_servo_by_name(servo_name);
+                if (!servo)
                 {
-                    if (!strcmp(arm[i].NAME, servo_name))
-                    {
-                        return arm + i;
-                    }
+                    LOG_ARM_F("[%s] wrong servo name\n", _name)
                 }
-                LOG_ARM_F("[%s] wrong servo name\n", _name)
+                return servo;
             }
             else
             {
@@ -108,8 +121,8 @@ namespace json_parser
         servo_data *servo = get_servo_ptr(json);
         if (servo)
         {
-            servo->destination_angle = servo->MAX_ANGLE;
-            LOG_ARM_F("[%s] servo at index %d stopping at angle %d\n", _name, servo->extern_module_pin, servo->current_angle)
+            servo->destination_angle = servo->current_angle;
+            LOG_ARM_F("[%s] servo %S stopping at angle %d\n", _name, servo->NAME, servo->current_angle)
             return true;
         }
         return false;
@@ -122,7 +135,7 @@ namespace json_parser
         {
             if (json->containsKey(ANGLE_KEY))
             {
-                int new_angle = (*json)[ANGLE_KEY];
+                uint8_t new_angle = (*json)[ANGLE_KEY];
                 if (new_angle >= servo->MIN_ANGLE && new_angle <= servo->MAX_ANGLE)
                 {
                     servo->destination_angle = new_angle;

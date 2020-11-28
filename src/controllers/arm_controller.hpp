@@ -16,7 +16,6 @@ namespace json_parser
         bool initialize() override;
         void update() override;
 
-    private:
         typedef struct
         {
             const char *const NAME;
@@ -27,6 +26,9 @@ namespace json_parser
             uint8_t extern_module_pin;
         } servo_data;
 
+        servo_data* get_servo_by_name(const char* servo_name);
+
+    private:
         bool servo_minus(const JsonObjectConst *json);
         bool servo_plus(const JsonObjectConst *json);
         bool servo_stop(const JsonObjectConst *json);

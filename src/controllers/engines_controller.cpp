@@ -76,91 +76,102 @@ namespace json_parser
 #endif
         LOG_ENGINE_NL("[engine_controller] initialized engine pins")
 
-        _events.reserve(20U);
         bool if_added = true;
 
         if_added &= add_event(FORWARD, &engines_controller::forward);
-        if_added &= add_event(FORWARD_LEFT, &engines_controller::forward_left);
-        if_added &= add_event(FORWARD_RIGHT, &engines_controller::forward_right);
-
         if_added &= add_event(BACKWARD, &engines_controller::backward);
-        if_added &= add_event(BACKWARD_LEFT, &engines_controller::backward_left);
-        if_added &= add_event(BACKWARD_RIGHT, &engines_controller::backward_right);
-
         if_added &= add_event(STOP, &engines_controller::stop);
-        if_added &= add_event(STOP_LEFT, &engines_controller::stop_left);
-        if_added &= add_event(STOP_RIGHT, &engines_controller::stop_right);
-
         if_added &= add_event(FASTER, &engines_controller::faster);
-        if_added &= add_event(FASTER_LEFT, &engines_controller::faster_left);
-        if_added &= add_event(FASTER_RIGHT, &engines_controller::faster_right);
-
         if_added &= add_event(SLOWER, &engines_controller::slower);
-        if_added &= add_event(SLOWER_LEFT, &engines_controller::slower_left);
-        if_added &= add_event(SLOWER_RIGHT, &engines_controller::slower_right);
-
         if_added &= add_event(KEEP_SPEED, &engines_controller::keep_speed);
-        if_added &= add_event(KEEP_SPEED_LEFT, &engines_controller::keep_speed_left);
-        if_added &= add_event(KEEP_SPEED_RIGHT, &engines_controller::keep_speed_right);
-
         if_added &= add_event(SPEED, &engines_controller::set_speed);
-        if_added &= add_event(SPEED_LEFT, &engines_controller::set_speed_left);
-        if_added &= add_event(SPEED_RIGHT, &engines_controller::set_speed_right);
 
         return true;
     }
 
     bool engines_controller::forward(const JsonObjectConst *json)
     {
-        forward_left(json);
-        forward_right(json);
-        LOG_ENGINE_NL("[engine_controller] both forward")
-        return true;
+        bool if_executed = false;
+        const char *engines = get_engine_from_json(json);
+        if (engines)
+        {
+            if (!strcmp(engines, BOTH))
+            {
+                forward_left();
+                forward_right();
+                if_executed = true;
+            }
+            else if (!strcmp(engines, LEFT))
+            {
+                forward_left();
+                if_executed = true;
+            }
+            else if (!strcmp(engines, RIGHT))
+            {
+                forward_right();
+                if_executed = true;
+            }
+        }
+        return if_executed;
     }
 
-    bool engines_controller::forward_left(const JsonObjectConst *json)
+    void engines_controller::forward_left()
     {
-        // disabling speed pin just in case
         disable_speed_left();
         digitalWrite(PIN_FRONT_LEFT, HIGH);
         digitalWrite(PIN_BACK_LEFT, LOW);
         _direction_left = direction::FORWARD;
         enable_speed_left();
-        LOG_ENGINE_NL("[engine_controller] forward left")
-        return true;
+        LOG_ENGINE_F("[%s] forward left\n", _name)
     }
 
-    bool engines_controller::forward_right(const JsonObjectConst *json)
+    void engines_controller::forward_right()
     {
         disable_speed_right();
         digitalWrite(PIN_FRONT_RIGHT, HIGH);
         digitalWrite(PIN_BACK_RIGHT, LOW);
         _direction_right = direction::FORWARD;
         enable_speed_right();
-        LOG_ENGINE_NL("[engine_controller] forward right")
-        return true;
+        LOG_ENGINE_F("[%s] forward right\n", _name)
     }
 
     bool engines_controller::backward(const JsonObjectConst *json)
     {
-        backward_left(json);
-        backward_right(json);
-        LOG_ENGINE_NL("[engine_controller] both backward")
-        return true;
+        bool if_executed = false;
+        const char *engines = get_engine_from_json(json);
+        if (engines)
+        {
+            if (!strcmp(engines, BOTH))
+            {
+                backward_left();
+                backward_right();
+                if_executed = true;
+            }
+            else if (!strcmp(engines, LEFT))
+            {
+                backward_left();
+                if_executed = true;
+            }
+            else if (!strcmp(engines, RIGHT))
+            {
+                backward_right();
+                if_executed = true;
+            }
+        }
+        return if_executed;
     }
 
-    bool engines_controller::backward_left(const JsonObjectConst *json)
+    void engines_controller::backward_left()
     {
         disable_speed_left();
         digitalWrite(PIN_FRONT_LEFT, LOW);
         digitalWrite(PIN_BACK_LEFT, HIGH);
         _direction_left = direction::BACKWARD;
         enable_speed_left();
-        LOG_ENGINE_NL("[engine_controller] backward left")
-        return true;
+        LOG_ENGINE_F("[%s] backward left\n", _name)
     }
 
-    bool engines_controller::backward_right(const JsonObjectConst *json)
+    void engines_controller::backward_right()
     {
         disable_speed_right();
         digitalWrite(PIN_FRONT_RIGHT, LOW);
@@ -168,117 +179,198 @@ namespace json_parser
         _direction_right = direction::BACKWARD;
         enable_speed_right();
         LOG_ENGINE_NL("[engine_controller] backward right")
-        return true;
     }
 
     bool engines_controller::stop(const JsonObjectConst *json)
     {
-        stop_left(json);
-        stop_right(json);
-        LOG_ENGINE_NL("[engine_controller] both stop")
-        return true;
+        bool if_executed = false;
+        const char *engines = get_engine_from_json(json);
+        if (engines)
+        {
+            if (!strcmp(engines, BOTH))
+            {
+                stop_left();
+                stop_right();
+                if_executed = true;
+            }
+            else if (!strcmp(engines, LEFT))
+            {
+                stop_left();
+                if_executed = true;
+            }
+            else if (!strcmp(engines, RIGHT))
+            {
+                stop_right();
+                if_executed = true;
+            }
+        }
+        return if_executed;
     }
 
-    bool engines_controller::stop_left(const JsonObjectConst *json)
+    void engines_controller::stop_left()
     {
         disable_speed_left();
         digitalWrite(PIN_FRONT_LEFT, LOW);
         digitalWrite(PIN_BACK_LEFT, LOW);
         _direction_left = direction::STOP;
-        LOG_ENGINE_NL("[engine_controller] stop left")
-        return true;
+        LOG_ENGINE_F("[%s] stop left\n", _name)
     }
 
-    bool engines_controller::stop_right(const JsonObjectConst *json)
+    void engines_controller::stop_right()
     {
         disable_speed_right();
         digitalWrite(PIN_FRONT_RIGHT, LOW);
         digitalWrite(PIN_BACK_RIGHT, LOW);
         _direction_right = direction::STOP;
-        LOG_ENGINE_NL("[engine_controller] stop right")
-        return true;
+        LOG_ENGINE_F("[%s] stop right\n", _name)
     }
 
-    bool engines_controller::rotate_left(const JsonObjectConst *json)
+    bool engines_controller::rotate(const JsonObjectConst *json)
     {
-        backward_left(json);
-        forward_right(json);
-        LOG_ENGINE_NL("[engine_controller] rotate left")
-        return true;
+        bool if_executed = false;
+        const char *engines = get_engine_from_json(json);
+        if (engines)
+        {
+            if (!strcmp(engines, LEFT))
+            {
+                rotate_left();
+                if_executed = true;
+            }
+            else if (!strcmp(engines, RIGHT))
+            {
+                rotate_right();
+                if_executed = true;
+            }
+        }
+        return if_executed;
     }
 
-    bool engines_controller::rotate_right(const JsonObjectConst *json)
+    void engines_controller::rotate_left()
     {
-        forward_left(json);
-        backward_right(json);
-        LOG_ENGINE_NL("[engine_controller] rotate right")
-        return true;
+        backward_left();
+        forward_right();
+        LOG_ENGINE_F("[%s] rotate left\n", _name)
+    }
+
+    void engines_controller::rotate_right()
+    {
+        forward_left();
+        backward_right();
+        LOG_ENGINE_F("[%s] rotate right\n", _name)
     }
 
     bool engines_controller::slower(const JsonObjectConst *json)
     {
-        slower_left(json);
-        slower_right(json);
-        LOG_ENGINE_NL("[engine_controller] both slower")
-        return true;
+        bool if_executed = false;
+        const char *engines = get_engine_from_json(json);
+        if (engines)
+        {
+            if (!strcmp(engines, BOTH))
+            {
+                slower_left();
+                slower_right();
+                if_executed = true;
+            }
+            else if (!strcmp(engines, LEFT))
+            {
+                slower_left();
+                if_executed = true;
+            }
+            else if (!strcmp(engines, RIGHT))
+            {
+                slower_right();
+                if_executed = true;
+            }
+        }
+        return if_executed;
     }
 
-    bool engines_controller::slower_left(const JsonObjectConst *json)
+    void engines_controller::slower_left()
     {
         _speed_controll_left = speed_controll::SLOWER;
-        LOG_ENGINE_NL("[engine_controller] slower left")
-        return true;
+        LOG_ENGINE_F("[%s] slower left\n", _name)
     }
 
-    bool engines_controller::slower_right(const JsonObjectConst *json)
+    void engines_controller::slower_right()
     {
         _speed_controll_right = speed_controll::SLOWER;
-        LOG_ENGINE_NL("[engine_controller] slower right")
-        return true;
+        LOG_ENGINE_F("[%s] slower right\n", _name)
     }
 
     bool engines_controller::faster(const JsonObjectConst *json)
     {
-        faster_left(json);
-        faster_right(json);
-        LOG_ENGINE_NL("[engine_controller] both faster")
-        return true;
+        bool if_executed = false;
+        const char *engines = get_engine_from_json(json);
+        if (engines)
+        {
+            if (!strcmp(engines, BOTH))
+            {
+                faster_left();
+                faster_right();
+                if_executed = true;
+            }
+            else if (!strcmp(engines, LEFT))
+            {
+                faster_left();
+                if_executed = true;
+            }
+            else if (!strcmp(engines, RIGHT))
+            {
+                faster_right();
+                if_executed = true;
+            }
+        }
+        return if_executed;
     }
 
-    bool engines_controller::faster_left(const JsonObjectConst *json)
+    void engines_controller::faster_left()
     {
         _speed_controll_left = speed_controll::FASTER;
-        LOG_ENGINE_NL("[engine_controller] faster left")
-        return true;
+        LOG_ENGINE_F("[%s] faster left\n", _name)
     }
 
-    bool engines_controller::faster_right(const JsonObjectConst *json)
+    void engines_controller::faster_right()
     {
         _speed_controll_right = speed_controll::FASTER;
-        LOG_ENGINE_NL("[engine_controller] faster right")
-        return true;
+        LOG_ENGINE_F("[%s] faster right\n", _name)
     }
 
     bool engines_controller::keep_speed(const JsonObjectConst *json)
     {
-        keep_speed_left(json);
-        keep_speed_right(json);
-        LOG_ENGINE_NL("[engine_controller] both keep speed")
-        return true;
+        bool if_executed = false;
+        const char *engines = get_engine_from_json(json);
+        if (engines)
+        {
+            if (!strcmp(engines, BOTH))
+            {
+                keep_speed_left();
+                keep_speed_right();
+                if_executed = true;
+            }
+            else if (!strcmp(engines, LEFT))
+            {
+                keep_speed_left();
+                if_executed = true;
+            }
+            else if (!strcmp(engines, RIGHT))
+            {
+                keep_speed_right();
+                if_executed = true;
+            }
+        }
+        return if_executed;
     }
 
-    bool engines_controller::keep_speed_left(const JsonObjectConst *json)
+    void engines_controller::keep_speed_left()
     {
         _speed_controll_left = speed_controll::KEEP_SPEED;
-        LOG_ENGINE_NL("[engine_controller] left keeps speed")
-        return true;
+        LOG_ENGINE_F("[%s] left keeps speed\n", _name)
     }
 
-    bool engines_controller::keep_speed_right(const JsonObjectConst *json)
+    void engines_controller::keep_speed_right()
     {
         _speed_controll_right = speed_controll::KEEP_SPEED;
-        LOG_ENGINE_NL("[engine_controller] right keeps speed")
-        return true;
+        LOG_ENGINE_F("[%s] right keeps speed\n", _name)
     }
 
     size_t engines_controller::get_speed_from_json(const JsonObjectConst *json, bool *succ)
@@ -314,36 +406,60 @@ namespace json_parser
 
     bool engines_controller::set_speed(const JsonObjectConst *json)
     {
+        bool if_executed = false;
         bool succ = false;
         size_t new_speed = get_speed_from_json(json, &succ);
-        if (succ)
+        const char *engines = get_engine_from_json(json);
+        if (succ && engines)
         {
-            _speed_left = new_speed;
-            _speed_right = new_speed;
+            if (!strcmp(engines, BOTH))
+            {
+                set_speed_left(new_speed);
+                set_speed_right(new_speed);
+                if_executed = true;
+            }
+            else if (!strcmp(engines, LEFT))
+            {
+                set_speed_left(new_speed);
+                if_executed = true;
+            }
+            else if (!strcmp(engines, RIGHT))
+            {
+                set_speed_right(new_speed);
+                if_executed = true;
+            }
         }
-        return succ;
+        return if_executed;
     }
 
-    bool engines_controller::set_speed_left(const JsonObjectConst *json)
+    void engines_controller::set_speed_left(uint32_t new_speed)
     {
-        bool succ = false;
-        size_t new_speed = get_speed_from_json(json, &succ);
-        if (succ)
-        {
-            _speed_left = new_speed;
-        }
-        return succ;
+        _speed_left = new_speed;
     }
 
-    bool engines_controller::set_speed_right(const JsonObjectConst *json)
+    void engines_controller::set_speed_right(uint32_t new_speed)
     {
-        bool succ = false;
-        size_t new_speed = get_speed_from_json(json, &succ);
-        if (succ)
+        _speed_right = new_speed;
+    }
+
+    const char *engines_controller::get_engine_from_json(const JsonObjectConst *json)
+    {
+        if (json)
         {
-            _speed_right = new_speed;
+            if (json->containsKey(ENGINE_KEY))
+            {
+                return (*json)[ENGINE_KEY];
+            }
+            else
+            {
+                LOG_ENGINE_NL("[engine_controller] no engine key")
+            }
         }
-        return succ;
+        else
+        {
+            LOG_ENGINE_NL("[engine_controller] no json")
+        }
+        return nullptr;
     }
 
     void engines_controller::update()

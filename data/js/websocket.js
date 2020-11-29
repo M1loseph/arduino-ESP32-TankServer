@@ -17,10 +17,11 @@ webSocket.onmessage = e => {
     console.log(e);
 };
 
-function sendWS(message) {
-    console.log(message);
+const sendWS = (message) => {
+    const stringified = JSON.stringify(message);
+    console.log(stringified);
     if (webSocket.readyState === WebSocket.OPEN) {
-        webSocket.send(message);
+        webSocket.send(stringified);
     }
 }
 

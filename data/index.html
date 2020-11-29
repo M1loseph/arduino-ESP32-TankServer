@@ -7,147 +7,32 @@
     <title>Tank webserver</title>
     <link rel="icon" type="image/x-icon" href="./favicon.ico">
     <link rel="stylesheet" href="./styles/styles.css">
-    <script src="./js/jquery-3.5.1.min.js"></script>
+    <script type="module" src="./js/index.js"></script>
 </head>
 
 <body>
-    <div id="main-screen" onclick="closeSidebar(event)">
-
-        <div id="sidebar" class="sidebar hidden-sidebar">
-            <button class="dropdown-button sidebar-element">Music controll
-                <span class="caret-down">&#9660;</span>
-            </button>
-            <div class="dropdown-container hidden-dropdown-container">
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.MP3.STOP)">Stop</button>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.MP3.RESUME)">Resume</button>
-                <button class="sidebar-element" onclick="openVolumeDialog()">Set Volume</button>
-            </div>
-
-            <button class="dropdown-button sidebar-element">Star wars
-                <span class="caret-down">&#9660;</span>
-            </button>
-            <div class="dropdown-container hidden-dropdown-container">
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.MP3.HIGH_GROUND)">High Ground</button>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.MP3.FINE_ADDITION)">Fine Addition</button>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.MP3.I_DONT_LIKE_SAND)">Sand</button>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.MP3.HELLO_THERE)">Hello There</button>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.MP3.IM_THE_SENATE)">Senate</button>
-            </div>
-
-            <button class="dropdown-button sidebar-element">Songs
-                <span class="caret-down">&#9660;</span>
-            </button>
-            <div class="dropdown-container hidden-dropdown-container">
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.MP3.PROPAGANDA)">JoJo Propaganda</button>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.MP3.MIGHTY_POLISH_TANK)">Mighty Polish Tank</button>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.MP3.WINDOWS_XP)">Windows XP</button>
-                <div class="sidebar-spacer"></div>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.MP3.FOREVER_YOUNG)">Forever Young</button>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.MP3.REVENGE)">Revenge</button>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.MP3.SILHOUETTE)">Silhouette</button>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.MP3.THE_BAD_TOUCH)">The Bad Touch</button>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.MP3.HERO)">Hero</button>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.MP3.GAS_GAS_GAS)">Gas Gas Gas</button>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.MP3.RUNNING_IN_THE_90S)">Running in the 90s</button>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.MP3.DEJA_VU)">Deja vu</button>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.MP3.RUNNING_IN_THE_90S_SHORT)">Running in the 90s short</button>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.MP3.DEJA_VU_SHORT)">Deja vu short</button>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.MP3.TRUE_SURVIVOR)">True Survivor</button>
-            </div>
-
-            <button class="dropdown-button sidebar-element">LED
-                <span class="caret-down">&#9660;</span>
-            </button>
-            <div class="dropdown-container hidden-dropdown-container">
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.LED.OFF)">Turn Off</button>
-                <div class="sidebar-spacer"></div>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.LED.EUROBEAT)">Eurobeat</button>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.LED.POLISH)">Polish Flag</button>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.LED.RANDOM)">Random</button>
-                <button class="sidebar-element" onclick="openColorPickerDialog()">Set Custom Color</button>
-                <div class="sidebar-spacer"></div>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.LED.ANIMATION_FORWARD)">Animation Forward</button>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.LED.ANIMATION_BACKWARD)">Animation Backward</button>
-                <button class="sidebar-element" onclick="sendWS(COMMANDS.LED.ANIMATION_STOP)">Animation Off</button>
-                <div class="sidebar-spacer"></div>
-                <button class="sidebar-element" onclick="openBrightnessDialog()">Set Brightness</button>
-                <button class="sidebar-element" onclick="openIntervalDialog()">Set Animation Interval</button>
-            </div>
-
-            <button class="dropdown-button sidebar-element">Engines
-                <span class="caret-down">&#9660;</span>
-            </button>
-
-            <div class="dropdown-container hidden-dropdown-container">
-                <button class="sidebar-element" onclick="openSpeedDialog()">Set Speed</button>
-            </div>
+    <div class="button-container">
+        <div class="options-button">
+            <span class="button-name">music</span>
+            <span class="button-icon">&#9835;</span>
         </div>
-
-        <div id="modal" class="modal hidden-modal" onclick="closeDialogs()"></div>
-
-        <button class="openbtn" onclick="openSidebar()">☰ Open Configuration</button>
-
-
-        <div id="gamepad-container" class="imgbox">
-            <img id="gamepad-image" class="center-fit" src="./images/controller.svg" alt="Gamepad image">
-            <!-- <map name="gamepad-buttons">
-                <area shape="circle" coords="383,112,18" onclick="console.log('chuj')" alt="dunno" href="" />
-            </map> -->
+        <div class="options-button">
+            <span class="button-name">arm</span>
+            <span class="button-icon">&#129302;</span>
         </div>
-
-        <!-- <script>
-            document.getElementById('gamepad-image').onclick = function(event) {
-                var x = event.pageX - this.offsetLeft;
-                var y = event.pageY - this.offsetTop;
-                alert("X Coordinate: " + x + " Y Coordinate: " + y);;
-            };
-        </script> -->
-
-        <div id="color-picker-dialog" class="dialog-window hidden-dialog">
-            <div class="dialog-content">
-                <span class="dialog-title">Choose New Color</span>
-                <input id="led-color-picker" class="dialog-color-picker" type="color">
-            </div>
-            <button class="dialog-button" onclick="sendColor()">Set</button>
+        <div class="options-button">
+            <span class="button-name">engines</span>
+            <span class="button-icon">&#128663;</span>
         </div>
-
-        <div id="speed-dialog" class="dialog-window hidden-dialog">
-            <div class="dialog-content">
-                <span class="dialog-title">Choose New Speed</span>
-                <span id="speed-slider-label" class="slider-label"></span>
-                <input id="speed-slider" class="dialog-slider" type="range" min="0" max="1023" value="700">
-            </div>
-            <button class="dialog-button" onclick="sendSpeed()">Set</button>
+        <div class="options-button">
+            <span class="button-name">led</span>
+            <span class="button-icon">&#128161;</span>
         </div>
-
-        <div id="volume-dialog" class="dialog-window hidden-dialog">
-            <div class="dialog-content">
-                <span class="dialog-title">Choose New Volume</span>
-                <span id="volume-slider-label" class="slider-label"></span>
-                <input id="volume-slider" class="dialog-slider" type="range" min="0" max="30" value="15">
-            </div>
-            <button class="dialog-button" onclick="sendVolume()">Set</button>
-        </div>
-
-        <div id="brightness-dialog" class="dialog-window hidden-dialog">
-            <div class="dialog-content">
-                <span class="dialog-title">Choose New Brightness</span>
-                <span id="brightness-slider-label" class="slider-label"></span>
-                <input id="brightness-slider" class="dialog-slider" type="range" min="0" max="255" value="100">
-            </div>
-            <button class="dialog-button" onclick="sendBrightness()">Set</button>
-        </div>
-
-        <div id="interval-dialog" class="dialog-window hidden-dialog">
-            <div class="dialog-content">
-                <span class="dialog-title">Choose New Interval</span>
-                <span id="interval-slider-label" class="slider-label"></span>
-                <input id="interval-slider" class="dialog-slider" type="range" min="1" max="1000" value="30">
-            </div>
-            <button class="dialog-button" onclick="sendInterval()">Set</button>
+        <div class="options-button">
+            <span class="button-name">sd storage</span>
+            <span class="button-icon">&#128194;</span>
         </div>
     </div>
-    <script type="module" src="./js/main.js"></script>
 </body>
 
 </html>

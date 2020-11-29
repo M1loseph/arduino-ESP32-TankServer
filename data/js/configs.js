@@ -1,5 +1,3 @@
-import { COMMANDS } from './tank_commands.js';
-
 const GAMEPAD = {
     LT: 6,
     LB: 4,
@@ -66,16 +64,6 @@ class ButtonCombination {
     }
 }
 
-const debugMessages = {
-    NEGATIVE: "NEGATIVE",
-    POSITIVE: "POSITIVE",
-    IDLE: "IDLE",
-    PRESSED: "PRESSED",
-    RELEASED: "RELEASED",
-    COMB_PRESSED: "COMBINATION PRESSED",
-    COMB_RELEASED: "COMBINATION RELEASED"
-};
-
 // config 
 // needs to have 4 arrays
 // 1st axesPosition
@@ -85,56 +73,56 @@ const debugMessages = {
 const DEFAULT_CONFIG = {
     axesPosition: [
         new AxisPositionEvent(GAMEPAD.AXIS_LEFT_HOR, 0.7,
-            COMMANDS.ARM.SERVO_MINUS + COMMANDS.ARM.INDEXSES.BASE, null,
-            COMMANDS.ARM.SERVO_STOP + COMMANDS.ARM.INDEXSES.BASE, null,
-            COMMANDS.ARM.SERVO_PLUS + COMMANDS.ARM.INDEXSES.BASE, null),
-        
+            { controller: "arm", command: "minus", servo: "base" }, null,
+            { controller: "arm", command: "stop", servo: "base" }, null,
+            { controller: "arm", command: "plus", servo: "base" }, null),
+
         new AxisPositionEvent(GAMEPAD.AXIS_LEFT_VER, 0.7,
-            COMMANDS.ARM.SERVO_PLUS + COMMANDS.ARM.INDEXSES.SHOULDER, null,
-            COMMANDS.ARM.SERVO_STOP + COMMANDS.ARM.INDEXSES.SHOULDER, null,
-            COMMANDS.ARM.SERVO_MINUS + COMMANDS.ARM.INDEXSES.SHOULDER, null),
+            { controller: "arm", command: "plus", servo: "shoulder" }, null,
+            { controller: "arm", command: "stop", servo: "shoulder" }, null,
+            { controller: "arm", command: "minus", servo: "shoulder" }, null),
 
         new AxisPositionEvent(GAMEPAD.AXIS_RIGHT_HOR, 0.7,
-            COMMANDS.ARM.SERVO_PLUS + COMMANDS.ARM.INDEXSES.ROTATION, null,
-            COMMANDS.ARM.SERVO_STOP + COMMANDS.ARM.INDEXSES.ROTATION, null,
-            COMMANDS.ARM.SERVO_MINUS + COMMANDS.ARM.INDEXSES.ROTATION, null),
+            { controller: "arm", command: "plus", servo: "rotation" }, null,
+            { controller: "arm", command: "stop", servo: "rotation" }, null,
+            { controller: "arm", command: "minus", servo: "rotation" }, null),
 
         new AxisPositionEvent(GAMEPAD.AXIS_RIGHT_VER, 0.7,
-            COMMANDS.ARM.SERVO_PLUS + COMMANDS.ARM.INDEXSES.CLAW, null,
-            COMMANDS.ARM.SERVO_STOP + COMMANDS.ARM.INDEXSES.CLAW, null,
-            COMMANDS.ARM.SERVO_MINUS + COMMANDS.ARM.INDEXSES.CLAW, null),
+            { controller: "arm", command: "plus", servo: "claw" }, null,
+            { controller: "arm", command: "stop", servo: "claw" }, null,
+            { controller: "arm", command: "minus", servo: "claw" }, null),
     ],
     axesNumeric: [],
     buttons: [
-        new ButtonBehaviour(GAMEPAD.LT, COMMANDS.ENGINES.FORWARD_LEFT, null, null, null),
-        new ButtonBehaviour(GAMEPAD.LB, COMMANDS.ENGINES.BACKWARD_LEFT, null, null, null),
-        new ButtonBehaviour(GAMEPAD.RT, COMMANDS.ENGINES.FORWARD_RIGHT, null, null, null),
-        new ButtonBehaviour(GAMEPAD.RB, COMMANDS.ENGINES.BACKWARD_RIGHT, null, null, null),
-        new ButtonBehaviour(GAMEPAD.A, COMMANDS.ARM.SERVO_MINUS + COMMANDS.ARM.INDEXSES.ELBOW, null, null, null),
-        new ButtonBehaviour(GAMEPAD.X, COMMANDS.ARM.SERVO_PLUS + COMMANDS.ARM.INDEXSES.ELBOW, null, null, null),
-        new ButtonBehaviour(GAMEPAD.Y, COMMANDS.ARM.SERVO_PLUS + COMMANDS.ARM.INDEXSES.WRIST, null, null, null),
-        new ButtonBehaviour(GAMEPAD.B, COMMANDS.ARM.SERVO_MINUS + COMMANDS.ARM.INDEXSES.WRIST, null, null, null),
+        new ButtonBehaviour(GAMEPAD.LT, { controller: "engines", command: "forward", engines: "left" }, null, null, null),
+        new ButtonBehaviour(GAMEPAD.LB, { controller: "engines", command: "backward", engines: "left" }, null, null, null),
+        new ButtonBehaviour(GAMEPAD.RT, { controller: "engines", command: "forward", engines: "left" }, null, null, null),
+        new ButtonBehaviour(GAMEPAD.RB, { controller: "engines", command: "backward", engines: "left" }, null, null, null),
+        new ButtonBehaviour(GAMEPAD.A, { controller: "arm", command: "minus", servo: "elbow" }, null, null, null),
+        new ButtonBehaviour(GAMEPAD.X, { controller: "arm", command: "plus", servo: "elbow" }, null, null, null),
+        new ButtonBehaviour(GAMEPAD.Y, { controller: "arm", command: "plus", servo: "wrist" }, null, null, null),
+        new ButtonBehaviour(GAMEPAD.B, { controller: "arm", command: "minus", servo: "wrist" }, null, null, null),
     ],
     combinations: [
         new ButtonCombination([
             [GAMEPAD.LT, false],
             [GAMEPAD.LB, false]
-        ], COMMANDS.ENGINES.STOP_LEFT, null, null, null),
+        ], {controller: "engines", command: "stop", engines: "left"}, null, null, null),
 
         new ButtonCombination([
             [GAMEPAD.RT, false],
             [GAMEPAD.RB, false]
-        ], COMMANDS.ENGINES.STOP_RIGHT, null, null, null),
+        ], { controller: "engines", command: "stop", engines: "right" }, null, null, null),
 
         new ButtonCombination([
             [GAMEPAD.X, false],
             [GAMEPAD.A, false]
-        ], COMMANDS.ARM.SERVO_STOP + COMMANDS.ARM.INDEXSES.ELBOW, null, null, null),
+        ], { controller: "arm", command: "stop", servo: "elbow" }, null, null, null),
 
         new ButtonCombination([
             [GAMEPAD.Y, false],
             [GAMEPAD.B, false]
-        ], COMMANDS.ARM.SERVO_STOP + COMMANDS.ARM.INDEXSES.WRIST, null, null, null)
+        ], { controller: "arm", command: "stop", servo: "wrist" }, null, null, null)
     ]
 };
 

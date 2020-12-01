@@ -1,0 +1,48 @@
+.button-name {
+    font-size: 4em;
+}
+
+.button-icon {
+    font-size: 10em;
+}
+
+.commands-list {
+    width: 90%;
+}
+
+.commands-list li {
+    width: 100%;
+    font-size: 5em;
+}
+
+input[type="range"] {
+    margin-bottom: 5em;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    height: 5em;
+    width: 5em;
+    margin-top: -1.5em;
+}
+
+input[type="range"]::-moz-range-thumb {
+    height: 5em;
+    width: 5em;
+}
+
+input[type="range"]::-ms-thumb {
+    height: 5em;
+    width: 5em;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    height: 2em;
+}
+
+input[type="range"]::-moz-range-track {
+    height: 2em;
+}
+
+input[type="range"]::-ms-track {
+    height: 2em;
+}

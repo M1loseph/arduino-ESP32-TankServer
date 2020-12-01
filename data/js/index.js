@@ -1,8 +1,8 @@
-import { sendWS } from './websocket.js';
-import { getGamepadInfo, processGamepad } from './gamepad_processing.js';
-import { DEFAULT_CONFIG } from './configs.js';
+import { sendWS } from "./websocket.js";
+import { getGamepadInfo, processGamepad } from "./gamepad_processing.js";
+import { DEFAULT_CONFIG } from "./configs.js";
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
     // checking gamepad info every few milliseconds
     const GAMEPAD_INTERVAL = 33;
     // logging function to see if gamepad has been conneted
@@ -24,111 +24,49 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, GAMEPAD_INTERVAL);
 
-    Array.from(document.getElementsByClassName('dropdown-button')).forEach(sidebarElement => {
-        sidebarElement.onclick = function (event) {
-            let dropdownContent = this.nextElementSibling;
-            dropdownContent.classList.toggle('hidden-dropdown-container');
+    // main menu
+    document.querySelector("#button-music").onclick = () => {
+        document.querySelector("#dial-music").classList.remove("hidden");
+    };
+    document.querySelector("#button-arm").onclick = () => {
+        document.querySelector("#dial-arm").classList.remove("hidden");
+    };
+    document.querySelector("#button-engines").onclick = () => {
+        document.querySelector("#dial-engines").classList.remove("hidden");
+    };
+    document.querySelector("#button-led").onclick = () => {
+        document.querySelector("#dial-led").classList.remove("hidden");
+    };
+    document.querySelector("#button-sd").onclick = () => {
+        document.querySelector("#dial-sd").classList.remove("hidden");
+    };
+
+    // close
+    document.querySelectorAll(".dial-exit").forEach(button => {
+        button.onclick = () => {
+            document.querySelectorAll(".dial").forEach(dial => dial.classList.add("hidden"));
+        };
+    });
+
+    // music dial
+    document.querySelectorAll(".mp3").forEach((elem) => {
+        elem.onclick = () => {
+            sendWS({ controller: "mp3", command: elem.id });
         }
     });
 
-    let mainScreen = document.getElementById('main-screen');
-    let gamepadImage = document.getElementById('gamepad-image');
-    let gamepadContainer = document.getElementById('gamepad-container');
+    // arm dial
+    let rangeBullet = document.getElementById("base-bullet");
 
-    let sidebar = document.getElementById('sidebar');
-    let modal = document.getElementById('modal');
+    document.querySelectorAll('.arm-slider').forEach(slider => {
+        slider.addEventListener("input", () => {
+            slider.previousElementSibling.innerHTML = slider.value;
+        }, false);
 
-    // elements from LED color picker dialog
-    let colorDialog = document.getElementById('color-picker-dialog');
-    let ledColorPicker = document.getElementById('led-color-picker');
-
-    // elements from dialog for setting speed
-    let speedDialog = document.getElementById('speed-dialog');
-    let speedSlider = document.getElementById('speed-slider');
-    let speedLabel = document.getElementById('speed-slider-label');
-    speedLabel.textContent = speedSlider.value;
-    speedSlider.onchange = () => speedLabel.textContent = speedSlider.value;
-
-    // elements from volume dialog
-    let volumeDialog = document.getElementById('volume-dialog');
-    let volumeSlider = document.getElementById('volume-slider');
-    let volumeLabel = document.getElementById('volume-slider-label');
-    volumeLabel.textContent = volumeSlider.value;
-    volumeSlider.onchange = () => volumeLabel.textContent = volumeSlider.value;
-
-    // elements from brightness dialog
-    let brightnessDialog = document.getElementById('brightness-dialog');
-    let brightnessSlider = document.getElementById('brightness-slider');
-    let brightnessLabel = document.getElementById('brightness-slider-label');
-    brightnessLabel.textContent = brightnessSlider.value;
-    brightnessSlider.onchange = () => brightnessLabel.textContent = brightnessSlider.value;
-
-    // elements from interval dialog
-    let intervalDialog = document.getElementById('interval-dialog');
-    let intervalSlider = document.getElementById('interval-slider');
-    let intervalLabel = document.getElementById('interval-slider-label');
-    intervalLabel.textContent = intervalSlider.value + MILLIS;
-    intervalSlider.onchange = () => intervalLabel.textContent = intervalSlider.value + MILLIS;
-
-    let sidebarCloseElements = [
-        gamepadImage,
-        mainScreen,
-        gamepadContainer,
-    ];
-
-    function closeSidebar(event) {
-        console.log('trying to close the sidebar...');
-        console.log(event.target);
-        if (sidebarCloseElements.some(e => e === event.target)) {
-            sidebar.classList.add('hidden-sidebar');
-            console.log('closing sidebar...');
-        }
-    }
-
-    function openSidebar() {
-        sidebar.classList.remove('hidden-sidebar');
-        console.log('opening sidebar...');
-    }
-
-    function openColorPickerDialog() {
-        console.log('opening color picker...');
-        colorDialog.classList.remove('hidden-dialog');
-        modal.classList.remove('hidden-modal');
-    }
-
-    function openSpeedDialog() {
-        console.log('opening speed dialog...');
-        speedDialog.classList.remove('hidden-dialog');
-        modal.classList.remove('hidden-modal');
-    }
-
-    function openVolumeDialog() {
-        console.log('opening volume dialog...');
-        volumeDialog.classList.remove('hidden-dialog');
-        modal.classList.remove('hidden-modal');
-    }
-
-    function openBrightnessDialog() {
-        console.log('opening brightness dialog...');
-        brightnessDialog.classList.remove('hidden-dialog');
-        modal.classList.remove('hidden-modal');
-    }
-
-    function openIntervalDialog() {
-        console.log('opening brightness dialog...');
-        intervalDialog.classList.remove('hidden-dialog');
-        modal.classList.remove('hidden-modal');
-    }
-
-    function closeDialogs() {
-        console.log('closing all dialogs...');
-        modal.classList.add('hidden-modal');
-        brightnessDialog.classList.add('hidden-dialog');
-        volumeDialog.classList.add('hidden-dialog');
-        colorDialog.classList.add('hidden-dialog');
-        intervalDialog.classList.add('hidden-dialog');
-        speedDialog.classList.add('hidden-dialog');
-    }
+        slider.addEventListener("touchend", () => {
+            sendWS({ controller: "arm", command: "angle", angle: slider.value, servo: slider.id })
+        });
+    });
 
     function sendColor() {
         let hexColor = ledColorPicker.value;

@@ -7,31 +7,114 @@
     <title>Tank webserver</title>
     <link rel="icon" type="image/x-icon" href="./favicon.ico">
     <link rel="stylesheet" href="./styles/styles.css">
+    <link rel="stylesheet" media="screen and (max-width: 1000px)" href="./styles/mobile.css">
     <script type="module" src="./js/index.js"></script>
 </head>
 
-<body>
+<body class="def-background">
     <div class="button-container">
-        <div class="options-button">
+        <div id="button-music" class="options-button">
             <span class="button-name">music</span>
             <span class="button-icon">&#9835;</span>
         </div>
-        <div class="options-button">
+        <div id="button-arm" class="options-button">
             <span class="button-name">arm</span>
             <span class="button-icon">&#129302;</span>
         </div>
-        <div class="options-button">
+        <div id="button-engines" class="options-button">
             <span class="button-name">engines</span>
             <span class="button-icon">&#128663;</span>
         </div>
-        <div class="options-button">
+        <div id="button-led" class="options-button">
             <span class="button-name">led</span>
             <span class="button-icon">&#128161;</span>
         </div>
-        <div class="options-button">
-            <span class="button-name">sd storage</span>
+        <div id="button-sd" class="options-button">
+            <span class="button-name">sd</span>
             <span class="button-icon">&#128194;</span>
         </div>
+    </div>
+
+    <div id="dial-music" class="dial def-background hidden">
+        <ul class="commands-list">
+            <li class="section-title">Memes</li>
+            <li id="propaganda" class="list-element mp3">JoJo Propaganda</li>
+            <li id="mighty_polish_tank" class="list-element mp3">Mighty Polish Tank</li>
+            <li id="windows_xp" class="list-element mp3">Windows XP</li>
+            <li class="section-title">Star Wars</li>
+            <li id="high_ground" class="list-element mp3">High ground</li>
+            <li id="fine_addition" class="list-element mp3">Fine addition</li>
+            <li id="i_dont_like_sand" class="list-element mp3">I don't like sand</li>
+            <li id="hello_there" class="list-element mp3">Hello there</li>
+            <li id="im_the_senate" class="list-element mp3">I'm the senate</li>
+            <li class="section-title">Eurobeat</li>
+            <li id="forever_young" class="list-element mp3">Forever Young</li>
+            <li id="revenge" class="list-element mp3">Revenge</li>
+            <li id="silhouette" class="list-element mp3">Silhouette</li>
+            <li id="the_bad_touch" class="list-element mp3">The Bad Touch</li>
+            <li id="hero" class="list-element mp3">Hero</li>
+            <li id="gas_gas_gas" class="list-element mp3">Gas Gas Gas</li>
+            <li id="running_in_the-90s" class="list-element mp3">Running In The 90s</li>
+            <li id="deja_vu" class="list-element mp3">Deja Vu</li>
+            <li id="running_in_the_90s_short" class="list-element mp3">Running In The 90s <i><b>short</b></i></li>
+            <li id="deja_vu_short" class="list-element mp3">Deja Vu <i><b>short</b></i></li>
+            <li id="true_survivor" class="list-element mp3">True Survivor</li>
+            <li class="dial-exit">EXIT</li>
+        </ul>
+    </div>
+
+    <div id="dial-arm" class="dial def-background hidden">
+        <ul class="commands-list">
+            <li class="section-title">Base</li>
+            <li class="list-element range-slider">
+                <span id="base-bullet" class="arm-bullet">0</span>
+                <input id="base" class="arm-slider" type="range" value="0" min="0" max="180">
+            </li>
+            <li class="section-title">Shoulder</li>
+            <li class="list-element range-slider">
+                <span id="shoulder-bullet" class="arm-bullet">0</span>
+                <input id="shoulder" class="arm-slider" type="range" value="0" min="0" max="180">
+            </li>
+            <li class="section-title">Elbow</li>
+            <li class="list-element range-slider">
+                <span id="elbow-bullet" class="arm-bullet">0</span>
+                <input id="elbow" class="arm-slider" type="range" value="0" min="0" max="180">
+            </li>
+            <li class="section-title">Wrist</li>
+            <li class="list-element range-slider">
+                <span id="wrist-bullet" class="arm-bullet">0</span>
+                <input id="wrist" class="arm-slider" type="range" value="0" min="0" max="180">
+            </li>
+            <li class="section-title">Rotation</li>
+            <li class="list-element range-slider">
+                <span id="rotation-bullet" class="arm-bullet">0</span>
+                <input id="rotation" class="arm-slider" type="range" value="0" min="0" max="180">
+            </li>
+            <li class="section-title">Claw</li>
+            <li class="list-element range-slider">
+                <span id="claw-bullet" class="arm-bullet">0</span>
+                <input id="claw" class="arm-slider" type="range" value="0" min="0" max="180">
+            </li>
+            <li class="dial-exit">EXIT</li>
+        </ul>
+    </div>
+
+    <div id="dial-engines" class="dial def-background hidden">
+        <ul class="commands-list">
+            <li class="dial-exit">EXIT</li>
+        </ul>
+    </div>
+
+    <div id="dial-led" class="dial def-background hidden">
+        <ul class="commands-list">
+            <li class="dial-exit">EXIT</li>
+        </ul>
+    </div>
+
+    <div id="dial-sd" class="dial def-background hidden">
+        <ul class="commands-list">
+            <li class="dial-exit">EXIT</li>
+        </ul>
     </div>
 </body>
 

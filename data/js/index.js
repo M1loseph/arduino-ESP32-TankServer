@@ -93,19 +93,19 @@ document.addEventListener("DOMContentLoaded", () => {
         sendWS({ controller: "leds", command: "set_custom_color", colors: [RGB[0], RGB[1], RGB[2]] });
     }, false);
 
-    function sendSpeed() {
-        sendWS({ controller: "engines", command: "speed", speed: speedSlider.value });
-    }
+    // function sendSpeed() {
+    //     sendWS({ controller: "engines", command: "speed", speed: speedSlider.value });
+    // }
 
-    function sendVolume() {
-        sendWS({ controller: "mp3", command: "set_volume", "volume": volumeSlider.value });
-    }
+    // function sendVolume() {
+    //     sendWS({ controller: "mp3", command: "set_volume", "volume": volumeSlider.value });
+    // }
 
-    function sendBrightness() {
-        sendWS({ controller: "leds", command: "set_brightness", brightness: brightnessSlider.value });
-    }
+    // function sendBrightness() {
+    //     sendWS({ controller: "leds", command: "set_brightness", brightness: brightnessSlider.value });
+    // }
 
-    function sendInterval() {
-        sendWS({ controller: "leds", command: "set_interval", interval: intervalSlider.value });
-    }
+    // function sendInterval() {
+    //     sendWS({ controller: "leds", command: "set_interval", interval: intervalSlider.value });
+    // }
 });

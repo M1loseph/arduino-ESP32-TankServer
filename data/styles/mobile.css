@@ -50,3 +50,16 @@ input[type="range"]::-ms-track {
 input[type="color"] {
     height: 200px;
 }
+
+.transparent-arrow-button {
+    height: 30vw;
+    width: 30vw;
+    font-size: 20vw;
+    background-color: transparent;
+}
+
+.arrow-button {
+    height: 30vw;
+    width: 30vw;
+    background-color: indigo;
+}

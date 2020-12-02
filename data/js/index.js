@@ -114,6 +114,8 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     document.querySelectorAll(".arrow-button").forEach(button => {
-
+        button.ontouchend = () => {
+            sendWS({controller: "engines", command: "stop", engines: "both"})
+        };
     });
 });

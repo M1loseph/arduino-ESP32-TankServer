@@ -13,6 +13,7 @@ namespace json_parser
         explicit engines_controller();
         bool initialize() override;
         void update() override;
+        StaticJsonDocument<JSON_SIZE> retrive_data() override;
 
         enum class speed_controll
         {
@@ -77,6 +78,8 @@ namespace json_parser
 
         const char *get_engine_from_json(const JsonObjectConst *json);
         size_t get_speed_from_json(const JsonObjectConst *json, bool *succ);
+
+        static constexpr const char *NAME = "engines";
 
         static constexpr const char *FORWARD = "forward";
         static constexpr const char *BACKWARD = "backward";

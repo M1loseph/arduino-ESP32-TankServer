@@ -15,6 +15,7 @@ namespace json_parser
 
         bool initialize() override;
         void update() override;
+        StaticJsonDocument<JSON_SIZE> retrive_data() override;
 
         typedef struct
         {
@@ -37,8 +38,7 @@ namespace json_parser
         void send_angle(uint8_t index);
         servo_data *get_servo_ptr(const JsonObjectConst *json);
 
-        void update_servos_movement();
-
+        static constexpr const char *NAME = "arm";
         static constexpr const char *SERVO_MINUS = "minus";
         static constexpr const char *SERVO_PLUS = "plus";
         static constexpr const char *SERVO_STOP = "stop";

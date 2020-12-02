@@ -17,7 +17,7 @@
 
 namespace json_parser
 {
-    arm_controller::arm_controller() : templated_controller("arm")
+    arm_controller::arm_controller() : templated_controller(NAME)
     {
     }
 
@@ -179,5 +179,22 @@ namespace json_parser
             }
             timer = millis();
         }
+    }
+
+
+    StaticJsonDocument<controller::JSON_SIZE> arm_controller::retrive_data()
+    {
+        StaticJsonDocument<JSON_SIZE> json;
+        json[NAME_FIELD] = NAME;
+        JsonObject data = json.createNestedObject(DATA_FIELD);
+
+        for(uint8_t i = 0; i < SERVOS; i++)
+        {
+            JsonObject servo = data.createNestedObject(arm[i].NAME);
+            servo["min"] = arm[i].MIN_ANGLE;
+            servo["max"] = arm[i].MIN_ANGLE;
+            servo["angle"] = arm[i].current_angle;
+        }
+        return json;
     }
 } // namespace json_parser

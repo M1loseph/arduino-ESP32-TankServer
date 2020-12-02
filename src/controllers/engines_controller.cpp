@@ -17,7 +17,7 @@
 
 namespace json_parser
 {
-    engines_controller::engines_controller() : templated_controller("engines")
+    engines_controller::engines_controller() : templated_controller(NAME)
     {
     }
 
@@ -504,5 +504,15 @@ namespace json_parser
 
             last_update = millis();
         }
+    }
+
+    StaticJsonDocument<controller::JSON_SIZE> engines_controller::retrive_data()
+    {
+        StaticJsonDocument<JSON_SIZE> json;
+        json[NAME_FIELD] = NAME;
+        JsonObject data = json.createNestedObject(DATA_FIELD);
+        data["speed_left"] = _speed_left;
+        data["speed_right"] = _speed_right;
+        return json;
     }
 } // namespace json_parser

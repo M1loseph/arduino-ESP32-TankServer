@@ -63,9 +63,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // arm dial
-    document.querySelectorAll('.arm-slider').forEach(slider => {
+    document.querySelectorAll(".arm-slider").forEach(slider => {
         slider.addEventListener("change", () => {
-            sendWS({ controller: "arm", command: "angle", angle: slider.value, servo: slider.id });
+            sendWS({ controller: "arm", command: "angle", angle: parseInt(slider.value), servo: slider.id });
         });
     });
 
@@ -77,12 +77,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.querySelector("#set_interval").addEventListener("change", event => {
-        sendWS({ controller: "leds", command: "set_interval", interval: event.target.value });
+        sendWS({ controller: "leds", command: event.target.id, interval: parseInt(event.target.value) });
     });
 
     document.querySelector("#set_custom_color").addEventListener("change", (event) => {
-        let hexColor = event.target.value;
-        hexColor = hexColor.substring(1);
+        const hexColor = event.target.value.substring(1);
 
         const RGBHex = hexColor.match(/.{1,2}/g);
         const RGB = [
@@ -93,19 +92,28 @@ document.addEventListener("DOMContentLoaded", () => {
         sendWS({ controller: "leds", command: "set_custom_color", colors: [RGB[0], RGB[1], RGB[2]] });
     }, false);
 
-    // function sendSpeed() {
-    //     sendWS({ controller: "engines", command: "speed", speed: speedSlider.value });
-    // }
+    // engines dial
+    document.querySelector("#speed").addEventListener("change", event => {
+        sendWS({ controller: "engines", command: event.target.id, engines: "both", speed: parseInt(event.target.value) })
+    });
 
-    // function sendVolume() {
-    //     sendWS({ controller: "mp3", command: "set_volume", "volume": volumeSlider.value });
-    // }
+    document.querySelector("#forward").ontouchstart = (event) => {
+        sendWS({ controller: "engines", command: event.target.id, engines: "both" })
+    };
 
-    // function sendBrightness() {
-    //     sendWS({ controller: "leds", command: "set_brightness", brightness: brightnessSlider.value });
-    // }
+    document.querySelector("#backward").ontouchstart = (event) => {
+        sendWS({ controller: "engines", command: event.target.id, engines: "both" })
+    };
 
-    // function sendInterval() {
-    //     sendWS({ controller: "leds", command: "set_interval", interval: intervalSlider.value });
-    // }
+    document.querySelector("#rotate_left").ontouchstart = (event) => {
+        sendWS({ controller: "engines", command: "rotate", engines: "left" })
+    };
+
+    document.querySelector("#rotate_right").ontouchstart = (event) => {
+        sendWS({ controller: "engines", command: "rotate", engines: "right" })
+    };
+
+    document.querySelectorAll(".arrow-button").forEach(button => {
+
+    });
 });

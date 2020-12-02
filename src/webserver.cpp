@@ -75,6 +75,10 @@ void webserver::init_web_server()
         request->send(SPIFFS, "/styles/styles.css", "text/css");
     });
 
+    web_server.on("/styles/mobile.css", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SPIFFS, "/styles/mobile.css", "text/css");
+    });
+
     web_server.on("/js/configs.js", HTTP_GET, [](AsyncWebServerRequest *request) {
         request->send(SPIFFS, "/js/configs.js", "text/javascript");
     });

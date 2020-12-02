@@ -85,6 +85,7 @@ namespace json_parser
         if_added &= add_event(SLOWER, &engines_controller::slower);
         if_added &= add_event(KEEP_SPEED, &engines_controller::keep_speed);
         if_added &= add_event(SPEED, &engines_controller::set_speed);
+        if_added &= add_event(ROTATE, &engines_controller::rotate);
 
         return true;
     }

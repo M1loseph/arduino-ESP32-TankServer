@@ -85,6 +85,7 @@ namespace json_parser
         static constexpr const char *SLOWER = "slower";
         static constexpr const char *KEEP_SPEED = "keep_speed";
         static constexpr const char *SPEED = "speed";
+        static constexpr const char *ROTATE = "rotate";
 
         static constexpr const char *LEFT = "left";
         static constexpr const char *RIGHT = "right";

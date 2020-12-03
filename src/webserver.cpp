@@ -6,16 +6,16 @@
 #if WEB_SERVER_DEBUG
 
 #define LOG_WEBSERVER(message) LOG(message)
-#define LOG_WEBSERVER_NL(message) LOG_NL(message)
+#define LOG_WEBSERVER_NL(message) LOG_WEBSERVER_G(message)
 #define LOG_WEBSERVER_F(...) LOG_F(__VA_ARGS__)
-#define LOG_WEBSERVER_PRETTY(...) serializeJsonPretty(__VA_ARGS__); 
+#define LOG_WEBSERVER_JSON_PRETTY(json) LOG_JSON_PRETTY(json)
 
 #else
 
 #define LOG_WEBSERVER(message)
 #define LOG_WEBSERVER_NL(message)
 #define LOG_WEBSERVER_F(...)
-#define LOG_WEBSERVER_PRETTY(...) 
+#define LOG_WEBSERVER_JSON_PRETTY(json) 
 
 #endif
 
@@ -25,24 +25,24 @@ DNSServer webserver::dns;
 
 void webserver::init_entire_web()
 {
-    LOG_NL("[webserver] initing file system...")
+    LOG_WEBSERVER_F("[%s] initing file system...\n", SSID)
     if (SPIFFS.begin())
     {
-        LOG_NL("[webserver] initing access points...")
+        LOG_WEBSERVER_F("[%s] initing access points...\n", SSID)
         init_access_point();
-        LOG_NL("[webserver] initing web server...")
+        LOG_WEBSERVER_F("[%s] initing web server...\n", SSID);
         init_web_server();
-        LOG_NL("[webserver] initing web socket...")
+        LOG_WEBSERVER_F("[%s] initing web socket...\n", SSID)
         init_web_socket();
-        LOG_NL("[webserver] initing DNS...")
+        LOG_WEBSERVER_F("[%s] initing DNS...\n", SSID)
         init_dns();
-        LOG_NL("[webserver] starting server...")
+        LOG_WEBSERVER_F("[%s] starting server...\n", SSID)
         web_server.begin();
-        LOG_NL("[webserver] good to go!")
+        LOG_WEBSERVER_F("[%s] good to go!\n", SSID)
     }
     else
     {
-        LOG_NL("[webserver] error occured while initing SPIFFS")
+        LOG_WEBSERVER_F("[%s] error occured while initing SPIFFS\n", SSID)
     }
 }
 
@@ -116,8 +116,7 @@ void webserver::handle_web_socket(AsyncWebSocket *server, AsyncWebSocketClient *
                 auto error = deserializeJson(*json, (const char*) data, len);
                 if(!error)
                 {
-                    LOG_WEBSERVER_PRETTY(*json, Serial)
-                    LOG_WEBSERVER_NL(' ');
+                    LOG_WEBSERVER_JSON_PRETTY(*json)
                 }
 
                 if(error || !global_queue::queue.push(&json))
@@ -125,32 +124,11 @@ void webserver::handle_web_socket(AsyncWebSocket *server, AsyncWebSocketClient *
                     delete json;
                 }
             }
-            // else
-            // {
-            //     //message is comprised of multiple frames or the frame is split into multiple packets
-            //     if (frame->index == 0)
-            //     {
-            //         if (frame->num == 0)
-            //             Serial.printf("ws[%s][%u] %s-message start\n", server->url(), client->id(), (frame->message_opcode == WS_TEXT) ? "text" : "binary");
-            //         Serial.printf("ws[%s][%u] frame[%u] start[%llu]\n", server->url(), client->id(), frame->num, frame->len);
-            //     }
-
-            //     Serial.printf("ws[%s][%u] frame[%u] %s[%llu - %llu]: ", server->url(), client->id(), frame->num, (frame->message_opcode == WS_TEXT) ? "text" : "binary", frame->index, frame->index + len);
-
-            //     if ((frame->index + len) == frame->len)
-            //     {
-            //         Serial.printf("ws[%s][%u] frame[%u] end[%llu]\n", server->url(), client->id(), frame->num, frame->len);
-            //         if (frame->final)
-            //         {
-            //             Serial.printf("ws[%s][%u] %s-message end\n", server->url(), client->id(), (frame->message_opcode == WS_TEXT) ? "text" : "binary");
-            //         }
-            //     }
-            // }
         }
     }
     else if (type == WS_EVT_DISCONNECT)
     {
-        LOG_WEBSERVER_F("ws[%u] disconnect\n", client->id());
+        LOG_WEBSERVER_F("[%s] ws[%u] disconnect\n", SSID, client->id());
         size_t clients = server->getClients().length();
         if (!clients)
         {
@@ -167,16 +145,16 @@ void webserver::handle_web_socket(AsyncWebSocket *server, AsyncWebSocketClient *
 #if WEB_SERVER_DEBUG
     else if (type == WS_EVT_CONNECT)
     {
-        LOG_WEBSERVER_F("ws[%u] connect\n", client->id());
+        LOG_WEBSERVER_F("[%s] ws[%u] connect\n", SSID, client->id());
         client->ping();
     }
     else if (type == WS_EVT_ERROR)
     {
-        LOG_WEBSERVER_F("ws[%u] error(%u): %s\n", client->id(), *((uint16_t *)arg), (char *)data);
+        LOG_WEBSERVER_F("[%s] ws[%u] error(%u): %s\n", SSID, client->id(), *((uint16_t *)arg), (char *)data);
     }
     else if (type == WS_EVT_PONG)
     {
-        LOG_WEBSERVER_F("ws[%u] pong[%u]: %s\n", client->id(), len, (len) ? (char *)data : "");
+        LOG_WEBSERVER_F("[%s] ws[%u] pong[%u]: %s\n", SSID, client->id(), len, (len) ? (char *)data : "");
     }
 #endif // WEB_SERVER_DEBUG
 }

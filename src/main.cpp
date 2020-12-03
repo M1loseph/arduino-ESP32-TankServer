@@ -39,6 +39,12 @@ void setup()
     {
         LOG_NL("[main] could not create queue")
     }
+
+    LOG_F("[main] memory usage before: %d\n", esp_get_free_heap_size());
+    auto json = parser.retrive_data();
+    LOG_F("[main] memory usage after: %d\n", esp_get_free_heap_size());
+    LOG_JSON_PRETTY(json);
+    LOG_NL("[main] end of setup");
 }
 
 void loop()
@@ -55,7 +61,7 @@ void loop()
     if (Serial.available())
     {
         json = new DynamicJsonDocument(256);
-        deserializeJson(*json, Serial);
+        LOG_JSON_PRETTY(*json);
         global_queue::queue.push(&json);
     }
 #endif // SMART_TANK_DEBUG

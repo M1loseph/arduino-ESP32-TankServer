@@ -14,6 +14,7 @@ namespace json_parser
         bool initialize() override;
         void update() override
         {}
+        DynamicJsonDocument retrive_data() override;
 
     private:
         bool stop_playing(const JsonObjectConst *json);
@@ -68,7 +69,9 @@ namespace json_parser
 
         static constexpr const char *VOLUME_KEY = "volume";
 
-        MD_YX5300 mp3;
+        MD_YX5300 _mp3;
+        uint8_t _volume;
+        const char *_last_song;
     };
 } // namespace json_parser
 

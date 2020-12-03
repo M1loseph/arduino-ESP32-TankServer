@@ -12,6 +12,7 @@ namespace json_parser
         explicit leds_controller();
         bool initialize() override;
         void update() override;
+        DynamicJsonDocument retrive_data() override;
 
     private:
         bool polish_animation(const JsonObjectConst *json);

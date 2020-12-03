@@ -17,7 +17,7 @@
 
 namespace json_parser
 {
-    engines_controller::engines_controller() : templated_controller(NAME)
+    engines_controller::engines_controller() : templated_controller("engines")
     {
     }
 
@@ -453,12 +453,12 @@ namespace json_parser
             }
             else
             {
-                LOG_ENGINE_NL("[engine_controller] no engine key")
+                LOG_ENGINE_F("[%s] no engine key\n", _name)
             }
         }
         else
         {
-            LOG_ENGINE_NL("[engine_controller] no json")
+            LOG_ENGINE_F("[%s] no json\n", _name)
         }
         return nullptr;
     }
@@ -495,24 +495,32 @@ namespace json_parser
 
             if (left_speed_changed)
             {
-                LOG_ENGINE_F("[engine_controller] new left speed: %d\n", _speed_left)
+                LOG_ENGINE_F("[%s] new left speed: %d\n", _name, _speed_left)
             }
             if (right_speed_changed)
             {
-                LOG_ENGINE_F("[engine_controller] new right speed: %d\n", _speed_right)
+                LOG_ENGINE_F("[%s] new right speed: %d\n", _name, _speed_right)
             }
 
             last_update = millis();
         }
     }
 
-    StaticJsonDocument<controller::JSON_SIZE> engines_controller::retrive_data()
+    DynamicJsonDocument engines_controller::retrive_data()
     {
-        StaticJsonDocument<JSON_SIZE> json;
-        json[NAME_FIELD] = NAME;
+        DynamicJsonDocument json(200);
+        json[NAME_FIELD] = _name;
         JsonObject data = json.createNestedObject(DATA_FIELD);
-        data["speed_left"] = _speed_left;
-        data["speed_right"] = _speed_right;
+        JsonObject left = data.createNestedObject(LEFT);
+        JsonObject right = data.createNestedObject(RIGHT);
+
+        left[SPEED_KEY] = _speed_left;
+        left[DIRECTION_KEY] = static_cast<int>(_direction_left);
+        left[SPEED_CONTROLL_KEY] = static_cast<int>(_direction_left);
+
+        right[SPEED_KEY] = _speed_right;
+        right[DIRECTION_KEY] = static_cast<int>(_direction_right);
+        right[SPEED_CONTROLL_KEY] = static_cast<int>(_direction_right);
         return json;
     }
 } // namespace json_parser

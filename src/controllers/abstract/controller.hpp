@@ -30,8 +30,7 @@ namespace json_parser
 
         virtual void update() = 0;
         virtual bool initialize() = 0;
-        static constexpr uint32_t JSON_SIZE = 256U;
-        virtual StaticJsonDocument<JSON_SIZE> retrive_data() = 0;
+        virtual DynamicJsonDocument retrive_data() = 0;
 
     protected:
         virtual bool can_handle(const JsonObjectConst &json) const = 0;

@@ -12,6 +12,7 @@ namespace json_parser
         bool initialize() override;
         void update() override
         {}
+        DynamicJsonDocument retrive_data() override;
 
     private:
         bool can_handle(const JsonObjectConst &json) const override;

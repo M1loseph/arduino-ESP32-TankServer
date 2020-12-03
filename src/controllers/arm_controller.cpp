@@ -17,7 +17,7 @@
 
 namespace json_parser
 {
-    arm_controller::arm_controller() : templated_controller(NAME)
+    arm_controller::arm_controller() : templated_controller("arm")
     {
     }
 
@@ -182,10 +182,10 @@ namespace json_parser
     }
 
 
-    StaticJsonDocument<controller::JSON_SIZE> arm_controller::retrive_data()
+    DynamicJsonDocument arm_controller::retrive_data()
     {
-        StaticJsonDocument<JSON_SIZE> json;
-        json[NAME_FIELD] = NAME;
+        DynamicJsonDocument json(500);
+        json[NAME_FIELD] = _name;
         JsonObject data = json.createNestedObject(DATA_FIELD);
 
         for(uint8_t i = 0; i < SERVOS; i++)

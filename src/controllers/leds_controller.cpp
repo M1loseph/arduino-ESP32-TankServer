@@ -242,4 +242,25 @@ namespace json_parser
             last_measute = millis();
         }
     }
+
+    DynamicJsonDocument leds_controller::retrive_data()
+    {
+        DynamicJsonDocument json(1600);
+        json[NAME_FIELD] = _name;
+        JsonObject data = json.createNestedObject(DATA_FIELD);
+
+        data[BRIGHTNESS_KEY] = _brightness;
+        data[INTERVAL_KEY] = _animation_interval;
+        JsonArray array = data.createNestedArray("colors");
+        for(uint8_t i = 0; i < NUM_LEDS; i++)
+        {
+            auto &color = _leds[i];
+            uint32_t buffer = color.red;
+            buffer |= static_cast<uint32_t>(color.green) >> 8;
+            buffer |= static_cast<uint32_t>(color.blue) >> 16;
+
+            array.add(buffer);
+        }
+        return json;
+    }
 } // namespace json_parser

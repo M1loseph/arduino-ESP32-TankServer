@@ -48,4 +48,12 @@ namespace json_parser
         LOG_SD_F("[%s] unable to open the file\n", _name)
         return false;
     }
+
+    DynamicJsonDocument sd_controller::retrive_data()
+    {
+        DynamicJsonDocument json(50);
+        json[NAME_FIELD] = _name;
+        json[DATA_FIELD] = nullptr;
+        return json;
+    }
 } // namespace json_parser

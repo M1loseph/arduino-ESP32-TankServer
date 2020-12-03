@@ -13,20 +13,20 @@ namespace json_parser
         explicit engines_controller();
         bool initialize() override;
         void update() override;
-        StaticJsonDocument<JSON_SIZE> retrive_data() override;
+        DynamicJsonDocument retrive_data() override;
 
         enum class speed_controll
         {
-            SLOWER,
-            FASTER,
-            KEEP_SPEED
+            SLOWER = -1,
+            KEEP_SPEED,
+            FASTER
         };
 
         enum class direction
         {
-            BACKWARD,
-            FORWARD,
-            STOP
+            BACKWARD = -1,
+            STOP,
+            FORWARD
         };
 
         inline speed_controll get_speed_controll_left() { return _speed_controll_left; }
@@ -79,8 +79,6 @@ namespace json_parser
         const char *get_engine_from_json(const JsonObjectConst *json);
         size_t get_speed_from_json(const JsonObjectConst *json, bool *succ);
 
-        static constexpr const char *NAME = "engines";
-
         static constexpr const char *FORWARD = "forward";
         static constexpr const char *BACKWARD = "backward";
         static constexpr const char *STOP = "stop";
@@ -96,6 +94,8 @@ namespace json_parser
 
         static constexpr const char* SPEED_KEY = "speed";
         static constexpr const char* ENGINE_KEY = "engines";
+        static constexpr const char* DIRECTION_KEY = "direction";
+        static constexpr const char* SPEED_CONTROLL_KEY = "speed_controll";
 
         static constexpr uint8_t PIN_FRONT_RIGHT = 33;
         static constexpr uint8_t PIN_BACK_RIGHT = 25;

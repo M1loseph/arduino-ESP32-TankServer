@@ -17,6 +17,7 @@ namespace json_parser
         void hadnle_updates();
         bool add_controller(std::unique_ptr<controller>&& controller);
         bool initialize_all();
+        DynamicJsonDocument retrive_data();
 
     private:
         std::vector<std::unique_ptr<controller>> _controllers;

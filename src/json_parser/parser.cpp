@@ -71,4 +71,15 @@ namespace json_parser
         }
         return res;
     }
+
+
+    DynamicJsonDocument parser::retrive_data() {
+        DynamicJsonDocument json(3000);
+        JsonArray array = json.createNestedArray();
+        for(auto& controller : _controllers)
+        {
+            array.add(controller->retrive_data());
+        }
+        return json;
+    }
 } // namespace parser

@@ -12,6 +12,7 @@ class webserver {
 public:
     static void init_entire_web();
     static void process_web();
+    static void send_ws(const DynamicJsonDocument& json);
 
 private:
     static void send_or_delete(DynamicJsonDocument *json, const char* data, size_t len);

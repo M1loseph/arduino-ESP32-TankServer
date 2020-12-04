@@ -40,7 +40,7 @@ namespace json_parser
         return {permited, handled};
     }
 
-    void parser::hadnle_updates()
+    void parser::handle_updates()
     {
         for(const auto& controller : _controllers)
             controller->update();

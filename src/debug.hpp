@@ -7,7 +7,11 @@
 #define LOG_NL(messege) Serial.println(messege);
 #define LOG(messege) Serial.print(messege);
 #define LOG_F(...) Serial.printf(__VA_ARGS__);
-#define LOG_JSON_PRETTY(json) serializeJsonPretty(json, Serial); LOG('\n');
+#define LOG_JSON_PRETTY(json)                         \
+    WriteBufferingStream buffered_serial(Serial, 64); \
+    serializeJsonPretty(json, buffered_serial);       \
+    buffered_serial.flush();                          \
+    LOG('\n');
 
 #else
 

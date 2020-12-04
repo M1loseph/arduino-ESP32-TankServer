@@ -14,7 +14,7 @@ namespace json_parser
     {
     public:
         std::pair<uint8_t, uint8_t> handle(const JsonObjectConst& json);
-        void hadnle_updates();
+        void handle_updates();
         bool add_controller(std::unique_ptr<controller>&& controller);
         bool initialize_all();
         DynamicJsonDocument retrive_data();

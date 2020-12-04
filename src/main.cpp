@@ -1,6 +1,7 @@
 #ifndef UNIT_TEST
 
 #include <Arduino.h>
+#include <StreamUtils.h>
 #include <memory>
 #include "debug.hpp"
 
@@ -14,6 +15,7 @@
 #include "global_queue.hpp"
 
 json_parser::parser parser;
+unsigned long counter = 0;
 
 void setup()
 {
@@ -40,9 +42,9 @@ void setup()
         LOG_NL("[main] could not create queue")
     }
 
-    LOG_F("[main] memory usage before: %d\n", esp_get_free_heap_size());
+    LOG_F("[main] memory usage before: %d\n", esp_get_free_heap_size())
     auto json = parser.retrive_data();
-    LOG_F("[main] memory usage after: %d\n", esp_get_free_heap_size());
+    LOG_F("[main] memory usage after: %d\n", esp_get_free_heap_size())
     LOG_JSON_PRETTY(json);
     LOG_NL("[main] end of setup");
 }
@@ -56,7 +58,15 @@ void loop()
         parser.handle(json->as<JsonObjectConst>());
         delete json;
     }
-    parser.hadnle_updates();
+    parser.handle_updates();
+    if(millis() - counter > 2000)
+    {
+        auto retrived_json = parser.retrive_data();
+        LOG_JSON_PRETTY(retrived_json)
+        webserver::send_ws(retrived_json);
+        counter = millis();
+    }
+
 #ifdef SMART_TANK_DEBUG
     if (Serial.available())
     {

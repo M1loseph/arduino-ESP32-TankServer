@@ -1,4 +1,5 @@
 #include <ArduinoJson.h>
+#include <StreamUtils.h>
 #include "webserver.hpp"
 #include "debug.hpp"
 #include "global_queue.hpp"
@@ -162,4 +163,12 @@ void webserver::handle_web_socket(AsyncWebSocket *server, AsyncWebSocketClient *
 void webserver::init_dns()
 {
     dns.start(53, "*", WiFi.softAPIP());
+}
+
+void webserver::send_ws(const DynamicJsonDocument &json)
+{
+    String buffer;
+    serializeJson(json, buffer);
+    LOG_WEBSERVER_F("[%s] string size: %d\n", SSID, buffer.length());
+    web_socket.textAll(buffer);
 }

@@ -1,3 +1,4 @@
+#include <StreamUtils.h>
 #include "sd_controller.hpp"
 #include "debug.hpp"
 
@@ -37,9 +38,13 @@ namespace json_parser
 
     bool sd_controller::handle(const JsonObjectConst &json)
     {
+        if(_file)
+            _file.close();
+
         _file = SD.open(LOG_FILE);
         if(_file)
         {
+            ReadBufferingStream bufferedFile(_file, 64);
             serializeJson(json, _file);
             LOG_SD_F("[%s] serialized JSON\n", _name)
             _file.close();

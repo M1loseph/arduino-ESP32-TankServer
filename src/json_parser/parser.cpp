@@ -17,7 +17,7 @@
 
 namespace json_parser
 {
-    std::pair<uint8_t, uint8_t> parser::handle(const JsonObjectConst& json)
+    std::pair<uint8_t, uint8_t> parser::handle(const JsonObjectConst &json) const
     {
         uint8_t permited = 0;
         uint8_t handled = 0;
@@ -25,12 +25,12 @@ namespace json_parser
         for (const auto &controller : _controllers)
         {
             auto res = controller->try_handle(json);
-            if(res == controller::handle_resoult::error)
+            if (res == controller::handle_resoult::error)
             {
                 permited++;
             }
 
-            if(res == controller::handle_resoult::ok)
+            if (res == controller::handle_resoult::ok)
             {
                 permited++;
                 handled++;
@@ -40,9 +40,9 @@ namespace json_parser
         return {permited, handled};
     }
 
-    void parser::handle_updates()
+    void parser::handle_updates() const
     {
-        for(const auto& controller : _controllers)
+        for (const auto &controller : _controllers)
             controller->update();
     }
 
@@ -56,12 +56,13 @@ namespace json_parser
         return false;
     }
 
-    bool parser::initialize_all()
+    bool parser::initialize_all() const
     {
-        if(!_controllers.size()) return false;
+        if (!_controllers.size())
+            return false;
 
         bool res = true;
-        for(auto& controller : _controllers)
+        for (auto &controller : _controllers)
         {
             LOG_PARSER_NL("[parser] initializing engine pins...");
             bool init_res = controller->initialize();
@@ -72,14 +73,14 @@ namespace json_parser
         return res;
     }
 
-
-    DynamicJsonDocument parser::retrive_data() {
+    DynamicJsonDocument parser::retrive_data() const
+    {
         DynamicJsonDocument json(3000);
         JsonArray array = json.createNestedArray();
-        for(auto& controller : _controllers)
+        for (auto &controller : _controllers)
         {
             array.add(controller->retrive_data());
         }
         return json;
     }
-} // namespace parser
+} // namespace json_parser

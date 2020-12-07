@@ -18,7 +18,7 @@
 #define LOG_NL(messege)
 #define LOG(messege)
 #define LOG_F(...)
-#define LOG_JSON_PRETTY(json) serializeJsonPretty(json, Serial); LOG('\n');
+#define LOG_JSON_PRETTY(json)
 
 #endif // SMART_TANK_DEBUG
 

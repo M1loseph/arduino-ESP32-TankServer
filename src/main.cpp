@@ -11,11 +11,11 @@
 #include "controllers/leds_controller.hpp"
 #include "controllers/mp3_controller.hpp"
 #include "controllers/sd_controller.hpp"
+#include "controllers/config_controller.hpp"
 #include "json_parser/parser.hpp"
 #include "global_queue.hpp"
 
 json_parser::parser parser;
-unsigned long counter = 0;
 
 void setup()
 {
@@ -25,11 +25,12 @@ void setup()
 
     LOG_NL("[main] adding controllers...")
     bool if_added = true;
-    if_added &= parser.add_controller(std::unique_ptr<json_parser::engines_controller>(new json_parser::engines_controller()));
-    if_added &= parser.add_controller(std::unique_ptr<json_parser::arm_controller>(new json_parser::arm_controller()));
-    if_added &= parser.add_controller(std::unique_ptr<json_parser::leds_controller>(new json_parser::leds_controller()));
-    if_added &= parser.add_controller(std::unique_ptr<json_parser::mp3_controller>(new json_parser::mp3_controller()));
-    if_added &= parser.add_controller(std::unique_ptr<json_parser::sd_controller>(new json_parser::sd_controller()));
+    if_added &= parser.add_controller(std::unique_ptr<json_parser::controller>(new json_parser::engines_controller()));
+    if_added &= parser.add_controller(std::unique_ptr<json_parser::controller>(new json_parser::arm_controller()));
+    if_added &= parser.add_controller(std::unique_ptr<json_parser::controller>(new json_parser::leds_controller()));
+    if_added &= parser.add_controller(std::unique_ptr<json_parser::controller>(new json_parser::mp3_controller()));
+    if_added &= parser.add_controller(std::unique_ptr<json_parser::controller>(new json_parser::sd_controller()));
+    if_added &= parser.add_controller(std::unique_ptr<json_parser::controller>(new json_parser::config_controller(parser)));
     LOG_F("[main] adding controllers: %s\n", if_added ? "success" : "failed")
 
     parser.initialize_all();
@@ -59,18 +60,12 @@ void loop()
         delete json;
     }
     parser.handle_updates();
-    if(millis() - counter > 2000)
-    {
-        auto retrived_json = parser.retrive_data();
-        LOG_JSON_PRETTY(retrived_json)
-        webserver::send_ws(retrived_json);
-        counter = millis();
-    }
 
 #ifdef SMART_TANK_DEBUG
     if (Serial.available())
     {
         json = new DynamicJsonDocument(256);
+        deserializeJson(*json, Serial);
         LOG_JSON_PRETTY(*json);
         global_queue::queue.push(&json);
     }

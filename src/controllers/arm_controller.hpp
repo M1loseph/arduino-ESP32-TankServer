@@ -10,13 +10,7 @@ namespace json_parser
 {
     class arm_controller final : public templated_controller<arm_controller>
     {
-    public:
-        explicit arm_controller();
-
-        bool initialize() override;
-        void update() override;
-        DynamicJsonDocument retrive_data() override;
-
+    private:
         typedef struct
         {
             const char *const NAME;
@@ -27,6 +21,12 @@ namespace json_parser
             uint8_t extern_module_pin;
         } servo_data;
 
+    public:
+        explicit arm_controller();
+
+        bool initialize() override;
+        void update() override;
+        DynamicJsonDocument retrive_data() override;
         servo_data* get_servo_by_name(const char* servo_name);
 
     private:

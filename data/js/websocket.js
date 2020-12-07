@@ -4,16 +4,11 @@ let webSocket = new WebSocket(WS_ADDRESS);
 
 webSocket.onopen = e => {
     console.log("Connected to WS server");
-    console.log(e);
+    sendWS({ controller: "config", command: "get" })
 };
 
 webSocket.onerror = e => {
     console.log("Error while connecting to WS server");
-    console.log(e);
-};
-
-webSocket.onmessage = e => {
-    console.log("Received message from server");
     console.log(e);
 };
 
@@ -25,4 +20,8 @@ const sendWS = (message) => {
     }
 }
 
-export { sendWS };
+const setOnRecive = (fun) => {
+    webSocket.onmessage = fun
+}
+
+export { sendWS, setOnRecive };

@@ -1,4 +1,4 @@
-import { sendWS } from "./websocket.js";
+import { sendWS, setOnRecive } from "./websocket.js";
 import { getGamepadInfo, processGamepad } from "./gamepad_processing.js";
 import { DEFAULT_CONFIG } from "./configs.js";
 
@@ -118,4 +118,10 @@ document.addEventListener("DOMContentLoaded", () => {
             sendWS({controller: "engines", command: "stop", engines: "both"})
         };
     });
+    setOnRecive(updateUI)
 });
+
+function updateUI(message) {
+    const data  = JSON.parse(message.data)
+    console.log(data);
+}

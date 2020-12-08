@@ -17,7 +17,7 @@
 
 namespace json_parser
 {
-    engines_controller::engines_controller() : templated_controller("engines", JSON_OBJECT_SIZE(10))
+    engines_controller::engines_controller() : templated_controller("engines", JSON_OBJECT_SIZE(14) + JSON_ARRAY_SIZE(2))
     {
     }
 
@@ -510,14 +510,22 @@ namespace json_parser
     {
         DynamicJsonDocument json(_json_size);
         json[NAME_FIELD] = _name;
-        JsonObject data = json.createNestedObject(DATA_FIELD);
-        JsonObject left = data.createNestedObject(LEFT);
-        JsonObject right = data.createNestedObject(RIGHT);
+        JsonArray data = json.createNestedArray(DATA_FIELD);
 
+        JsonObject left = data.createNestedObject();
+
+        left[ENGINE_KEY] = LEFT;
+        left["min"] = 0;
+        left["max"] = SPEED_MAX;
         left[SPEED_KEY] = _speed_left;
         left[DIRECTION_KEY] = static_cast<int>(_direction_left);
         left[SPEED_CONTROLL_KEY] = static_cast<int>(_direction_left);
 
+        JsonObject right = data.createNestedObject();
+
+        right[ENGINE_KEY] = RIGHT;
+        right["min"] = 0;
+        right["max"] = SPEED_MAX;
         right[SPEED_KEY] = _speed_right;
         right[DIRECTION_KEY] = static_cast<int>(_direction_right);
         right[SPEED_CONTROLL_KEY] = static_cast<int>(_direction_right);

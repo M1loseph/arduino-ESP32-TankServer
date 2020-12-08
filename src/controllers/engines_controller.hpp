@@ -93,7 +93,7 @@ namespace json_parser
         static constexpr const char *BOTH = "both";
 
         static constexpr const char* SPEED_KEY = "speed";
-        static constexpr const char* ENGINE_KEY = "engines";
+        static constexpr const char* ENGINE_KEY = "engine";
         static constexpr const char* DIRECTION_KEY = "direction";
         static constexpr const char* SPEED_CONTROLL_KEY = "speed_controll";
 

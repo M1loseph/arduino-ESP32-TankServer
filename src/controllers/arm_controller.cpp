@@ -17,7 +17,7 @@
 
 namespace json_parser
 {
-    arm_controller::arm_controller() : templated_controller("arm", JSON_OBJECT_SIZE(26))
+    arm_controller::arm_controller() : templated_controller("arm", JSON_ARRAY_SIZE(SERVOS) + JSON_OBJECT_SIZE(SERVOS * 4) + JSON_OBJECT_SIZE(2))
     {
     }
 
@@ -186,13 +186,14 @@ namespace json_parser
     {
         DynamicJsonDocument json(_json_size);
         json[NAME_FIELD] = _name;
-        JsonObject data = json.createNestedObject(DATA_FIELD);
+        JsonArray data = json.createNestedArray(DATA_FIELD);
 
         for(uint8_t i = 0; i < SERVOS; i++)
         {
-            JsonObject servo = data.createNestedObject(arm[i].NAME);
+            JsonObject servo = data.createNestedObject();
+            servo["servo"] = arm[i].NAME;
             servo["min"] = arm[i].MIN_ANGLE;
-            servo["max"] = arm[i].MIN_ANGLE;
+            servo["max"] = arm[i].MAX_ANGLE;
             servo["angle"] = arm[i].current_angle;
         }
         return json;

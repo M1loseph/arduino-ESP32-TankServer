@@ -93,8 +93,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }, false);
 
     // engines dial
-    document.querySelector("#speed").addEventListener("change", event => {
-        sendWS({ controller: "engines", command: event.target.id, engines: "both", speed: parseInt(event.target.value) })
+    document.querySelector("#left").addEventListener("change", event => {
+        sendWS({ controller: "engines", command: "speed", engine: event.target.id, speed: parseInt(event.target.value) })
+    });
+
+    document.querySelector("#right").addEventListener("change", event => {
+        sendWS({ controller: "engines", command: "speed", engine: event.target.id, speed: parseInt(event.target.value) })
     });
 
     document.querySelector("#forward").ontouchstart = (event) => {
@@ -136,6 +140,14 @@ function updateUI(message) {
                     slider.previousElementSibling.innerHTML = slider.value;
                 });
                 break;
+            case "engines":
+                json.data.forEach(engine => {
+                    const slider = document.getElementById(engine.engine);
+                    slider.min = engine.min;
+                    slider.max = engine.max;
+                    slider.value = engine.speed;
+                    slider.previousElementSibling.innerHTML = slider.value;
+                });
         }
     });
 }

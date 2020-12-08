@@ -17,7 +17,7 @@
 
 namespace json_parser
 {
-    engines_controller::engines_controller() : templated_controller("engines")
+    engines_controller::engines_controller() : templated_controller("engines", JSON_OBJECT_SIZE(10))
     {
     }
 
@@ -508,7 +508,7 @@ namespace json_parser
 
     DynamicJsonDocument engines_controller::retrive_data()
     {
-        DynamicJsonDocument json(200);
+        DynamicJsonDocument json(_json_size);
         json[NAME_FIELD] = _name;
         JsonObject data = json.createNestedObject(DATA_FIELD);
         JsonObject left = data.createNestedObject(LEFT);

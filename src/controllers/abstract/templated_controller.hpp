@@ -29,7 +29,7 @@ namespace json_parser
             size_t interval;
         } event_data;
 
-        templated_controller(const char *name) : controller(name) {}
+        templated_controller(const char *name, uint32_t json_size) : controller(name, json_size) {}
         virtual ~templated_controller() = default;
 
         bool add_event(const char *command, event function, size_t interval = IDLE_INTERVAL)

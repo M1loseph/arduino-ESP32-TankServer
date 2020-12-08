@@ -18,7 +18,7 @@
 
 namespace json_parser
 {
-    sd_controller::sd_controller() : controller("sd")
+    sd_controller::sd_controller() : controller("sd", JSON_OBJECT_SIZE(2))
     {
     }
 
@@ -56,7 +56,7 @@ namespace json_parser
 
     DynamicJsonDocument sd_controller::retrive_data()
     {
-        DynamicJsonDocument json(50);
+        DynamicJsonDocument json(_json_size);
         json[NAME_FIELD] = _name;
         json[DATA_FIELD] = nullptr;
         return json;

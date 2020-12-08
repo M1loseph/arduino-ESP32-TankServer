@@ -18,7 +18,7 @@
 
 namespace json_parser
 {
-    leds_controller::leds_controller() : templated_controller("leds")
+    leds_controller::leds_controller() : templated_controller("leds", JSON_OBJECT_SIZE(5) + JSON_ARRAY_SIZE(NUM_LEDS))
     {
     }
 

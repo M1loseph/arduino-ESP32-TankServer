@@ -75,12 +75,15 @@ namespace json_parser
 
     DynamicJsonDocument parser::retrive_data() const
     {
-        DynamicJsonDocument json(3000);
-        JsonArray array = json.createNestedArray();
+        uint32_t json_size = 0;
         for (auto &controller : _controllers)
-        {
-            array.add(controller->retrive_data());
-        }
+            json_size += controller->retrive_data_size();
+
+        DynamicJsonDocument json(json_size + JSON_ARRAY_SIZE(_controllers.size()));
+
+        for (auto &controller : _controllers)
+            json.add(controller->retrive_data());
+
         return json;
     }
 } // namespace json_parser

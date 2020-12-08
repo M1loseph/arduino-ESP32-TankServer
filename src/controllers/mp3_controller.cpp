@@ -17,7 +17,7 @@
 
 namespace json_parser
 {
-    mp3_controller::mp3_controller() : templated_controller("mp3"),
+    mp3_controller::mp3_controller() : templated_controller("mp3", JSON_OBJECT_SIZE(4)),
                                        _mp3(Serial2),
                                        _volume(DEF_VOLUME),
                                        _last_song(nullptr)

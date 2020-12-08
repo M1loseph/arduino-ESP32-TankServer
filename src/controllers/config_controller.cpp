@@ -21,7 +21,7 @@
 
 namespace json_parser
 {
-    config_controller::config_controller(const parser &parser) : templated_controller("config"),
+    config_controller::config_controller(const parser &parser) : templated_controller("config", JSON_OBJECT_SIZE(2)),
                                                                  _parser(parser)
     {
     }
@@ -41,7 +41,7 @@ namespace json_parser
 
     DynamicJsonDocument config_controller::retrive_data()
     {
-        DynamicJsonDocument json(100);
+        DynamicJsonDocument json(_json_size);
         json[NAME_FIELD] = _name;
         json[DATA_FIELD] = nullptr;
         return json;

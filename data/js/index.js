@@ -115,13 +115,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.querySelectorAll(".arrow-button").forEach(button => {
         button.ontouchend = () => {
-            sendWS({controller: "engines", command: "stop", engines: "both"})
+            sendWS({ controller: "engines", command: "stop", engines: "both" })
         };
     });
-    setOnRecive(updateUI)
+    setOnRecive(updateUI);
 });
 
 function updateUI(message) {
-    const data  = JSON.parse(message.data)
+    const data = JSON.parse(message.data)
     console.log(data);
+
+    data.forEach(json => {
+        switch (json.name) {
+            case "arm":
+                json.data.forEach(servoData => {
+                    const slider = document.getElementById(servoData.servo);
+                    slider.min = servoData.min;
+                    slider.max = servoData.max;
+                    slider.value = servoData.angle;
+                    slider.previousElementSibling.innerHTML = slider.value;
+                });
+                break;
+        }
+    });
 }

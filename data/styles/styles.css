@@ -75,6 +75,7 @@ body {
     flex-direction: column;
     list-style-type: none;
     align-items: center;
+    min-height: 50%;
 }
 
 .commands-list li {
@@ -95,12 +96,16 @@ body {
 }
 
 .list-element {
-    background-color: pink;
+    background-color: rgb(255, 192, 203);
 }
 
 .list-button:active {
     transition: 0.2s;
     background-color: hotpink;
+}
+
+.exit-grower {
+    flex-grow: 1;
 }
 
 .dial-exit {
@@ -208,4 +213,15 @@ input[type="color"]::-webkit-color-swatch {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.form_input {
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+    font-size: 1em;
+    padding: 0.5em 1em;
+    border-radius: 0.5em;
+    background-color: rgba(255, 255, 255, 0.7);
+    border: none;
+    transition: all 0.3s;
 }

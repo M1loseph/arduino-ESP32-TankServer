@@ -90,7 +90,7 @@ namespace json_parser
         return true;
     }
 
-    bool engines_controller::forward(const JsonObjectConst *json)
+    bool engines_controller::forward(const JsonObject *json)
     {
         bool if_executed = false;
         const char *engines = get_engine_from_json(json);
@@ -136,7 +136,7 @@ namespace json_parser
         LOG_ENGINE_F("[%s] forward right\n", _name)
     }
 
-    bool engines_controller::backward(const JsonObjectConst *json)
+    bool engines_controller::backward(const JsonObject *json)
     {
         bool if_executed = false;
         const char *engines = get_engine_from_json(json);
@@ -182,7 +182,7 @@ namespace json_parser
         LOG_ENGINE_NL("[engine_controller] backward right")
     }
 
-    bool engines_controller::stop(const JsonObjectConst *json)
+    bool engines_controller::stop(const JsonObject *json)
     {
         bool if_executed = false;
         const char *engines = get_engine_from_json(json);
@@ -226,7 +226,7 @@ namespace json_parser
         LOG_ENGINE_F("[%s] stop right\n", _name)
     }
 
-    bool engines_controller::rotate(const JsonObjectConst *json)
+    bool engines_controller::rotate(const JsonObject *json)
     {
         bool if_executed = false;
         const char *engines = get_engine_from_json(json);
@@ -260,7 +260,7 @@ namespace json_parser
         LOG_ENGINE_F("[%s] rotate right\n", _name)
     }
 
-    bool engines_controller::slower(const JsonObjectConst *json)
+    bool engines_controller::slower(const JsonObject *json)
     {
         bool if_executed = false;
         const char *engines = get_engine_from_json(json);
@@ -298,7 +298,7 @@ namespace json_parser
         LOG_ENGINE_F("[%s] slower right\n", _name)
     }
 
-    bool engines_controller::faster(const JsonObjectConst *json)
+    bool engines_controller::faster(const JsonObject *json)
     {
         bool if_executed = false;
         const char *engines = get_engine_from_json(json);
@@ -336,7 +336,7 @@ namespace json_parser
         LOG_ENGINE_F("[%s] faster right\n", _name)
     }
 
-    bool engines_controller::keep_speed(const JsonObjectConst *json)
+    bool engines_controller::keep_speed(const JsonObject *json)
     {
         bool if_executed = false;
         const char *engines = get_engine_from_json(json);
@@ -374,7 +374,7 @@ namespace json_parser
         LOG_ENGINE_F("[%s] right keeps speed\n", _name)
     }
 
-    size_t engines_controller::get_speed_from_json(const JsonObjectConst *json, bool *succ)
+    size_t engines_controller::get_speed_from_json(const JsonObject *json, bool *succ)
     {
         if (json)
         {
@@ -405,7 +405,7 @@ namespace json_parser
         return 0U;
     }
 
-    bool engines_controller::set_speed(const JsonObjectConst *json)
+    bool engines_controller::set_speed(const JsonObject *json)
     {
         bool if_executed = false;
         bool succ = false;
@@ -443,7 +443,7 @@ namespace json_parser
         _speed_right = new_speed;
     }
 
-    const char *engines_controller::get_engine_from_json(const JsonObjectConst *json)
+    const char *engines_controller::get_engine_from_json(const JsonObject *json)
     {
         if (json)
         {

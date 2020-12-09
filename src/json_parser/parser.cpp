@@ -17,7 +17,7 @@
 
 namespace json_parser
 {
-    std::pair<uint8_t, uint8_t> parser::handle(const JsonObjectConst &json) const
+    std::pair<uint8_t, uint8_t> parser::handle(const JsonObject &json) const
     {
         uint8_t permited = 0;
         uint8_t handled = 0;

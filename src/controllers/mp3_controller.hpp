@@ -17,29 +17,29 @@ namespace json_parser
         DynamicJsonDocument retrive_data() override;
 
     private:
-        bool stop_playing(const JsonObjectConst *json);
-        bool set_volume(const JsonObjectConst *json);
-        bool resume(const JsonObjectConst *json);
+        bool stop_playing(const JsonObject *json);
+        bool set_volume(const JsonObject *json);
+        bool resume(const JsonObject *json);
 
-        bool propaganda(const JsonObjectConst *json);
-        bool mighty_polish_tank(const JsonObjectConst *json);
-        bool high_ground(const JsonObjectConst *json);
-        bool fine_addition(const JsonObjectConst *json);
-        bool i_dont_like_sand(const JsonObjectConst *json);
-        bool hello_there(const JsonObjectConst *json);
-        bool im_the_senate(const JsonObjectConst *json);
-        bool forever_young(const JsonObjectConst *json);
-        bool revenge(const JsonObjectConst *json);
-        bool silhouette(const JsonObjectConst *json);
-        bool the_bad_touch(const JsonObjectConst *json);
-        bool hero(const JsonObjectConst *json);
-        bool gas_gas_gas(const JsonObjectConst *json);
-        bool running_in_the_90s(const JsonObjectConst *json);
-        bool deja_vu(const JsonObjectConst *json);
-        bool running_in_the_90s_short(const JsonObjectConst *json);
-        bool deja_vu_short(const JsonObjectConst *json);
-        bool true_survivor(const JsonObjectConst *json);
-        bool windows_xp(const JsonObjectConst *json);
+        bool propaganda(const JsonObject *json);
+        bool mighty_polish_tank(const JsonObject *json);
+        bool high_ground(const JsonObject *json);
+        bool fine_addition(const JsonObject *json);
+        bool i_dont_like_sand(const JsonObject *json);
+        bool hello_there(const JsonObject *json);
+        bool im_the_senate(const JsonObject *json);
+        bool forever_young(const JsonObject *json);
+        bool revenge(const JsonObject *json);
+        bool silhouette(const JsonObject *json);
+        bool the_bad_touch(const JsonObject *json);
+        bool hero(const JsonObject *json);
+        bool gas_gas_gas(const JsonObject *json);
+        bool running_in_the_90s(const JsonObject *json);
+        bool deja_vu(const JsonObject *json);
+        bool running_in_the_90s_short(const JsonObject *json);
+        bool deja_vu_short(const JsonObject *json);
+        bool true_survivor(const JsonObject *json);
+        bool windows_xp(const JsonObject *json);
 
         static constexpr uint8_t DEF_VOLUME = 15U;
 

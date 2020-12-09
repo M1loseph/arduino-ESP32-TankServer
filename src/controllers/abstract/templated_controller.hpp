@@ -12,7 +12,7 @@ namespace json_parser
     class templated_controller : public controller
     {
     public:
-        typedef bool (T::*event)(const JsonObjectConst *);
+        typedef bool (T::*event)(const JsonObject *);
 
         typedef struct event_data
         {
@@ -59,7 +59,7 @@ namespace json_parser
             return false;
         }
 
-        handle_resoult try_handle(const JsonObjectConst& json)
+        handle_resoult try_handle(const JsonObject& json)
         {
             if (can_handle(json))
             {
@@ -84,7 +84,7 @@ namespace json_parser
         }
 
     protected:
-        bool can_handle(const JsonObjectConst& json) const
+        bool can_handle(const JsonObject& json) const
         {
             if (json.containsKey(CONTROLLER_KEY))
             {
@@ -97,7 +97,7 @@ namespace json_parser
         std::vector<event_data> _events;
 
     private:
-        bool handle(const JsonObjectConst& json) override
+        bool handle(const JsonObject& json) override
         {
             if (json.containsKey(COMMAND_KEY))
             {

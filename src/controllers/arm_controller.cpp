@@ -46,7 +46,7 @@ namespace json_parser
         }
     }
 
-    arm_controller::servo_data *arm_controller::get_servo_ptr(const JsonObjectConst *json)
+    arm_controller::servo_data *arm_controller::get_servo_ptr(const JsonObject *json)
     {
         if (json)
         {
@@ -92,7 +92,7 @@ namespace json_parser
         return if_added;
     }
 
-    bool arm_controller::servo_minus(const JsonObjectConst *json)
+    bool arm_controller::servo_minus(const JsonObject *json)
     {
         servo_data *servo = get_servo_ptr(json);
         if (servo)
@@ -104,7 +104,7 @@ namespace json_parser
         return false;
     }
 
-    bool arm_controller::servo_plus(const JsonObjectConst *json)
+    bool arm_controller::servo_plus(const JsonObject *json)
     {
         servo_data *servo = get_servo_ptr(json);
         if (servo)
@@ -116,7 +116,7 @@ namespace json_parser
         return false;
     }
 
-    bool arm_controller::servo_stop(const JsonObjectConst *json)
+    bool arm_controller::servo_stop(const JsonObject *json)
     {
         servo_data *servo = get_servo_ptr(json);
         if (servo)
@@ -128,7 +128,7 @@ namespace json_parser
         return false;
     }
 
-    bool arm_controller::servo_angle(const JsonObjectConst *json)
+    bool arm_controller::servo_angle(const JsonObject *json)
     {
         servo_data *servo = get_servo_ptr(json);
         if (servo)

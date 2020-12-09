@@ -15,17 +15,17 @@ namespace json_parser
         DynamicJsonDocument retrive_data() override;
 
     private:
-        bool polish_animation(const JsonObjectConst *json);
-        bool eurobeat_animation(const JsonObjectConst *json);
-        bool custom_animation(const JsonObjectConst *json);
-        bool random_animation(const JsonObjectConst *json);
-        bool set_custom_animation(const JsonObjectConst *json);
-        bool set_brightness(const JsonObjectConst *json);
-        bool set_animation_interval(const JsonObjectConst *json);
-        bool stop_animation(const JsonObjectConst *json);
-        bool turn_off_leds(const JsonObjectConst *json);
-        bool animate_forward(const JsonObjectConst *json);
-        bool animate_backward(const JsonObjectConst *json);
+        bool polish_animation(const JsonObject *json);
+        bool eurobeat_animation(const JsonObject *json);
+        bool custom_animation(const JsonObject *json);
+        bool random_animation(const JsonObject *json);
+        bool set_custom_animation(const JsonObject *json);
+        bool set_brightness(const JsonObject *json);
+        bool set_animation_interval(const JsonObject *json);
+        bool stop_animation(const JsonObject *json);
+        bool turn_off_leds(const JsonObject *json);
+        bool animate_forward(const JsonObject *json);
+        bool animate_backward(const JsonObject *json);
 
         void show_leds();
 

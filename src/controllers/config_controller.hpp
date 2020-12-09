@@ -18,7 +18,7 @@ namespace json_parser
     private:
         static constexpr const char* GET_DATA = "get";
 
-        bool get_data(const JsonObjectConst *json);
+        bool get_data(const JsonObject *json);
 
         const parser& _parser;
     };

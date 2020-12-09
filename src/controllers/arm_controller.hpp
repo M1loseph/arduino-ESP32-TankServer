@@ -30,13 +30,13 @@ namespace json_parser
         servo_data* get_servo_by_name(const char* servo_name);
 
     private:
-        bool servo_minus(const JsonObjectConst *json);
-        bool servo_plus(const JsonObjectConst *json);
-        bool servo_stop(const JsonObjectConst *json);
-        bool servo_angle(const JsonObjectConst *json);
+        bool servo_minus(const JsonObject *json);
+        bool servo_plus(const JsonObject *json);
+        bool servo_stop(const JsonObject *json);
+        bool servo_angle(const JsonObject *json);
 
         void send_angle(uint8_t index);
-        servo_data *get_servo_ptr(const JsonObjectConst *json);
+        servo_data *get_servo_ptr(const JsonObject *json);
 
         static constexpr const char *SERVO_MINUS = "minus";
         static constexpr const char *SERVO_PLUS = "plus";

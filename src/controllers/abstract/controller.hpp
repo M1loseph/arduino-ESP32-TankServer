@@ -18,7 +18,7 @@ namespace json_parser
         controller(const char *name, uint32_t json_size) : _name(name), _json_size(json_size) {}
         virtual ~controller() = default;
 
-        virtual handle_resoult try_handle(const JsonObjectConst &json)
+        virtual handle_resoult try_handle(const JsonObject &json)
         {
             if (can_handle(json))
             {
@@ -35,14 +35,14 @@ namespace json_parser
         virtual DynamicJsonDocument retrive_data() = 0;
 
     protected:
-        virtual bool can_handle(const JsonObjectConst &json) const = 0;
+        virtual bool can_handle(const JsonObject &json) const = 0;
         const char *const _name;
         uint32_t _json_size;
         static constexpr const char* NAME_FIELD = "name";
         static constexpr const char* DATA_FIELD = "data";
 
     private:
-        virtual bool handle(const JsonObjectConst &json) = 0;
+        virtual bool handle(const JsonObject &json) = 0;
     };
 } // namespace json_parser
 #endif // __ICONTROLLER_HPP__

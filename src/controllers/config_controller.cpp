@@ -31,7 +31,7 @@ namespace json_parser
         return add_event(GET_DATA, &config_controller::get_data);
     }
 
-    bool config_controller::get_data(const JsonObjectConst *json)
+    bool config_controller::get_data(const JsonObject *json)
     {
         auto retrived_json = _parser.retrive_data();
         LOG_CONFIG_JSON_PRETTY(retrived_json)

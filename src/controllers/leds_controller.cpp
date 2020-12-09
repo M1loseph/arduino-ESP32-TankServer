@@ -45,7 +45,7 @@ namespace json_parser
         return if_added;
     }
 
-    bool leds_controller::polish_animation(const JsonObjectConst *json)
+    bool leds_controller::polish_animation(const JsonObject *json)
     {
         LOG_LEDS_F("[%s] set polish animation\n", _name)
         _current_animation = &leds_controller::polish;
@@ -53,7 +53,7 @@ namespace json_parser
         return true;
     }
 
-    bool leds_controller::eurobeat_animation(const JsonObjectConst *json)
+    bool leds_controller::eurobeat_animation(const JsonObject *json)
     {
         LOG_LEDS_F("[%s] set eurobeat animation\n", _name)
         _current_animation = &leds_controller::rainbow;
@@ -61,7 +61,7 @@ namespace json_parser
         return true;
     }
 
-    bool leds_controller::custom_animation(const JsonObjectConst *json)
+    bool leds_controller::custom_animation(const JsonObject *json)
     {
         LOG_LEDS_F("[%s] set custiom animation\n", _name)
         _current_animation = &leds_controller::custom;
@@ -69,7 +69,7 @@ namespace json_parser
         return true;
     }
 
-    bool leds_controller::random_animation(const JsonObjectConst *json)
+    bool leds_controller::random_animation(const JsonObject *json)
     {
         LOG_LEDS_F("[%s] set random animation\n", _name)
         _current_animation = &leds_controller::random;
@@ -77,7 +77,7 @@ namespace json_parser
         return true;
     }
 
-    bool leds_controller::set_custom_animation(const JsonObjectConst *json)
+    bool leds_controller::set_custom_animation(const JsonObject *json)
     {
         if (json)
         {
@@ -105,7 +105,7 @@ namespace json_parser
         return false;
     }
 
-    bool leds_controller::set_brightness(const JsonObjectConst *json)
+    bool leds_controller::set_brightness(const JsonObject *json)
     {
         if (json)
         {
@@ -129,7 +129,7 @@ namespace json_parser
         return false;
     }
 
-    bool leds_controller::set_animation_interval(const JsonObjectConst *json)
+    bool leds_controller::set_animation_interval(const JsonObject *json)
     {
         if (json)
         {
@@ -152,14 +152,14 @@ namespace json_parser
         return false;
     }
 
-    bool leds_controller::stop_animation(const JsonObjectConst *json)
+    bool leds_controller::stop_animation(const JsonObject *json)
     {
         LOG_LEDS_F("[%s] stop animation\n", _name)
         _direction = animation_direction::STOP;
         return true;
     }
 
-    bool leds_controller::turn_off_leds(const JsonObjectConst *json)
+    bool leds_controller::turn_off_leds(const JsonObject *json)
     {
         LOG_LEDS_NL("Turn off leds");
         _current_animation = nullptr;
@@ -167,14 +167,14 @@ namespace json_parser
         return true;
     }
 
-    bool leds_controller::animate_forward(const JsonObjectConst *json)
+    bool leds_controller::animate_forward(const JsonObject *json)
     {
         LOG_LEDS_NL("Animate forward");
         _direction = animation_direction::FORWARD;
         return true;
     }
 
-    bool leds_controller::animate_backward(const JsonObjectConst *json)
+    bool leds_controller::animate_backward(const JsonObject *json)
     {
         LOG_LEDS_NL("Animate backward");
         _direction = animation_direction::BACKWARD;

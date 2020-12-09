@@ -44,40 +44,40 @@ namespace json_parser
         void disable_speed_right();
         void enable_speed_right();
 
-        bool forward(const JsonObjectConst *json);
+        bool forward(const JsonObject *json);
         void forward_left();
         void forward_right();
 
-        bool backward(const JsonObjectConst *json);
+        bool backward(const JsonObject *json);
         void backward_left();
         void backward_right();
 
-        bool stop(const JsonObjectConst *json);
+        bool stop(const JsonObject *json);
         void stop_left();
         void stop_right();
 
-        bool rotate(const JsonObjectConst *json);
+        bool rotate(const JsonObject *json);
         void rotate_left();
         void rotate_right();
 
-        bool slower(const JsonObjectConst *json);
+        bool slower(const JsonObject *json);
         void slower_left();
         void slower_right();
 
-        bool faster(const JsonObjectConst *json);
+        bool faster(const JsonObject *json);
         void faster_left();
         void faster_right();
 
-        bool keep_speed(const JsonObjectConst *json);
+        bool keep_speed(const JsonObject *json);
         void keep_speed_left();
         void keep_speed_right();
 
-        bool set_speed(const JsonObjectConst *json);
+        bool set_speed(const JsonObject *json);
         void set_speed_left(uint32_t new_speed);
         void set_speed_right(uint32_t new_speed);
 
-        const char *get_engine_from_json(const JsonObjectConst *json);
-        size_t get_speed_from_json(const JsonObjectConst *json, bool *succ);
+        const char *get_engine_from_json(const JsonObject *json);
+        size_t get_speed_from_json(const JsonObject *json, bool *succ);
 
         static constexpr const char *FORWARD = "forward";
         static constexpr const char *BACKWARD = "backward";

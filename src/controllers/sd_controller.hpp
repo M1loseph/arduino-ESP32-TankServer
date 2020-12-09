@@ -15,14 +15,15 @@ namespace json_parser
         DynamicJsonDocument retrive_data() override;
 
     private:
-        bool can_handle(const JsonObjectConst &json) const override;
-        bool handle(const JsonObjectConst& json) override;
+        bool can_handle(const JsonObject &json) const override;
+        bool handle(const JsonObject& json) override;
 
         static constexpr uint8_t CHIP_SELECT = 5U;
         static constexpr const char* LOG_KEY = "log";
 
         static constexpr const char *SCRIPT_FILE = "/script.txt";
         static constexpr const char *LOG_FILE = "/logs.txt";
+        static constexpr const char *TIME_KEY = "time";
 
         File _file;
     };

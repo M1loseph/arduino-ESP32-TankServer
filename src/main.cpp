@@ -56,7 +56,7 @@ void loop()
     DynamicJsonDocument* json = nullptr;
     if(global_queue::queue.read(&json))
     {
-        parser.handle(json->as<JsonObjectConst>());
+        parser.handle(json->as<JsonObject>());
         delete json;
     }
     parser.handle_updates();

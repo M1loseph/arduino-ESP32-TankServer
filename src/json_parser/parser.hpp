@@ -13,7 +13,7 @@ namespace json_parser
     class parser
     {
     public:
-        std::pair<uint8_t, uint8_t> handle(const JsonObjectConst& json) const;
+        std::pair<uint8_t, uint8_t> handle(const JsonObject& json) const;
         void handle_updates() const;
         bool add_controller(std::unique_ptr<controller>&& controller);
         bool initialize_all() const;

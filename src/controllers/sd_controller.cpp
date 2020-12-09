@@ -27,7 +27,7 @@ namespace json_parser
         return SD.begin(CHIP_SELECT);
     }
 
-    bool sd_controller::can_handle(const JsonObjectConst &json) const
+    bool sd_controller::can_handle(const JsonObject &json) const
     {
         if (json.containsKey(LOG_KEY))
         {
@@ -36,21 +36,30 @@ namespace json_parser
         return true;
     }
 
-    bool sd_controller::handle(const JsonObjectConst &json)
+    bool sd_controller::handle(const JsonObject &json)
     {
-        if(_file)
-            _file.close();
-
-        _file = SD.open(LOG_FILE);
-        if(_file)
+        if (json.containsKey(TIME_KEY))
         {
-            ReadBufferingStream bufferedFile(_file, 64);
-            serializeJson(json, _file);
-            LOG_SD_F("[%s] serialized JSON\n", _name)
-            _file.close();
-            return true;
+            if (_file)
+                _file.close();
+
+            _file = SD.open(LOG_FILE);
+            if (_file)
+            {
+                json["time"] = millis();
+                ReadBufferingStream bufferedFile(_file, 64);
+                serializeJson(json, _file);
+                LOG_SD_F("[%s] serialized JSON\n", _name)
+                _file.close();
+                return true;
+            }
+            LOG_SD_F("[%s] unable to open the file\n", _name)
         }
-        LOG_SD_F("[%s] unable to open the file\n", _name)
+        else
+        {
+            LOG_SD_F("[%s] already logged\n", _name);
+        }
+
         return false;
     }
 

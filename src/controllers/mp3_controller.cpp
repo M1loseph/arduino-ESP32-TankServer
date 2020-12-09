@@ -59,14 +59,14 @@ namespace json_parser
         return if_added;
     }
 
-    bool mp3_controller::stop_playing(const JsonObjectConst *json)
+    bool mp3_controller::stop_playing(const JsonObject *json)
     {
         LOG_MP3_F("[%s] stop playback\n", _name)
         _mp3.playStop();
         return true;
     }
 
-    bool mp3_controller::set_volume(const JsonObjectConst *json)
+    bool mp3_controller::set_volume(const JsonObject *json)
     {
         if (json)
         {
@@ -96,14 +96,14 @@ namespace json_parser
         return false;
     }
 
-    bool mp3_controller::resume(const JsonObjectConst *json)
+    bool mp3_controller::resume(const JsonObject *json)
     {
         LOG_MP3_F("[%s] resuming song\n", _name)
         _mp3.playStart();
         return true;
     }
 
-    bool mp3_controller::propaganda(const JsonObjectConst *json)
+    bool mp3_controller::propaganda(const JsonObject *json)
     {
         LOG_MP3_F("[%s] playing propaganda\n", _name)
         _last_song = PROPAGANDA;
@@ -111,7 +111,7 @@ namespace json_parser
         return true;
     }
 
-    bool mp3_controller::mighty_polish_tank(const JsonObjectConst *json)
+    bool mp3_controller::mighty_polish_tank(const JsonObject *json)
     {
         LOG_MP3_F("[%s] playing mighty polish tank\n", _name)
         _last_song = MIGHTY_POLISH_TANK;
@@ -119,7 +119,7 @@ namespace json_parser
         return true;
     }
 
-    bool mp3_controller::high_ground(const JsonObjectConst *json)
+    bool mp3_controller::high_ground(const JsonObject *json)
     {
         LOG_MP3_F("[%s] playing high ground\n", _name)
         _last_song = HIGH_GROUND;
@@ -127,7 +127,7 @@ namespace json_parser
         return true;
     }
 
-    bool mp3_controller::fine_addition(const JsonObjectConst *json)
+    bool mp3_controller::fine_addition(const JsonObject *json)
     {
         LOG_MP3_F("[%s] playing fine addition\n", _name)
         _last_song = FINE_ADDITION;
@@ -135,7 +135,7 @@ namespace json_parser
         return true;
     }
 
-    bool mp3_controller::i_dont_like_sand(const JsonObjectConst *json)
+    bool mp3_controller::i_dont_like_sand(const JsonObject *json)
     {
         LOG_MP3_F("[%s] playing i dont like sand\n", _name)
         _last_song = I_DONT_LIKE_SAND;
@@ -143,7 +143,7 @@ namespace json_parser
         return true;
     }
 
-    bool mp3_controller::hello_there(const JsonObjectConst *json)
+    bool mp3_controller::hello_there(const JsonObject *json)
     {
         LOG_MP3_F("[%s] playing hello there\n", _name)
         _last_song = HELLO_THERE;
@@ -151,7 +151,7 @@ namespace json_parser
         return true;
     }
 
-    bool mp3_controller::im_the_senate(const JsonObjectConst *json)
+    bool mp3_controller::im_the_senate(const JsonObject *json)
     {
         LOG_MP3_F("[%s] playing im the senate\n", _name)
         _last_song = IM_THE_SENATE;
@@ -159,7 +159,7 @@ namespace json_parser
         return true;
     }
 
-    bool mp3_controller::forever_young(const JsonObjectConst *json)
+    bool mp3_controller::forever_young(const JsonObject *json)
     {
         LOG_MP3_F("[%s] playing forever young\n", _name)
         _last_song = FOREVER_YOUNG;
@@ -167,7 +167,7 @@ namespace json_parser
         return true;
     }
 
-    bool mp3_controller::revenge(const JsonObjectConst *json)
+    bool mp3_controller::revenge(const JsonObject *json)
     {
         LOG_MP3_F("[%s] playing revenge\n", _name)
         _last_song = REVENGE;
@@ -175,7 +175,7 @@ namespace json_parser
         return true;
     }
 
-    bool mp3_controller::silhouette(const JsonObjectConst *json)
+    bool mp3_controller::silhouette(const JsonObject *json)
     {
         LOG_MP3_F("[%s] playing naruto opening\n", _name)
         _last_song = REVENGE;
@@ -183,7 +183,7 @@ namespace json_parser
         return true;
     }
 
-    bool mp3_controller::the_bad_touch(const JsonObjectConst *json)
+    bool mp3_controller::the_bad_touch(const JsonObject *json)
     {
         LOG_MP3_F("[%s] playing the bad touch\n", _name)
         _last_song = THE_BAD_TOUCH;
@@ -191,7 +191,7 @@ namespace json_parser
         return true;
     }
 
-    bool mp3_controller::hero(const JsonObjectConst *json)
+    bool mp3_controller::hero(const JsonObject *json)
     {
         LOG_MP3_F("[%s] playing i need a hero\n", _name)
         _last_song = HERO;
@@ -199,7 +199,7 @@ namespace json_parser
         return true;
     }
 
-    bool mp3_controller::gas_gas_gas(const JsonObjectConst *json)
+    bool mp3_controller::gas_gas_gas(const JsonObject *json)
     {
         LOG_MP3_F("[%s] playing gas gas gas\n", _name)
         _last_song = GAS_GAS_GAS;
@@ -207,7 +207,7 @@ namespace json_parser
         return true;
     }
 
-    bool mp3_controller::running_in_the_90s(const JsonObjectConst *json)
+    bool mp3_controller::running_in_the_90s(const JsonObject *json)
     {
         LOG_MP3_F("[%s] playing running in the 90s\n", _name)
         _last_song = RUNNING_IN_THE_90S;
@@ -215,7 +215,7 @@ namespace json_parser
         return true;
     }
 
-    bool mp3_controller::deja_vu(const JsonObjectConst *json)
+    bool mp3_controller::deja_vu(const JsonObject *json)
     {
         LOG_MP3_F("[%s] playing deja vu\n", _name)
         _last_song = DEJA_VU;
@@ -223,7 +223,7 @@ namespace json_parser
         return true;
     }
 
-    bool mp3_controller::running_in_the_90s_short(const JsonObjectConst *json)
+    bool mp3_controller::running_in_the_90s_short(const JsonObject *json)
     {
         LOG_MP3_F("[%s] playing running in the 90s - short version\n", _name)
         _last_song = RUNNING_IN_THE_90S_SHORT;
@@ -231,7 +231,7 @@ namespace json_parser
         return true;
     }
 
-    bool mp3_controller::deja_vu_short(const JsonObjectConst *json)
+    bool mp3_controller::deja_vu_short(const JsonObject *json)
     {
         LOG_MP3_F("[%s] playing deja vu - short version\n", _name)
         _last_song = DEJA_VU_SHORT;
@@ -239,7 +239,7 @@ namespace json_parser
         return true;
     }
 
-    bool mp3_controller::true_survivor(const JsonObjectConst *json)
+    bool mp3_controller::true_survivor(const JsonObject *json)
     {
         LOG_MP3_F("[%s] playing true survivor\n", _name)
         _last_song = TRUE_SURVIVOR;
@@ -247,7 +247,7 @@ namespace json_parser
         return true;
     }
 
-    bool mp3_controller::windows_xp(const JsonObjectConst *json)
+    bool mp3_controller::windows_xp(const JsonObject *json)
     {
         LOG_MP3_F("[%s] playing windows starup song\n", _name);
         _last_song = WINDOWS_XP;

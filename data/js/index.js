@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // checking gamepad info every few milliseconds
     const GAMEPAD_INTERVAL = 33;
     // logging function to see if gamepad has been conneted
-    window.addEventListener("gamepadconnected", function (e) {
+    window.addEventListener("gamepadconnected", (e) => {
         console.log(navigator.getGamepads()[e.gamepad.index]);
     });
 
@@ -80,6 +80,10 @@ document.addEventListener("DOMContentLoaded", () => {
         sendWS({ controller: "leds", command: event.target.id, interval: parseInt(event.target.value) });
     });
 
+    document.querySelector("#set_brightness").addEventListener("change", event => {
+        sendWS({ controller: "leds", command: event.target.id, brightness: parseInt(event.target.value) });
+    });
+
     document.querySelector("#set_custom_color").addEventListener("change", (event) => {
         const hexColor = event.target.value.substring(1);
 
@@ -101,25 +105,35 @@ document.addEventListener("DOMContentLoaded", () => {
         sendWS({ controller: "engines", command: "speed", engine: event.target.id, speed: parseInt(event.target.value) })
     });
 
+    let stack = [];
+
     document.querySelector("#forward").ontouchstart = (event) => {
-        sendWS({ controller: "engines", command: event.target.id, engines: "both" })
+        stack.push({ id: event.target.id, data: { controller: "engines", command: event.target.id, engines: "both" } });
+        sendWS(stack[stack.length - 1].data);
     };
 
     document.querySelector("#backward").ontouchstart = (event) => {
-        sendWS({ controller: "engines", command: event.target.id, engines: "both" })
+        stack.push({ id: event.target.id, data: { controller: "engines", command: event.target.id, engines: "both" } });
+        sendWS(stack[stack.length - 1].data);
     };
 
     document.querySelector("#rotate_left").ontouchstart = (event) => {
-        sendWS({ controller: "engines", command: "rotate", engines: "left" })
+        stack.push({ id: event.target.id, data: { controller: "engines", command: "rotate", engines: "left" } });
+        sendWS(stack[stack.length - 1].data);
     };
 
     document.querySelector("#rotate_right").ontouchstart = (event) => {
-        sendWS({ controller: "engines", command: "rotate", engines: "right" })
+        stack.push({ id: event.target.id, data: { controller: "engines", command: "rotate", engines: "right" } });
+        sendWS(stack[stack.length - 1].data);
     };
 
     document.querySelectorAll(".arrow-button").forEach(button => {
-        button.ontouchend = () => {
-            sendWS({ controller: "engines", command: "stop", engines: "both" })
+        button.ontouchend = event => {
+            stack = stack.filter(item => item.id != event.target.id);
+            if (stack.length > 0)
+                sendWS(stack[stack.length - 1].data);
+            else
+                sendWS({ controller: "engines", command: "stop", engines: "both" });
         };
     });
     setOnRecive(updateUI);
@@ -148,6 +162,15 @@ function updateUI(message) {
                     slider.value = engine.speed;
                     slider.previousElementSibling.innerHTML = slider.value;
                 });
+                break;
+            case "leds":
+                const intervalSlider = document.getElementById("set_interval");
+                intervalSlider.value = json.data.interval;
+                intervalSlider.previousElementSibling.innerHTML = intervalSlider.value;
+                const brightnessSlider = document.getElementById("set_brightness");
+                brightnessSlider.value = json.data.brightness;
+                brightnessSlider.previousElementSibling.innerHTML = brightnessSlider.value;
+                break;
         }
     });
 }

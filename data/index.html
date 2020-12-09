@@ -67,32 +67,32 @@
         <ul class="commands-list">
             <li class="section-title">Base</li>
             <li class="list-element ">
-                <span id="base-bullet" class="arm-bullet">0</span>
+                <span id="base-bullet" class="bullet">0</span>
                 <input id="base" class="arm-slider" type="range" value="0" min="0" max="180">
             </li>
             <li class="section-title">Shoulder</li>
             <li class="list-element ">
-                <span id="shoulder-bullet" class="arm-bullet">0</span>
+                <span id="shoulder-bullet" class="bullet">0</span>
                 <input id="shoulder" class="arm-slider" type="range" value="0" min="0" max="180">
             </li>
             <li class="section-title">Elbow</li>
             <li class="list-element ">
-                <span id="elbow-bullet" class="arm-bullet">0</span>
+                <span id="elbow-bullet" class="bullet">0</span>
                 <input id="elbow" class="arm-slider" type="range" value="0" min="0" max="180">
             </li>
             <li class="section-title">Wrist</li>
             <li class="list-element ">
-                <span id="wrist-bullet" class="arm-bullet">0</span>
+                <span id="wrist-bullet" class="bullet">0</span>
                 <input id="wrist" class="arm-slider" type="range" value="0" min="0" max="180">
             </li>
             <li class="section-title">Rotation</li>
             <li class="list-element ">
-                <span id="rotation-bullet" class="arm-bullet">0</span>
+                <span id="rotation-bullet" class="bullet">0</span>
                 <input id="rotation" class="arm-slider" type="range" value="0" min="0" max="180">
             </li>
             <li class="section-title">Claw</li>
             <li class="list-element ">
-                <span id="claw-bullet" class="arm-bullet">0</span>
+                <span id="claw-bullet" class="bullet">0</span>
                 <input id="claw" class="arm-slider" type="range" value="0" min="0" max="180">
             </li>
             <li class="dial-exit">EXIT</li>
@@ -103,13 +103,13 @@
         <ul class="commands-list">
             <li class="section-title">Left track speed</li>
             <li class="list-element">
-                <span id="left-bullet" class="arm-bullet">0</span>
-                <input id="left" class="interval-slider" type="range" value="0" min="0" max="1023">
+                <span id="left-bullet" class="bullet">0</span>
+                <input id="left" class="engines-slider" type="range" value="0" min="0" max="1023">
             </li>
             <li class="section-title">Right track speed</li>
             <li class="list-element">
-                <span id="right-bullet" class="arm-bullet">0</span>
-                <input id="right" class="interval-slider" type="range" value="0" min="0" max="1023">
+                <span id="right-bullet" class="bullet">0</span>
+                <input id="right" class="engines-slider" type="range" value="0" min="0" max="1023">
             </li>
             <li class="section-title">Controll &#10084;</li>
             <li>
@@ -150,10 +150,15 @@
             <li id="animation_forward" class="list-element list-button leds">Forward</li>
             <li id="animation_backward" class="list-element list-button leds">Backward</li>
             <li id="animation_stop" class="list-element list-button leds">Stop</li>
+            <li class="section-title">Brightness</li>
+            <li class="list-element">
+                <span id="brightness-bullet" class="bullet">0</span>
+                <input id="set_brightness" class="leds-slider" type="range" value="0" min="0" max="255">
+            </li>
             <li class="section-title">Animation interval</li>
             <li class="list-element">
-                <span id="animation-interval-bullet" class="arm-bullet">0</span>
-                <input id="set_interval" class="interval-slider" type="range" value="0" min="1" max="1000">
+                <span id="animation-interval-bullet" class="bullet">0</span>
+                <input id="set_interval" class="leds-slider" type="range" value="0" min="1" max="100">
             </li>
             <li class="section-title">Power</li>
             <li id="off" class="list-element list-button leds">Off</li>

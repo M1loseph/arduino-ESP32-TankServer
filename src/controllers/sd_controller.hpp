@@ -10,8 +10,7 @@ namespace json_parser
 
         explicit sd_controller();
         bool initialize() override;
-        void update() override
-        {}
+        void update() override;
         DynamicJsonDocument retrive_data() override;
 
     private:
@@ -19,12 +18,15 @@ namespace json_parser
         bool handle(const JsonObject& json) override;
 
         static constexpr uint8_t CHIP_SELECT = 5U;
-        static constexpr const char* LOG_KEY = "log";
+        static constexpr const char* EXECUTE = "execute";
+        static constexpr const char* FILE_KEY = "file";
 
-        static constexpr const char *SCRIPT_FILE = "/script.txt";
         static constexpr const char *LOG_FILE = "/logs.txt";
+
         static constexpr const char *TIME_KEY = "time";
 
         File _file;
+        bool _execute;
+        String _file_to_execute;
     };
 } // namespace sd_card

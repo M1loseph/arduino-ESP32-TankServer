@@ -12,12 +12,19 @@ namespace global_queue
         bool initialize()
         {
             _queue = xQueueCreate(10, sizeof(DynamicJsonDocument *));
-            return _queue != nullptr;
+            _semaphore = xSemaphoreCreateMutex();
+            return _queue && _semaphore;
         }
 
         bool push(DynamicJsonDocument **json)
         {
-            return xQueueSend(_queue, json, (TickType_t)0) == pdPASS;
+            if (xSemaphoreTake(_semaphore, (TickType_t)10) == pdTRUE)
+            {
+                bool succ = xQueueSend(_queue, json, (TickType_t)0) == pdPASS;
+                xSemaphoreGive(_semaphore);
+                return succ;
+            }
+            return false;
         }
 
         bool read(DynamicJsonDocument **json)
@@ -27,6 +34,7 @@ namespace global_queue
 
     private:
         xQueueHandle _queue;
+        SemaphoreHandle_t _semaphore;
     };
 
     extern global_queue queue;

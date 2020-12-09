@@ -84,7 +84,7 @@ namespace json_parser
         }
 
     protected:
-        bool can_handle(const JsonObject& json) const
+        virtual bool can_handle(const JsonObject& json) const
         {
             if (json.containsKey(CONTROLLER_KEY))
             {

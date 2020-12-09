@@ -74,7 +74,7 @@ namespace json_parser
         pinMode(PIN_SPEED_LEFT, OUTPUT);
         pinMode(PIN_SPEED_RIGHT, OUTPUT);
 #endif
-        LOG_ENGINE_NL("[engine_controller] initialized engine pins")
+        LOG_ENGINE_F("[%s] initialized engine pins\n", _name)
 
         bool if_added = true;
 
@@ -179,7 +179,7 @@ namespace json_parser
         digitalWrite(PIN_BACK_RIGHT, HIGH);
         _direction_right = direction::BACKWARD;
         enable_speed_right();
-        LOG_ENGINE_NL("[engine_controller] backward right")
+        LOG_ENGINE_F("[%s] backward right\n", _name)
     }
 
     bool engines_controller::stop(const JsonObject *json)

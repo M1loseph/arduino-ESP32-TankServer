@@ -161,7 +161,7 @@ namespace json_parser
 
     bool leds_controller::turn_off_leds(const JsonObject *json)
     {
-        LOG_LEDS_NL("Turn off leds");
+        LOG_LEDS_F("[%s] turn off leds\n", _name);
         _current_animation = nullptr;
         show_leds();
         return true;
@@ -169,14 +169,14 @@ namespace json_parser
 
     bool leds_controller::animate_forward(const JsonObject *json)
     {
-        LOG_LEDS_NL("Animate forward");
+        LOG_LEDS_F("[%s] animate forward\n", _name);
         _direction = animation_direction::FORWARD;
         return true;
     }
 
     bool leds_controller::animate_backward(const JsonObject *json)
     {
-        LOG_LEDS_NL("Animate backward");
+        LOG_LEDS_F("[%s] animate backward\n", _name);
         _direction = animation_direction::BACKWARD;
         return true;
     }
@@ -223,7 +223,6 @@ namespace json_parser
 
         if (_direction != animation_direction::STOP && _current_animation && millis() - last_measute > _animation_interval)
         {
-            LOG_LEDS_NL("[leds_controller] updating animation...");
             if (_direction == animation_direction::FORWARD)
             {
                 _animation_index = (_animation_index + 1U) % NUM_LEDS;

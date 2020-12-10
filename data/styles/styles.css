@@ -63,6 +63,9 @@ body {
     z-index: 1;
     opacity: 1;
     overflow: auto;
+    display: flex;
+    align-content: flex-start;
+    justify-content: center;
 }
 
 .hidden {
@@ -75,7 +78,6 @@ body {
     flex-direction: column;
     list-style-type: none;
     align-items: center;
-    min-height: 50%;
 }
 
 .commands-list li {

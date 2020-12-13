@@ -62,8 +62,13 @@ namespace json_parser
             {
                 DynamicJsonDocument *json = new DynamicJsonDocument(512);
                 ReadBufferingStream bufferedFile(_file, 64);
-                bool deserialized = deserializeJson(*json, bufferedFile);
-                if (!deserialized || !global_queue::queue.push(&json))
+                auto error = deserializeJson(*json, bufferedFile);
+
+                // if(!error)
+                // {
+                // }
+
+                if (error || !global_queue::queue.push(&json))
                 {
                     LOG_SD_F("[%s] closing file after execution\n", _name)
                     delete json;
@@ -71,26 +76,31 @@ namespace json_parser
                     _execute = false;
                 }
             }
+            else
+            {
+                _execute = false;
+            }
         }
     }
 
     bool sd_controller::handle(const JsonObject &json)
     {
-        if (json.containsKey(EXECUTE))
+        if (json.containsKey(COMMAND_KEY) && !strcmp(json[COMMAND_KEY].as<const char *>(), EXECUTE))
         {
+            LOG_SD_F("[%s] recived execute command\n", _name)
             if (json.containsKey(FILE_KEY))
             {
                 _file_to_execute = json[FILE_KEY].as<String>();
                 _file.close();
+                _execute = true;
                 return true;
             }
         }
         else if (!json.containsKey(TIME_KEY))
         {
             _file.close();
-            _file_to_execute.clear();
 
-            _file = SD.open(LOG_FILE, "w");
+            _file = SD.open(LOG_FILE, "a");
             if (_file)
             {
                 json[TIME_KEY] = millis();
@@ -105,6 +115,11 @@ namespace json_parser
                 LOG_SD_F("[%s] unable to open the file\n", _name)
             }
         }
+        else
+        {
+            LOG_SD_F("[%s] unable to handle\n", _name)
+        }
+
         return false;
     }
 

@@ -62,6 +62,10 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     });
 
+    document.getElementById("set_volume").addEventListener("change", event => {
+        sendWS({ controller: "mp3", command: event.target.id, volume: parseInt(event.target.value) });
+    });
+
     // arm dial
     document.querySelectorAll(".arm-slider").forEach(slider => {
         slider.addEventListener("change", () => {
@@ -98,32 +102,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // engines dial
     document.querySelector("#left").addEventListener("change", event => {
-        sendWS({ controller: "engine", command: "speed", engine: event.target.id, speed: parseInt(event.target.value) })
+        sendWS({ controller: "engines", command: "speed", engine: event.target.id, speed: parseInt(event.target.value) })
     });
 
     document.querySelector("#right").addEventListener("change", event => {
-        sendWS({ controller: "engine", command: "speed", engine: event.target.id, speed: parseInt(event.target.value) })
+        sendWS({ controller: "engines", command: "speed", engine: event.target.id, speed: parseInt(event.target.value) })
     });
 
     let stack = [];
 
     document.querySelector("#forward").ontouchstart = (event) => {
-        stack.push({ id: event.target.id, data: { controller: "engine", command: event.target.id, engines: "both" } });
+        stack.push({ id: event.target.id, data: { controller: "engines", command: event.target.id, engine: "both" } });
         sendWS(stack[stack.length - 1].data);
     };
 
     document.querySelector("#backward").ontouchstart = (event) => {
-        stack.push({ id: event.target.id, data: { controller: "engine", command: event.target.id, engines: "both" } });
+        stack.push({ id: event.target.id, data: { controller: "engines", command: event.target.id, engine: "both" } });
         sendWS(stack[stack.length - 1].data);
     };
 
     document.querySelector("#rotate_left").ontouchstart = (event) => {
-        stack.push({ id: event.target.id, data: { controller: "engine", command: "rotate", engines: "left" } });
+        stack.push({ id: event.target.id, data: { controller: "engines", command: "rotate", engine: "left" } });
         sendWS(stack[stack.length - 1].data);
     };
 
     document.querySelector("#rotate_right").ontouchstart = (event) => {
-        stack.push({ id: event.target.id, data: { controller: "engine", command: "rotate", engines: "right" } });
+        stack.push({ id: event.target.id, data: { controller: "engines", command: "rotate", engine: "right" } });
         sendWS(stack[stack.length - 1].data);
     };
 
@@ -133,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (stack.length > 0)
                 sendWS(stack[stack.length - 1].data);
             else
-                sendWS({ controller: "engine", command: "stop", engines: "both" });
+                sendWS({ controller: "engines", command: "stop", engine: "both" });
         };
     });
 
@@ -163,7 +167,7 @@ function updateUI(message) {
                     slider.previousElementSibling.innerHTML = slider.value;
                 });
                 break;
-            case "engine":
+            case "engines":
                 json.data.forEach(engine => {
                     const slider = document.getElementById(engine.engine);
                     slider.min = engine.min;
@@ -180,6 +184,10 @@ function updateUI(message) {
                 brightnessSlider.value = json.data.brightness;
                 brightnessSlider.previousElementSibling.innerHTML = brightnessSlider.value;
                 break;
+            case "mp3":
+                const slider = document.getElementById("set_volume");
+                slider.value = json.data.volume;
+                slider.previousElementSibling.innerHTML = slider.value;
         }
     });
 }

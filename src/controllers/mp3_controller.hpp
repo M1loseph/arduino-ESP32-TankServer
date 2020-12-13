@@ -21,7 +21,7 @@ namespace json_parser
         bool set_volume(const JsonObject *json);
         bool resume(const JsonObject *json);
 
-        bool propaganda(const JsonObject *json);
+        bool windows_xp(const JsonObject *json);
         bool mighty_polish_tank(const JsonObject *json);
         bool high_ground(const JsonObject *json);
         bool fine_addition(const JsonObject *json);
@@ -39,11 +39,14 @@ namespace json_parser
         bool running_in_the_90s_short(const JsonObject *json);
         bool deja_vu_short(const JsonObject *json);
         bool true_survivor(const JsonObject *json);
-        bool windows_xp(const JsonObject *json);
+        bool propaganda(const JsonObject *json);
+        bool giorno(const JsonObject *json);
+        bool noble_pope(const JsonObject *json);
+        bool torture_dance(const JsonObject *json);
+        bool awaken(const JsonObject *json);
 
         static constexpr uint8_t DEF_VOLUME = 15U;
 
-        static constexpr const char *PROPAGANDA = "propaganda";
         static constexpr const char *MIGHTY_POLISH_TANK = "mighty_polish_tank";
         static constexpr const char *WINDOWS_XP = "windows_xp";
         static constexpr const char *HIGH_GROUND = "high_ground";
@@ -62,6 +65,11 @@ namespace json_parser
         static constexpr const char *RUNNING_IN_THE_90S_SHORT = "running_in_the_90s_short";
         static constexpr const char *DEJA_VU_SHORT = "deja_vu_short";
         static constexpr const char *TRUE_SURVIVOR = "true_survivor";
+        static constexpr const char *PROPAGANDA = "propaganda";
+        static constexpr const char *NOBLE_POPE = "noble_pope";
+        static constexpr const char *GIORNO = "giorno";
+        static constexpr const char *TORTURE_DANCE = "torture_dance";
+        static constexpr const char *AWAKEN = "awaken";
 
         static constexpr const char *STOP = "stop";
         static constexpr const char *RESUME = "resume";

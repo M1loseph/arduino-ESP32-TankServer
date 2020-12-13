@@ -106,7 +106,7 @@ namespace json_parser
                 {
                     if (!strcmp(action.command, command))
                     {
-                        return (*static_cast<T*>(this).*action.fun)(&json);
+                        return (static_cast<T*>(this)->*action.fun)(&json);
                     }
                 }
             }
@@ -114,8 +114,6 @@ namespace json_parser
         }
 
         static constexpr size_t IDLE_INTERVAL = 0U;
-        static constexpr const char* CONTROLLER_KEY = "controller";
-        static constexpr const char* COMMAND_KEY = "command";
     };
 } // namespace parser
 #endif // __CONTROLLER_HPP__

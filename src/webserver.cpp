@@ -122,6 +122,7 @@ void webserver::handle_web_socket(AsyncWebSocket *server, AsyncWebSocketClient *
 
                 if(error || !global_queue::queue.push(&json))
                 {
+                    LOG_WEBSERVER_F("[%s] error: %s (might be queue fault)", SSID, error.c_str())
                     delete json;
                 }
             }

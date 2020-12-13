@@ -40,6 +40,8 @@ namespace json_parser
         uint32_t _json_size;
         static constexpr const char* NAME_FIELD = "name";
         static constexpr const char* DATA_FIELD = "data";
+        static constexpr const char* COMMAND_KEY = "command";
+        static constexpr const char* CONTROLLER_KEY = "controller";
 
     private:
         virtual bool handle(const JsonObject &json) = 0;

@@ -60,7 +60,7 @@ namespace json_parser
             servo_data{"elbow", 0, 130, 90, 90, 7},
             servo_data{"wrist", 70, 180, 90, 90, 8},
             servo_data{"rotation", 0, 180, 90, 90, 12},
-            servo_data{"claw", 60, 115, 80, 80, 11},
+            servo_data{"claw", 5, 60, 15, 15, 11},
         };
     };
 } // namespace json_parser

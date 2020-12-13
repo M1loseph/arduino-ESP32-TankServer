@@ -8,12 +8,14 @@
 #define LOG_SD(message) LOG(message)
 #define LOG_SD_NL(message) LOG_NL(message)
 #define LOG_SD_F(...) LOG_F(__VA_ARGS__)
+#define LOG_SD_JSON_PRETTY(json) LOG_JSON_PRETTY(json)
 
 #else
 
 #define LOG_SD(message)
 #define LOG_SD_NL(message)
 #define LOG_SD_F(...)
+#define LOG_SD_JSON_PRETTY(json)
 
 #endif // SD_DEBUG
 
@@ -26,7 +28,18 @@ namespace json_parser
 
     bool sd_controller::initialize()
     {
-        return SD.begin(CHIP_SELECT);
+        bool succ = SD.begin(CHIP_SELECT);
+        if(succ)
+        {
+            if(!SD.exists(LOG_FILE))
+            {
+                LOG_SD_F("[%s] creating logs file...", _name)
+                auto temp_file = SD.open(LOG_FILE);
+                if(temp_file)
+                    temp_file.close();
+            }
+        }
+        return succ;
     }
 
     bool sd_controller::can_handle(const JsonObject &json) const
@@ -61,16 +74,18 @@ namespace json_parser
             if(_file)
             {
                 DynamicJsonDocument *json = new DynamicJsonDocument(512);
-                ReadBufferingStream bufferedFile(_file, 64);
-                auto error = deserializeJson(*json, bufferedFile);
+                LOG_SD_F("[%s] peek before read char: %c int: %d\n", _name, _file.peek(), _file.peek())
+                auto error = deserializeJson(*json, _file);
 
-                // if(!error)
-                // {
-                // }
+                if(!error)
+                {
+                    LOG_SD_JSON_PRETTY(*json)
+                }
 
                 if (error || !global_queue::queue.push(&json))
                 {
                     LOG_SD_F("[%s] closing file after execution\n", _name)
+                    LOG_SD_F("[%s] error: %s (might be queue fault)", _name, error.c_str())
                     delete json;
                     _file.close();
                     _execute = false;
@@ -104,10 +119,12 @@ namespace json_parser
             if (_file)
             {
                 json[TIME_KEY] = millis();
-                ReadBufferingStream bufferedFile(_file, 64);
+                WriteBufferingStream bufferedFile(_file, 64);
                 serializeJson(json, _file);
-                LOG_SD_F("[%s] serialized JSON\n", _name)
+                bufferedFile.write('\n');
+                bufferedFile.flush();
                 _file.close();
+                LOG_SD_F("[%s] serialized JSON\n", _name)
                 return true;
             }
             else

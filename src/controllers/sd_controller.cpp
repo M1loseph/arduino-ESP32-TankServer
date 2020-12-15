@@ -21,11 +21,7 @@
 
 namespace json_parser
 {
-    sd_controller::sd_controller() : controller("sd", JSON_OBJECT_SIZE(2)),
-                                     _execute(false),
-                                     _last_log(0),
-                                     _last_executed(0),
-                                     _json(nullptr)
+    sd_controller::sd_controller() : controller("sd", JSON_OBJECT_SIZE(2))
     {
     }
 

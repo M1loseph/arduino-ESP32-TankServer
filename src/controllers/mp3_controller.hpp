@@ -44,8 +44,7 @@ namespace json_parser
         bool noble_pope(const JsonObject *json);
         bool torture_dance(const JsonObject *json);
         bool awaken(const JsonObject *json);
-
-        static constexpr uint8_t DEF_VOLUME = 15U;
+        bool dio_vs_jotaro(const JsonObject *json);
 
         static constexpr const char *MIGHTY_POLISH_TANK = "mighty_polish_tank";
         static constexpr const char *WINDOWS_XP = "windows_xp";
@@ -70,6 +69,7 @@ namespace json_parser
         static constexpr const char *GIORNO = "giorno";
         static constexpr const char *TORTURE_DANCE = "torture_dance";
         static constexpr const char *AWAKEN = "awaken";
+        static constexpr const char *DIO_VS_JOTARO = "dio_vs_jotaro";
 
         static constexpr const char *STOP = "stop";
         static constexpr const char *RESUME = "resume";
@@ -78,8 +78,8 @@ namespace json_parser
         static constexpr const char *VOLUME_KEY = "volume";
 
         MD_YX5300 _mp3;
-        uint8_t _volume;
-        const char *_last_song;
+        uint8_t _volume = 15;
+        const char *_last_song = nullptr;
     };
 } // namespace json_parser
 

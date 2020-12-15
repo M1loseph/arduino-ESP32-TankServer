@@ -28,11 +28,11 @@ namespace json_parser
         static constexpr const char *TIME_KEY = "time";
 
         File _file;
-        bool _execute;
+        bool _execute = false;
         String _file_to_execute;
 
-        unsigned long _last_log;
-        unsigned long _last_executed;
-        DynamicJsonDocument *_json;
+        unsigned long _last_log = 0;
+        unsigned long _last_executed = 0;
+        DynamicJsonDocument *_json = nullptr;
     };
 } // namespace json_parser

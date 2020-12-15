@@ -18,9 +18,7 @@
 namespace json_parser
 {
     mp3_controller::mp3_controller() : templated_controller("mp3", JSON_OBJECT_SIZE(4)),
-                                       _mp3(Serial2),
-                                       _volume(DEF_VOLUME),
-                                       _last_song(nullptr)
+                                       _mp3(Serial2)
     {
     }
 
@@ -56,6 +54,7 @@ namespace json_parser
         if_added &= add_event(NOBLE_POPE, &mp3_controller::noble_pope);
         if_added &= add_event(TORTURE_DANCE, &mp3_controller::torture_dance);
         if_added &= add_event(AWAKEN, &mp3_controller::awaken);
+        if_added &= add_event(DIO_VS_JOTARO, &mp3_controller::dio_vs_jotaro);
 
         if_added &= add_event(STOP, &mp3_controller::stop_playing);
         if_added &= add_event(SET_VOLUME, &mp3_controller::set_volume);
@@ -293,6 +292,13 @@ namespace json_parser
         return true;
     }
 
+    bool mp3_controller::dio_vs_jotaro(const JsonObject *json)
+    {
+        LOG_MP3_F("[%s] playing %s\n", _name, DIO_VS_JOTARO)
+        _last_song = DIO_VS_JOTARO;
+        _mp3.playSpecific(4, 24);
+        return true;
+    }
 
     DynamicJsonDocument mp3_controller::retrive_data()
     {

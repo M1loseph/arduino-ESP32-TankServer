@@ -94,10 +94,10 @@ const DEFAULT_CONFIG = {
     ],
     axesNumeric: [],
     buttons: [
-        new ButtonBehaviour(GAMEPAD.LT, { controller: "engines", command: "forward", engines: "left" }, null, null, null),
-        new ButtonBehaviour(GAMEPAD.LB, { controller: "engines", command: "backward", engines: "left" }, null, null, null),
-        new ButtonBehaviour(GAMEPAD.RT, { controller: "engines", command: "forward", engines: "left" }, null, null, null),
-        new ButtonBehaviour(GAMEPAD.RB, { controller: "engines", command: "backward", engines: "left" }, null, null, null),
+        new ButtonBehaviour(GAMEPAD.LT, { controller: "engines", command: "forward", engine: "left" }, null, null, null),
+        new ButtonBehaviour(GAMEPAD.LB, { controller: "engines", command: "backward", engine: "left" }, null, null, null),
+        new ButtonBehaviour(GAMEPAD.RT, { controller: "engines", command: "forward", engine: "right" }, null, null, null),
+        new ButtonBehaviour(GAMEPAD.RB, { controller: "engines", command: "backward", engine: "right" }, null, null, null),
         new ButtonBehaviour(GAMEPAD.A, { controller: "arm", command: "minus", servo: "elbow" }, null, null, null),
         new ButtonBehaviour(GAMEPAD.X, { controller: "arm", command: "plus", servo: "elbow" }, null, null, null),
         new ButtonBehaviour(GAMEPAD.Y, { controller: "arm", command: "plus", servo: "wrist" }, null, null, null),
@@ -107,12 +107,12 @@ const DEFAULT_CONFIG = {
         new ButtonCombination([
             [GAMEPAD.LT, false],
             [GAMEPAD.LB, false]
-        ], {controller: "engines", command: "stop", engines: "left"}, null, null, null),
+        ], {controller: "engines", command: "stop", engine: "left"}, null, null, null),
 
         new ButtonCombination([
             [GAMEPAD.RT, false],
             [GAMEPAD.RB, false]
-        ], { controller: "engines", command: "stop", engines: "right" }, null, null, null),
+        ], { controller: "engines", command: "stop", engine: "right" }, null, null, null),
 
         new ButtonCombination([
             [GAMEPAD.X, false],

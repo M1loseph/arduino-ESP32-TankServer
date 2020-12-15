@@ -78,25 +78,26 @@ function processGamepad(current, currentConfig) {
 function getGamepadInfo() {
     const gamepads = navigator.getGamepads();
     if (gamepads[0]) {
+        const gamepad = gamepads[0]
         const gamepadState = {
-            axes: gamepads[0].axes,
+            axes: gamepad.axes,
             buttons: [
-                gamepads[0].buttons[0].pressed,
-                gamepads[0].buttons[1].pressed,
-                gamepads[0].buttons[2].pressed,
-                gamepads[0].buttons[3].pressed,
-                gamepads[0].buttons[4].pressed,
-                gamepads[0].buttons[5].pressed,
-                gamepads[0].buttons[6].pressed,
-                gamepads[0].buttons[7].pressed,
-                gamepads[0].buttons[8].pressed,
-                gamepads[0].buttons[9].pressed,
-                gamepads[0].buttons[10].pressed,
-                gamepads[0].buttons[11].pressed,
-                gamepads[0].buttons[12].pressed,
-                gamepads[0].buttons[13].pressed,
-                gamepads[0].buttons[14].pressed,
-                gamepads[0].buttons[15].pressed
+                gamepad.buttons[0].pressed,
+                gamepad.buttons[1].pressed,
+                gamepad.buttons[2].pressed,
+                gamepad.buttons[3].pressed,
+                gamepad.buttons[4].pressed,
+                gamepad.buttons[5].pressed,
+                gamepad.buttons[6].pressed,
+                gamepad.buttons[7].pressed,
+                gamepad.buttons[8].pressed,
+                gamepad.buttons[9].pressed,
+                gamepad.buttons[10].pressed,
+                gamepad.buttons[11].pressed,
+                gamepad.buttons[12].pressed,
+                gamepad.buttons[13].pressed,
+                gamepad.buttons[14].pressed,
+                gamepad.buttons[15].pressed
             ]
         };
         return gamepadState;

@@ -3,12 +3,8 @@ import { getGamepadInfo, processGamepad } from "./gamepad_processing.js";
 import { DEFAULT_CONFIG } from "./configs.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    // checking gamepad info every few milliseconds
+
     const GAMEPAD_INTERVAL = 33;
-    // logging function to see if gamepad has been conneted
-    window.addEventListener("gamepadconnected", (e) => {
-        console.log(navigator.getGamepads()[e.gamepad.index]);
-    });
 
     setInterval(function () {
         let gamepadState = getGamepadInfo();
@@ -109,38 +105,6 @@ document.addEventListener("DOMContentLoaded", () => {
         sendWS({ controller: "engines", command: "speed", engine: event.target.id, speed: parseInt(event.target.value) })
     });
 
-    let stack = [];
-
-    document.querySelector("#forward").ontouchstart = (event) => {
-        stack.push({ id: event.target.id, data: { controller: "engines", command: event.target.id, engine: "both" } });
-        sendWS(stack[stack.length - 1].data);
-    };
-
-    document.querySelector("#backward").ontouchstart = (event) => {
-        stack.push({ id: event.target.id, data: { controller: "engines", command: event.target.id, engine: "both" } });
-        sendWS(stack[stack.length - 1].data);
-    };
-
-    document.querySelector("#rotate_left").ontouchstart = (event) => {
-        stack.push({ id: event.target.id, data: { controller: "engines", command: "rotate", engine: "left" } });
-        sendWS(stack[stack.length - 1].data);
-    };
-
-    document.querySelector("#rotate_right").ontouchstart = (event) => {
-        stack.push({ id: event.target.id, data: { controller: "engines", command: "rotate", engine: "right" } });
-        sendWS(stack[stack.length - 1].data);
-    };
-
-    document.querySelectorAll(".arrow-button").forEach(button => {
-        button.ontouchend = event => {
-            stack = stack.filter(item => item.id != event.target.id);
-            if (stack.length > 0)
-                sendWS(stack[stack.length - 1].data);
-            else
-                sendWS({ controller: "engines", command: "stop", engine: "both" });
-        };
-    });
-
     // SD dial
     document.getElementById("execute").onclick = (event) => {
         const textInput = document.getElementById("file");
@@ -149,10 +113,22 @@ document.addEventListener("DOMContentLoaded", () => {
         sendWS({ controller: "sd", command: "execute", file: fileName });
     };
 
-    setOnRecive(updateUI);
+    enableArrows();
+
+    window.addEventListener("gamepadconnected", (e) => {
+        console.log(navigator.getGamepads()[e.gamepad.index]);
+        disableArrows();
+    });
+
+    window.addEventListener("gamepaddisconnected", (e) => {
+        console.log("Gamepad disconnected from index %d: %s", e.gamepad.index, e.gamepad.id);
+        enableArrows();
+    });
+
+    setOnRecive(updateGUIFromWebsocket);
 });
 
-function updateUI(message) {
+function updateGUIFromWebsocket(message) {
     const data = JSON.parse(message.data)
     console.log(data);
 
@@ -189,5 +165,49 @@ function updateUI(message) {
                 slider.value = json.data.volume;
                 slider.previousElementSibling.innerHTML = slider.value;
         }
+    });
+}
+
+function enableArrows() {
+    let stack = [];
+
+    document.querySelector("#forward").ontouchstart = (event) => {
+        stack.push({ id: event.target.id, data: { controller: "engines", command: event.target.id, engine: "both" } });
+        sendWS(stack[stack.length - 1].data);
+    };
+
+    document.querySelector("#backward").ontouchstart = (event) => {
+        stack.push({ id: event.target.id, data: { controller: "engines", command: event.target.id, engine: "both" } });
+        sendWS(stack[stack.length - 1].data);
+    };
+
+    document.querySelector("#rotate_left").ontouchstart = (event) => {
+        stack.push({ id: event.target.id, data: { controller: "engines", command: "rotate", engine: "left" } });
+        sendWS(stack[stack.length - 1].data);
+    };
+
+    document.querySelector("#rotate_right").ontouchstart = (event) => {
+        stack.push({ id: event.target.id, data: { controller: "engines", command: "rotate", engine: "right" } });
+        sendWS(stack[stack.length - 1].data);
+    };
+
+    document.querySelectorAll(".arrow-button").forEach(button => {
+        button.classList.remove('disabled-arrow-button');
+        button.ontouchend = event => {
+            stack = stack.filter(item => item.id != event.target.id);
+            if (stack.length > 0)
+                sendWS(stack[stack.length - 1].data);
+            else
+                sendWS({ controller: "engines", command: "stop", engine: "both" });
+        };
+    });
+}
+
+function disableArrows() {
+    sendWS({ controller: "engines", command: "stop", engine: "both" });
+    document.querySelectorAll(".arrow-button").forEach(button => {
+        button.ontouchstart = null;
+        button.ontouchend = null;
+        button.classList.add('disabled-arrow-button');
     });
 }

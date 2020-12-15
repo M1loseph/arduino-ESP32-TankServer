@@ -130,7 +130,6 @@ body {
     justify-content: center;
     height: 160px;
     width: 160px;
-    font-size: 2em;
     font-weight: bolder;
     font-family: Arial, Helvetica, sans-serif;
     background-image: linear-gradient(310deg, #ff9a9e 0%, #fecded 99%, #fecded 100%);
@@ -139,6 +138,16 @@ body {
 
 .arrow-button:active {
     background: linear-gradient(310deg, rgba(255, 154, 158, 1) 0%, rgba(254, 205, 237, 1) 22%, rgba(254, 205, 237, 1) 100%);
+}
+
+.disabled-arrow-button {
+    background-image: linear-gradient(to left, #BDBBBE 0%, #9D9EA3 100%), radial-gradient(88% 271%, rgba(255, 255, 255, 0.25) 0%, rgba(254, 254, 254, 0.25) 1%, rgba(0, 0, 0, 0.25) 100%), radial-gradient(50% 100%, rgba(255, 255, 255, 0.30) 0%, rgba(0, 0, 0, 0.30) 100%);
+    background-blend-mode: normal, lighten, soft-light;
+}
+
+.disabled-arrow-button:active {
+    background-image: linear-gradient(to left, #BDBBBE 0%, #9D9EA3 100%), radial-gradient(88% 271%, rgba(255, 255, 255, 0.25) 0%, rgba(254, 254, 254, 0.25) 1%, rgba(0, 0, 0, 0.25) 100%), radial-gradient(50% 100%, rgba(255, 255, 255, 0.30) 0%, rgba(0, 0, 0, 0.30) 100%);
+    background-blend-mode: normal, lighten, soft-light;
 }
 
 .align-vertically {

@@ -134,6 +134,7 @@ namespace json_parser
             {
                 LOG_SD_F("[%s] sent json\n", _name)
                 _json = nullptr;
+                _last_executed = millis();
             }
             else
             {

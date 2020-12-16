@@ -18,14 +18,7 @@ namespace json_parser
         controller(const char *name, uint32_t json_size) : _name(name), _json_size(json_size) {}
         virtual ~controller() = default;
 
-        virtual handle_resoult try_handle(const JsonObject &json)
-        {
-            if (can_handle(json))
-            {
-                return handle(json) ? handle_resoult::ok : handle_resoult::error;
-            }
-            return handle_resoult::not_permited;
-        }
+        virtual handle_resoult try_handle(const JsonObject &json);
 
         inline const char *get_name() { return _name; }
         inline uint32_t retrive_data_size() { return _json_size; }

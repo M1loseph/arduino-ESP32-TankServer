@@ -30,72 +30,76 @@ namespace json_parser
 
         bool if_added = true;
 
-        if_added &= add_event(ANIMATION_BACKWARD, &leds_controller::animate_backward);
-        if_added &= add_event(ANIMATION_FORWARD, &leds_controller::animate_forward);
-        if_added &= add_event(SET_CUSTOM_COLOR, &leds_controller::set_custom_animation);
-        if_added &= add_event(CUSTOM_COLOR, &leds_controller::custom_animation);
-        if_added &= add_event(EUROBEAT, &leds_controller::eurobeat_animation);
-        if_added &= add_event(POLISH, &leds_controller::polish_animation);
-        if_added &= add_event(RANDOM, &leds_controller::random_animation);
-        if_added &= add_event(OFF, &leds_controller::turn_off_leds);
-        if_added &= add_event(SET_ANIMATION_INTERVAL, &leds_controller::set_animation_interval);
-        if_added &= add_event(SET_BRIGHTNESS, &leds_controller::set_brightness);
-        if_added &= add_event(ANIMATION_STOP, &leds_controller::stop_animation);
+        if_added &= add_event(EUROBEAT, &leds_controller::eurobeat);
+        if_added &= add_event(CUSTOM, &leds_controller::custom);
+        if_added &= add_event(RANDOM, &leds_controller::random);
+        if_added &= add_event(FORWARD, &leds_controller::forward);
+        if_added &= add_event(BACKWARD, &leds_controller::backward);
+        if_added &= add_event(STOP, &leds_controller::stop);
+        if_added &= add_event(OFF, &leds_controller::off);
+
+        if_added &= add_event(CUSTOM_COLOR, &leds_controller::custom_color);
+        if_added &= add_event(LENGTH, &leds_controller::length);
+        if_added &= add_event(BRIGHTNESS, &leds_controller::brightness);
+        if_added &= add_event(UPDATE_INTERVAL, &leds_controller::update_interval);
+        if_added &= add_event(REPETITIONS, &leds_controller::repetitions);
+        if_added &= add_event(COLOR_LENGTH, &leds_controller::color_length);
+        if_added &= add_event(RESTORE_DEFAULT, &leds_controller::restore_default);
 
         return if_added;
     }
 
-    bool leds_controller::polish_animation(const JsonObject *json)
-    {
-        LOG_LEDS_F("[%s] set polish animation\n", _name)
-        _current_animation = &leds_controller::polish;
-        show_leds();
-        return true;
-    }
-
-    bool leds_controller::eurobeat_animation(const JsonObject *json)
+    bool leds_controller::eurobeat(const JsonObject *json)
     {
         LOG_LEDS_F("[%s] set eurobeat animation\n", _name)
-        _current_animation = &leds_controller::rainbow;
+        _current_animation = &leds_controller::rainbow_factory;
         show_leds();
         return true;
     }
 
-    bool leds_controller::custom_animation(const JsonObject *json)
+    bool leds_controller::custom(const JsonObject *json)
     {
         LOG_LEDS_F("[%s] set custiom animation\n", _name)
-        _current_animation = &leds_controller::custom;
+        _current_animation = &leds_controller::custom_factory;
         show_leds();
         return true;
     }
 
-    bool leds_controller::random_animation(const JsonObject *json)
+    bool leds_controller::random(const JsonObject *json)
     {
         LOG_LEDS_F("[%s] set random animation\n", _name)
-        _current_animation = &leds_controller::random;
+        _current_animation = &leds_controller::random_factory;
         show_leds();
         return true;
     }
 
-    bool leds_controller::set_custom_animation(const JsonObject *json)
+    bool leds_controller::custom_color(const JsonObject *json)
     {
         if (json)
         {
-            if (json->containsKey(COLORS_KEY))
+            if (json->containsKey(COLORS_KEY) && json->containsKey(INDEX_KEY))
             {
-                uint8_t red = (*json)[COLORS_KEY][0];
-                uint8_t green = (*json)[COLORS_KEY][1];
-                uint8_t blue = (*json)[COLORS_KEY][2];
+                uint32_t index = (*json)[INDEX_KEY];
+                if (index < NUM_LEDS)
+                {
+                    uint8_t red = (*json)[COLORS_KEY][0];
+                    uint8_t green = (*json)[COLORS_KEY][1];
+                    uint8_t blue = (*json)[COLORS_KEY][2];
 
-                _custom_color = CRGB(red, green, blue);
-                custom_animation(json);
+                    _custom_colors[index] = CRGB(red, green, blue);
 
-                LOG_LEDS_F("[%s] new color r: %d, g %d, b%d\n", _name, red, green, blue)
-                return true;
+                    LOG_LEDS_F("[%s] new color r: %u, g: %u, b: %u, i: %u\n", _name, red, green, blue, index)
+                    return true;
+                }
+                else
+                {
+                    LOG_LEDS_F("[%s] index too big: %u\n", _name, index)
+                }
             }
             else
             {
-                LOG_LEDS_F("[%s] JSON didn't have colors key\n", _name)
+                LOG_LEDS_F("[%s] no keys: %s: %u, %s: %u\n", _name, COLORS_KEY,
+                           json->containsKey(COLORS_KEY), INDEX_KEY, json->containsKey(INDEX_KEY))
             }
         }
         else
@@ -105,15 +109,15 @@ namespace json_parser
         return false;
     }
 
-    bool leds_controller::set_brightness(const JsonObject *json)
+    bool leds_controller::brightness(const JsonObject *json)
     {
         if (json)
         {
             if (json->containsKey(BRIGHTNESS_KEY))
             {
-                uint8_t new_brightness = (*json)[BRIGHTNESS_KEY];
-                LOG_LEDS_F("new brightness: %d\n", new_brightness)
-                FastLED.setBrightness(new_brightness);
+                _brightness = (*json)[BRIGHTNESS_KEY];
+                LOG_LEDS_F("new brightness: %u\n", _brightness)
+                FastLED.setBrightness(_brightness);
                 show_leds();
                 return true;
             }
@@ -129,20 +133,19 @@ namespace json_parser
         return false;
     }
 
-    bool leds_controller::set_animation_interval(const JsonObject *json)
+    bool leds_controller::update_interval(const JsonObject *json)
     {
         if (json)
         {
             if (json->containsKey(INTERVAL_KEY))
             {
-                uint32_t new_interval = (*json)[INTERVAL_KEY];
-                LOG_LEDS_F("New animation interval: %d\n", new_interval);
-                _animation_interval = new_interval;
+                _animation_updates_interval = (*json)[INTERVAL_KEY];
+                LOG_LEDS_F("New update interval: %u\n", _animation_updates_interval);
                 return true;
             }
             else
             {
-                LOG_LEDS_F("[%s] JSON didn'thave interval key\n", _name)
+                LOG_LEDS_F("[%s] no interval key\n", _name)
             }
         }
         else
@@ -152,14 +155,14 @@ namespace json_parser
         return false;
     }
 
-    bool leds_controller::stop_animation(const JsonObject *json)
+    bool leds_controller::stop(const JsonObject *json)
     {
         LOG_LEDS_F("[%s] stop animation\n", _name)
         _direction = animation_direction::STOP;
         return true;
     }
 
-    bool leds_controller::turn_off_leds(const JsonObject *json)
+    bool leds_controller::off(const JsonObject *json)
     {
         LOG_LEDS_F("[%s] turn off leds\n", _name);
         _current_animation = nullptr;
@@ -167,17 +170,108 @@ namespace json_parser
         return true;
     }
 
-    bool leds_controller::animate_forward(const JsonObject *json)
+    bool leds_controller::forward(const JsonObject *json)
     {
         LOG_LEDS_F("[%s] animate forward\n", _name);
         _direction = animation_direction::FORWARD;
         return true;
     }
 
-    bool leds_controller::animate_backward(const JsonObject *json)
+    bool leds_controller::backward(const JsonObject *json)
     {
         LOG_LEDS_F("[%s] animate backward\n", _name);
         _direction = animation_direction::BACKWARD;
+        return true;
+    }
+
+    bool leds_controller::length(const JsonObject *json)
+    {
+        if (json)
+        {
+            if (json->containsKey(LENGTH_KEY))
+            {
+                uint32_t length = (*json)[LENGTH_KEY];
+                if (length < NUM_LEDS)
+                {
+                    _length = length;
+                    LOG_F("[%s] new length: %u\n", _name, _length)
+                    return true;
+                }
+                else
+                {
+                    LOG_LEDS_F("[%s] length was too big\n", _name)
+                }
+            }
+            else
+            {
+                LOG_LEDS_F("[%s] no length key\n", _name)
+            }
+        }
+        else
+        {
+            LOG_LEDS_F("[%s] JSON was null\n", _name)
+        }
+        return false;
+    }
+
+    bool leds_controller::color_length(const JsonObject *json)
+    {
+        if (json)
+        {
+            if (json->containsKey(LENGTH_KEY))
+            {
+                uint32_t length = (*json)[LENGTH_KEY];
+                if (length < NUM_LEDS)
+                {
+                    _color_length = length;
+                    LOG_F("[%s] new length: %u\n", _name, _length)
+                    return true;
+                }
+                else
+                {
+                    LOG_LEDS_F("[%s] length was too big\n", _name)
+                }
+            }
+            else
+            {
+                LOG_LEDS_F("[%s] no length key\n", _name)
+            }
+        }
+        else
+        {
+            LOG_LEDS_F("[%s] JSON was null\n", _name)
+        }
+        return false;
+    }
+
+    bool leds_controller::repetitions(const JsonObject *json)
+    {
+        if (json)
+        {
+            if (json->containsKey(REPEPTIONS_KEY))
+            {
+                _repetitions = (*json)[REPEPTIONS_KEY];
+                LOG_F("[%s] new repetitions: %u\n", _name, _repetitions)
+                return true;
+            }
+            else
+            {
+                LOG_LEDS_F("[%s] no interval key\n", _name)
+            }
+        }
+        else
+        {
+            LOG_LEDS_F("[%s] JSON was null\n", _name)
+        }
+        return false;
+    }
+
+    bool leds_controller::restore_default(const JsonObject *json)
+    {
+        LOG_LEDS_F("[%s] restored default\n", _name)
+        _length = DEF_LENGTH;
+        _repetitions = DEF_REPETITIONS;
+        _color_length = DEF_COLOR_LENGTH;
         return true;
     }
 
@@ -186,7 +280,21 @@ namespace json_parser
         if (_current_animation)
         {
             for (uint32_t i = 0; i < NUM_LEDS; i++)
-                _leds[i] = std::__invoke(_current_animation, this, i + _animation_index);
+            {
+                if (i < _length)
+                {
+                    uint32_t index = (i + _animation_index) % _length;
+                    if (_color_length)
+                        index /= _color_length;
+
+                    if (_repetitions)
+                        index %= _repetitions;
+
+                    _leds[i] = (this->*_current_animation)(index);
+                }
+                else
+                    _leds[i] = CRGB::Black;
+            }
         }
         else
         {
@@ -196,46 +304,41 @@ namespace json_parser
         FastLED.show();
     }
 
-    CRGB leds_controller::polish(uint32_t index)
-    {
-        return (index % POL_ANIME_INTERVAL) < (POL_ANIME_INTERVAL / 2) ? CRGB::White : CRGB::Red;
-    }
-
-    CRGB leds_controller::rainbow(uint32_t index)
+    CRGB leds_controller::rainbow_factory(uint32_t index)
     {
         const uint8_t h = static_cast<uint8_t>((index * 255U) / NUM_LEDS);
         return CHSV(h, 255, 255);
     }
 
-    CRGB leds_controller::random(uint32_t index)
+    CRGB leds_controller::random_factory(uint32_t index)
     {
         return CRGB(esp_random());
     }
 
-    CRGB leds_controller::custom(uint32_t index)
+    CRGB leds_controller::custom_factory(uint32_t index)
     {
-        return _custom_color;
+        return _custom_colors[index];
     }
 
     void leds_controller::update()
     {
         static unsigned long last_measute = millis();
 
-        if (_direction != animation_direction::STOP && _current_animation && millis() - last_measute > _animation_interval)
+        if (_direction != animation_direction::STOP && _current_animation && millis() - last_measute > _animation_updates_interval)
         {
             if (_direction == animation_direction::FORWARD)
             {
-                _animation_index = (_animation_index + 1U) % NUM_LEDS;
+                _animation_index = (_animation_index + 1U) % (UINT32_MAX - NUM_LEDS);
             }
             else if (_direction == animation_direction::BACKWARD)
             {
                 if (_animation_index == 0U)
-                    _animation_index = NUM_LEDS - 1U;
+                    _animation_index = UINT32_MAX - 1U - NUM_LEDS;
                 else
                     _animation_index--;
             }
 
-            LOG_LEDS_F("[%s] animation index: %d\n", _name, _animation_index)
+            LOG_LEDS_F("[%s] animation index: %u\n", _name, _animation_index)
             show_leds();
 
             last_measute = millis();
@@ -249,9 +352,9 @@ namespace json_parser
         JsonObject data = json.createNestedObject(DATA_FIELD);
 
         data[BRIGHTNESS_KEY] = _brightness;
-        data[INTERVAL_KEY] = _animation_interval;
-        JsonArray array = data.createNestedArray("colors");
-        for(uint8_t i = 0; i < NUM_LEDS; i++)
+        data[INTERVAL_KEY] = _animation_updates_interval;
+        JsonArray array = data.createNestedArray(COLORS_KEY);
+        for (uint8_t i = 0; i < NUM_LEDS; i++)
         {
             auto &color = _leds[i];
             uint32_t buffer = color.red;

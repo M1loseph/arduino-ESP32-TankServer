@@ -1,0 +1,4 @@
+{"controller":"engines","command":"forward","engine":"both","time":0}
+{"controller":"engines","command":"stop","engine":"both","time":1000}
+{"controller":"engines","command":"backward","engine":"both","time":1000}
+{"controller":"engines","command":"stop","engine":"both","time":1000}

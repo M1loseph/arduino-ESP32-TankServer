@@ -84,29 +84,37 @@ namespace json_parser
                 {
                     handle_current_json();
                 }
-                else
+                else // create new json from file
                 {
-                    // create new json from file
-                    _json = new DynamicJsonDocument(512);
                     LOG_SD_F("[%s] peek int: %d\n", _name, _file.peek())
-                    auto error = deserializeJson(*_json, _file);
+                    if (_file.peek() != -1)
+                    {
+                        _json = new DynamicJsonDocument(512);
+                        auto error = deserializeJson(*_json, _file);
 
-                    if (error)
-                    {
-                        LOG_SD_F("[%s] error: %s\n", _name, error.c_str())
-                        delete_json();
-                        _file.close();
-                        _execute = false;
-                    }
-                    else if(!_json->containsKey(TIME_KEY))
-                    {
-                        LOG_SD_F("[%s] error, not time key in script\n", _name);
-                        delete_json();
+                        if (error)
+                        {
+                            LOG_SD_F("[%s] error: %s\n", _name, error.c_str())
+                            delete_json();
+                            _file.close();
+                            _execute = false;
+                        }
+                        else if (!_json->containsKey(TIME_KEY))
+                        {
+                            LOG_SD_F("[%s] error, not time key in script\n", _name);
+                            delete_json();
+                        }
+                        else
+                        {
+                            LOG_SD_JSON_PRETTY(*_json)
+                            handle_current_json();
+                        }
                     }
                     else
                     {
-                        LOG_SD_JSON_PRETTY(*_json)
-                        handle_current_json();
+                        LOG_SD_F("[%s] end of file, closing...\n", _name)
+                        _file.close();
+                        _execute = false;
                     }
                 }
             }
@@ -120,9 +128,9 @@ namespace json_parser
     void sd_controller::handle_current_json()
     {
         uint32_t interval = (*_json)[TIME_KEY];
-        if(millis() - _last_executed >= interval)
+        if (millis() - _last_executed >= interval)
         {
-            if(global_queue::queue.push(&_json))
+            if (global_queue::queue.push(&_json))
             {
                 LOG_SD_F("[%s] sent json\n", _name)
                 _json = nullptr;

@@ -191,7 +191,7 @@ namespace json_parser
             if (json->containsKey(LENGTH_KEY))
             {
                 uint32_t length = (*json)[LENGTH_KEY];
-                if (length < NUM_LEDS)
+                if (length <= NUM_LEDS)
                 {
                     _length = length;
                     LOG_F("[%s] new length: %u\n", _name, _length)

@@ -64,9 +64,9 @@ namespace json_parser
         bool res = true;
         for (auto &controller : _controllers)
         {
-            LOG_PARSER_NL("[parser] initializing engine pins...");
+            LOG_PARSER_F("[parser] initializing %s\n", controller->get_name())
             bool init_res = controller->initialize();
-            LOG_PARSER_F("[parser] initing %s: %s\n", controller->get_name(), init_res ? "successful" : "error");
+            LOG_PARSER_F("[parser] initializing %s: %s\n", controller->get_name(), init_res ? "successful" : "error");
 
             res &= init_res;
         }

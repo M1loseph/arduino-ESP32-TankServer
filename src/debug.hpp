@@ -4,6 +4,7 @@
 
 #if SMART_TANK_DEBUG
 
+#define INIT_LOG Serial.begin(115200);
 #define LOG_NL(messege) Serial.println(messege);
 #define LOG(messege) Serial.print(messege);
 #define LOG_F(...) Serial.printf(__VA_ARGS__);
@@ -15,6 +16,7 @@
 
 #else
 
+#define INIT_LOG
 #define LOG_NL(messege)
 #define LOG(messege)
 #define LOG_F(...)

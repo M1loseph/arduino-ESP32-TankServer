@@ -19,34 +19,43 @@ json_parser::parser parser;
 
 void setup()
 {
-#if SMART_TANK_DEBUG
-    Serial.begin(115200);
-#endif // SMART_TANK_DEBUG
-
-    LOG_NL("[main] adding controllers...")
-    bool if_added = true;
-    if_added &= parser.add_controller(std::unique_ptr<json_parser::controller>(new json_parser::engines_controller()));
-    if_added &= parser.add_controller(std::unique_ptr<json_parser::controller>(new json_parser::arm_controller()));
-    if_added &= parser.add_controller(std::unique_ptr<json_parser::controller>(new json_parser::leds_controller()));
-    if_added &= parser.add_controller(std::unique_ptr<json_parser::controller>(new json_parser::mp3_controller()));
-    if_added &= parser.add_controller(std::unique_ptr<json_parser::controller>(new json_parser::sd_controller()));
-    if_added &= parser.add_controller(std::unique_ptr<json_parser::controller>(new json_parser::config_controller(parser)));
-    LOG_F("[main] adding controllers: %s\n", if_added ? "success" : "failed")
-
-    parser.initialize_all();
-    LOG_NL("[main] creating WiFi...")
-    webserver::init_entire_web();
+    INIT_LOG
 
     LOG_NL("[main] initing global queue...")
     if(!global_queue::queue.initialize())
     {
         LOG_NL("[main] could not create queue")
+        return;
     }
 
+    LOG_NL("[main] adding controllers...")
+    bool if_ok = true;
+    if_ok &= parser.add_controller(std::unique_ptr<json_parser::controller>(new json_parser::engines_controller()));
+    if_ok &= parser.add_controller(std::unique_ptr<json_parser::controller>(new json_parser::arm_controller()));
+    if_ok &= parser.add_controller(std::unique_ptr<json_parser::controller>(new json_parser::leds_controller()));
+    if_ok &= parser.add_controller(std::unique_ptr<json_parser::controller>(new json_parser::mp3_controller()));
+    if_ok &= parser.add_controller(std::unique_ptr<json_parser::controller>(new json_parser::sd_controller()));
+    if_ok &= parser.add_controller(std::unique_ptr<json_parser::controller>(new json_parser::config_controller(parser)));
+    LOG_F("[main] adding controllers: %s\n", if_ok ? "success" : "failed")
+
+    if_ok = parser.initialize_all();
+    LOG_NL("[main] creating WiFi...")
+    webserver::init_entire_web();
+
+    DynamicJsonDocument* mp3_json = new DynamicJsonDocument(256);
+    (*mp3_json)["controller"] = "mp3";
+    if(if_ok)
+        (*mp3_json)["command"] = "windows_xp";
+    else
+        (*mp3_json)["command"] = "error";
+    
+    if(!global_queue::queue.push(&mp3_json))
+        delete mp3_json;
+
     LOG_F("[main] memory usage before: %d\n", esp_get_free_heap_size())
-    auto json = parser.retrive_data();
+    auto device_state = parser.retrive_data();
     LOG_F("[main] memory usage after: %d\n", esp_get_free_heap_size())
-    LOG_JSON_PRETTY(json);
+    LOG_JSON_PRETTY(device_state);
     LOG_NL("[main] end of setup");
 }
 

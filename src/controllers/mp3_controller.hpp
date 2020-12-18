@@ -73,7 +73,7 @@ namespace json_parser
 
         static constexpr const char *STOP = "stop";
         static constexpr const char *RESUME = "resume";
-        static constexpr const char *SET_VOLUME = "set_volume";
+        static constexpr const char *SET_VOLUME = "volume";
 
         static constexpr const char *VOLUME_KEY = "volume";
 

@@ -7,6 +7,7 @@
 {"controller":"arm","command":"angle","angle":15,"servo":"claw","time":0}
 {"controller":"leds","command":"brightness","brightness":100,"time":1000}
 {"controller":"leds","command":"restore_default","time":0}
+{"controller":"mp3","command":"volume","volume":15,"time":0}
 {"controller":"mp3","command":"dio_vs_jotaro","time":0}
 {"controller":"leds","command":"custom_color","colors":[255,255,0],"index":0,"time":0}
 {"controller":"leds","command":"repetitions","repetitions":1,"time":0}
@@ -232,16 +233,12 @@
 {"controller":"engines","command":"forward","engine":"left","time":0}
 {"controller":"engines","command":"stop","engine":"left","time":500}
 {"controller":"engines","command":"forward","engine":"right","time":0}
-{"controller":"engines","command":"stop","engine":"right","time":500}
+{"controller":"engines","command":"stop","engine":"right","time":1000}
 {"controller":"engines","command":"forward","engine":"left","time":0}
-{"controller":"engines","command":"stop","engine":"left","time":500}
+{"controller":"engines","command":"stop","engine":"left","time":1000}
 {"controller":"engines","command":"forward","engine":"right","time":0}
 {"controller":"engines","command":"stop","engine":"right","time":500}
-{"controller":"engines","command":"forward","engine":"left","time":0}
-{"controller":"engines","command":"stop","engine":"left","time":500}
-{"controller":"engines","command":"forward","engine":"right","time":0}
-{"controller":"engines","command":"stop","engine":"right","time":500}
-{"controller":"leds","command":"custom_color","colors":[255,255,0],"index":0,"time":500}
+{"controller":"leds","command":"custom_color","colors":[255,255,0],"index":0,"time":400}
 {"controller":"leds","command":"custom","time":0}
 {"controller":"leds","command":"custom_color","colors":[0,0,255],"index":1,"time":4700}
 {"controller":"leds","command":"repetitions","repetitions":2,"time":0}
@@ -249,6 +246,7 @@
 {"controller":"leds","command":"custom","time":0}
 {"controller":"leds","command":"forward","time":0}
 {"controller":"engines","command":"rotate","engine":"left","time":0}
+{"controller":"mp3","command":"volume","volume":20,"time":0}
 {"controller":"engines","command":"stop","engine":"both","time":9000}
 {"controller":"arm","command":"angle","angle":90,"servo":"base","time":0}
 {"controller":"arm","command":"angle","angle":90,"servo":"shoulder","time":0}

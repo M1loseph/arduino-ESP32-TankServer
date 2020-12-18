@@ -28,7 +28,6 @@ namespace json_parser
         _mp3.begin();
         _mp3.setSynchronous(false);
         _mp3.volume(_volume);
-        windows_xp(nullptr);
 
         bool if_added = true;
         if_added &= add_event(WINDOWS_XP, &mp3_controller::windows_xp);
@@ -55,6 +54,7 @@ namespace json_parser
         if_added &= add_event(TORTURE_DANCE, &mp3_controller::torture_dance);
         if_added &= add_event(AWAKEN, &mp3_controller::awaken);
         if_added &= add_event(DIO_VS_JOTARO, &mp3_controller::dio_vs_jotaro);
+        if_added &= add_event(ERROR, &mp3_controller::error);
 
         if_added &= add_event(STOP, &mp3_controller::stop_playing);
         if_added &= add_event(SET_VOLUME, &mp3_controller::set_volume);
@@ -297,6 +297,15 @@ namespace json_parser
         LOG_MP3_F("[%s] playing %s\n", _name, DIO_VS_JOTARO)
         _last_song = DIO_VS_JOTARO;
         _mp3.playSpecific(4, 24);
+        return true;
+    }
+
+    bool mp3_controller::error(const JsonObject* json)
+    {
+
+        LOG_MP3_F("[%s] playing %s\n", _name, ERROR)
+        _last_song = ERROR;
+        _mp3.playSpecific(5, 25);
         return true;
     }
 

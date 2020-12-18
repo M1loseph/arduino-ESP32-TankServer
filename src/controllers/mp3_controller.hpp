@@ -45,6 +45,7 @@ namespace json_parser
         bool torture_dance(const JsonObject *json);
         bool awaken(const JsonObject *json);
         bool dio_vs_jotaro(const JsonObject *json);
+        bool error(const JsonObject* json);
 
         static constexpr const char *MIGHTY_POLISH_TANK = "mighty_polish_tank";
         static constexpr const char *WINDOWS_XP = "windows_xp";
@@ -70,6 +71,7 @@ namespace json_parser
         static constexpr const char *TORTURE_DANCE = "torture_dance";
         static constexpr const char *AWAKEN = "awaken";
         static constexpr const char *DIO_VS_JOTARO = "dio_vs_jotaro";
+        static constexpr const char *ERROR = "error";
 
         static constexpr const char *STOP = "stop";
         static constexpr const char *RESUME = "resume";

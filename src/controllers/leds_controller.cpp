@@ -347,7 +347,7 @@ namespace json_parser
 
     DynamicJsonDocument leds_controller::retrive_data()
     {
-        DynamicJsonDocument json(1600);
+        DynamicJsonDocument json(_json_size);
         json[NAME_FIELD] = _name;
         JsonObject data = json.createNestedObject(DATA_FIELD);
 

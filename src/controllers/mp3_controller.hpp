@@ -77,7 +77,7 @@ namespace json_parser
         static constexpr const char *RESUME = "resume";
         static constexpr const char *SET_VOLUME = "volume";
 
-        static constexpr const char *VOLUME_KEY = "volume";
+        static constexpr const char *VOLUME_KEY = SET_VOLUME;
 
         MD_YX5300 _mp3;
         uint8_t _volume = 15;

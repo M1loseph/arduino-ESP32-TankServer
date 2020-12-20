@@ -25,8 +25,8 @@ namespace json_parser
     bool mp3_controller::initialize()
     {
         Serial2.begin(9600);
-        _mp3.begin();
         _mp3.setSynchronous(false);
+        _mp3.begin();
         _mp3.volume(_volume);
 
         bool if_added = true;
@@ -311,7 +311,7 @@ namespace json_parser
 
     DynamicJsonDocument mp3_controller::retrive_data()
     {
-        DynamicJsonDocument json(100);
+        DynamicJsonDocument json(_json_size);
         json[NAME_FIELD] = _name;
         JsonObject data = json.createNestedObject(DATA_FIELD);
         data["playing"] = _last_song;

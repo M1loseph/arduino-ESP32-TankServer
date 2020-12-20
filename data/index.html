@@ -40,39 +40,39 @@
         <ul class="commands-list">
             <li class="section-title">Volume</li>
             <li class="list-element ">
-                <span id="volume-bullet" class="bullet">0</span>
-                <input id="set_volume" class="music-slider" type="range" value="0" min="0" max="30">
+                <span class="bullet">0</span>
+                <input id="volume-slider" data-command="volume" class="music-slider" type="range" value="0" min="0" max="30">
             </li>
             <li class="section-title">Common</li>
-            <li id="stop" class="list-element list-button mp3">Stop</li>
-            <li id="resume" class="list-element list-button mp3">Resume</li>
+            <li data-command="stop" class="list-element list-button mp3">Stop</li>
+            <li data-command="resume" class="list-element list-button mp3">Resume</li>
             <li class="section-title">JoJo</li>
-            <li id="propaganda" class="list-element list-button mp3">Propaganda</li>
-            <li id="giorno" class="list-element list-button mp3">Il Vento D'oro</li>
-            <li id="noble_pope" class="list-element list-button mp3">Noble Pope</li>
-            <li id="torture_dance" class="list-element list-button mp3">Canzoni Preferite</li>
-            <li id="awaken" class="list-element list-button mp3">Awaken</li>
+            <li data-command="propaganda" class="list-element list-button mp3">Propaganda</li>
+            <li data-command="giorno" class="list-element list-button mp3">Il Vento D'oro</li>
+            <li data-command="noble_pope" class="list-element list-button mp3">Noble Pope</li>
+            <li data-command="torture_dance" class="list-element list-button mp3">Canzoni Preferite</li>
+            <li data-command="awaken" class="list-element list-button mp3">Awaken</li>
             <li class="section-title">Star Wars</li>
-            <li id="high_ground" class="list-element list-button mp3">High ground</li>
-            <li id="fine_addition" class="list-element list-button mp3">Fine addition</li>
-            <li id="i_dont_like_sand" class="list-element list-button mp3">I don't like sand</li>
-            <li id="hello_there" class="list-element list-button mp3">Hello there</li>
-            <li id="im_the_senate" class="list-element list-button mp3">I'm the senate</li>
+            <li data-command="high_ground" class="list-element list-button mp3">High ground</li>
+            <li data-command="fine_addition" class="list-element list-button mp3">Fine addition</li>
+            <li data-command="i_dont_like_sand" class="list-element list-button mp3">I don't like sand</li>
+            <li data-command="hello_there" class="list-element list-button mp3">Hello there</li>
+            <li data-command="im_the_senate" class="list-element list-button mp3">I'm the senate</li>
             <li class="section-title">Eurobeat</li>
-            <li id="forever_young" class="list-element list-button mp3">Forever Young</li>
-            <li id="revenge" class="list-element list-button mp3">Revenge</li>
-            <li id="silhouette" class="list-element list-button mp3">Silhouette</li>
-            <li id="the_bad_touch" class="list-element list-button mp3">The Bad Touch</li>
-            <li id="hero" class="list-element list-button mp3">Hero</li>
-            <li id="gas_gas_gas" class="list-element list-button mp3">Gas Gas Gas</li>
-            <li id="running_in_the_90s" class="list-element list-button mp3">Running In The 90s</li>
-            <li id="deja_vu" class="list-element list-button mp3">Deja Vu</li>
-            <li id="running_in_the_90s_short" class="list-element list-button mp3">Running In The 90s <i><b>short</b></i></li>
-            <li id="deja_vu_short" class="list-element list-button mp3">Deja Vu <i><b>short</b></i></li>
-            <li id="true_survivor" class="list-element list-button mp3">True Survivor</li>
+            <li data-command="forever_young" class="list-element list-button mp3">Forever Young</li>
+            <li data-command="revenge" class="list-element list-button mp3">Revenge</li>
+            <li data-command="silhouette" class="list-element list-button mp3">Silhouette</li>
+            <li data-command="the_bad_touch" class="list-element list-button mp3">The Bad Touch</li>
+            <li data-command="hero" class="list-element list-button mp3">Hero</li>
+            <li data-command="gas_gas_gas" class="list-element list-button mp3">Gas Gas Gas</li>
+            <li data-command="running_in_the_90s" class="list-element list-button mp3">Running In The 90s</li>
+            <li data-command="deja_vu" class="list-element list-button mp3">Deja Vu</li>
+            <li data-command="running_in_the_90s_short" class="list-element list-button mp3">Running In The 90s <i><b>short</b></i></li>
+            <li data-command="deja_vu_short" class="list-element list-button mp3">Deja Vu <i><b>short</b></i></li>
+            <li data-command="true_survivor" class="list-element list-button mp3">True Survivor</li>
             <li class="section-title">Memes</li>
-            <li id="mighty_polish_tank" class="list-element list-button mp3">Mighty Polish Tank</li>
-            <li id="windows_xp" class="list-element list-button mp3">Windows XP</li>
+            <li data-command="mighty_polish_tank" class="list-element list-button mp3">Mighty Polish Tank</li>
+            <li data-command="windows_xp" class="list-element list-button mp3">Windows XP</li>
             <li class="dial-exit">EXIT</li>
         </ul>
     </div>
@@ -81,101 +81,106 @@
         <ul class="commands-list">
             <li class="section-title">Base</li>
             <li class="list-element ">
-                <span id="base-bullet" class="bullet">0</span>
-                <input id="base" class="arm-slider" type="range" value="0" min="0" max="180">
+                <span class="bullet">0</span>
+                <input data-servo="base" class="arm-slider" type="range" value="0" min="0" max="180">
             </li>
             <li class="section-title">Shoulder</li>
             <li class="list-element ">
-                <span id="shoulder-bullet" class="bullet">0</span>
-                <input id="shoulder" class="arm-slider" type="range" value="0" min="0" max="180">
+                <span class="bullet">0</span>
+                <input data-servo="shoulder" class="arm-slider" type="range" value="0" min="0" max="180">
             </li>
             <li class="section-title">Elbow</li>
             <li class="list-element ">
-                <span id="elbow-bullet" class="bullet">0</span>
-                <input id="elbow" class="arm-slider" type="range" value="0" min="0" max="180">
+                <span class="bullet">0</span>
+                <input data-servo="elbow" class="arm-slider" type="range" value="0" min="0" max="180">
             </li>
             <li class="section-title">Wrist</li>
             <li class="list-element ">
-                <span id="wrist-bullet" class="bullet">0</span>
-                <input id="wrist" class="arm-slider" type="range" value="0" min="0" max="180">
+                <span class="bullet">0</span>
+                <input data-servo="wrist" class="arm-slider" type="range" value="0" min="0" max="180">
             </li>
             <li class="section-title">Rotation</li>
             <li class="list-element ">
-                <span id="rotation-bullet" class="bullet">0</span>
-                <input id="rotation" class="arm-slider" type="range" value="0" min="0" max="180">
+                <span class="bullet">0</span>
+                <input data-servo="rotation" class="arm-slider" type="range" value="0" min="0" max="180">
             </li>
             <li class="section-title">Claw</li>
             <li class="list-element ">
-                <span id="claw-bullet" class="bullet">0</span>
-                <input id="claw" class="arm-slider" type="range" value="0" min="0" max="180">
+                <span class="bullet">0</span>
+                <input data-servo="claw" class="arm-slider " type="range" value="0" min="0" max="180">
             </li>
             <li class="dial-exit">EXIT</li>
         </ul>
     </div>
 
-    <div id="dial-engines" class="dial def-background hidden">
+    <div id="dial-engines" class="dial def-background hidden ">
         <ul class="commands-list">
             <li class="section-title">Left track speed</li>
             <li class="list-element">
-                <span id="left-bullet" class="bullet">0</span>
-                <input id="left" class="engines-slider" type="range" value="0" min="0" max="1023">
+                <span class="bullet">0</span>
+                <input data-command="speed" data-engine="left" class="engines-slider" type="range" value="0" min="0" max="1023">
             </li>
             <li class="section-title">Right track speed</li>
             <li class="list-element">
-                <span id="right-bullet" class="bullet">0</span>
-                <input id="right" class="engines-slider" type="range" value="0" min="0" max="1023">
+                <span class="bullet">0</span>
+                <input data-command="speed" data-engine="right" class="engines-slider" type="range" value="0" min="0" max="1023">
             </li>
             <li class="section-title">Controll &#10084;</li>
             <li>
                 <div class="align-vertivally">
                     <div class="align-horizontally">
                         <div class="transparent-arrow-button"> </div>
-                        <div id="forward" class="arrow-button noselect">&uarr;</div>
-                        <div class="transparent-arrow-button"> </div>
+                        <div data-command="forward" data-engine="both" class="arrow-button noselect">&uarr;</div>
+                        <div class="transparent-arrow-button "> </div>
+                    </div>
+                    <div class="align-horizontally ">
+                        <div data-command="rotate" data-engine="left" class="arrow-button noselect">&larr;</div>
+                        <div class="transparent-arrow-button "> </div>
+                        <div data-command="rotate" data-engine="right" class="arrow-button noselect">&rarr;</div>
                     </div>
                     <div class="align-horizontally">
-                        <div id="rotate_left" class="arrow-button noselect">&larr;</div>
                         <div class="transparent-arrow-button"> </div>
-                        <div id="rotate_right" class="arrow-button noselect">&rarr;</div>
-                    </div>
-                    <div class="align-horizontally">
-                        <div class="transparent-arrow-button"> </div>
-                        <div id="backward" class="arrow-button noselect">&darr;</div>
-                        <div class="transparent-arrow-button"> </div>
+                        <div data-command="backward" data-engine="both" class="arrow-button noselect ">&darr;</div>
+                        <div class="transparent-arrow-button "> </div>
                     </div>
                 </div>
             </li>
-            <li class="dial-exit">EXIT</li>
+            <li class="dial-exit ">EXIT</li>
         </ul>
     </div>
 
     <div id="dial-leds" class="dial def-background hidden">
         <ul class="commands-list">
             <li class="section-title">Colors</li>
-            <li id="polish" class="list-element list-button leds">Red and white</li>
-            <li id="eurobeat" class="list-element list-button leds">Eurobeat</li>
-            <li id="random" class="list-element list-button leds">Random</li>
-            <li id="custom_color" class="list-element list-button leds">Custom color</li>
-            <li class="section-title">Set custom color</li>
+            <li id="red-white" class="list-element list-button leds">Red and White</li>
+            <li id="blue-yellow" class="list-element list-button leds">Blue and Yellow</li>
+            <li id="eurobeat" class="list-element list-button leds ">Eurobeat</li>
+            <li id="random" class="list-element list-button leds ">Random</li>
+            <li class="section-title">Custom color</li>
             <li class="list-element">
-                <input id="set_custom_color" type="color">
+                <input id="custom" type="color">
             </li>
             <li class="section-title">Animation</li>
-            <li id="animation_forward" class="list-element list-button leds">Forward</li>
-            <li id="animation_backward" class="list-element list-button leds">Backward</li>
-            <li id="animation_stop" class="list-element list-button leds">Stop</li>
+            <li data-command="forward" class="list-element list-button leds">Forward</li>
+            <li data-command="backward" class="list-element list-button leds">Backward</li>
+            <li data-command="stop" class="list-element list-button leds">Stop</li>
             <li class="section-title">Brightness</li>
             <li class="list-element">
-                <span id="brightness-bullet" class="bullet">0</span>
-                <input id="set_brightness" class="leds-slider" type="range" value="0" min="0" max="255">
+                <span class="bullet">0</span>
+                <input id="brightness-slider" data-command="brightness" class="leds-slider" type="range" value="0" min="0" max="255">
             </li>
             <li class="section-title">Animation interval</li>
             <li class="list-element">
-                <span id="animation-interval-bullet" class="bullet">0</span>
-                <input id="set_interval" class="leds-slider" type="range" value="0" min="1" max="100">
+                <span class="bullet">0</span>
+                <input id="update-interval-slider" data-command="update_interval" class="leds-slider" type="range" value="1" min="1" max="100">
+            </li>
+            <li class="section-title">Length</li>
+            <li class="list-element">
+                <span class="bullet">0</span>
+                <input id="length-slider" data-command="length" class="leds-slider" type="range" value="0" min="0" max="100">
             </li>
             <li class="section-title">Power</li>
-            <li id="off" class="list-element list-button leds">Off</li>
+            <li data-command="off" class="list-element list-button leds">Off</li>
             <li class="dial-exit">EXIT</li>
         </ul>
     </div>
@@ -186,7 +191,7 @@
             <li class="list-element">
                 <input id="file" type="text" class="form_input">
             </li>
-            <li id="execute" class="list-element list-button">Execute</li>
+            <li id="execute-sd" class="list-element list-button">Execute</li>
             <li class="exit-grower"></li>
             <li class="dial-exit">EXIT</li>
         </ul>

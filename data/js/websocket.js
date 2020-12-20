@@ -12,6 +12,10 @@ webSocket.onerror = e => {
     console.log(e);
 };
 
+const sendWSMany = (list) => {
+    list.forEach(elem => sendWS(elem));
+}
+
 const sendWS = (message) => {
     const stringified = JSON.stringify(message);
     console.log(stringified);
@@ -24,4 +28,4 @@ const setOnRecive = (fun) => {
     webSocket.onmessage = fun
 }
 
-export { sendWS, setOnRecive };
+export { sendWS, sendWSMany, setOnRecive };

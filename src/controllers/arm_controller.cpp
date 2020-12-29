@@ -40,9 +40,12 @@ namespace json_parser
     {
         if (index < SERVOS)
         {
+            LOG_ARM_F("[%s] sending angle %d to servo %s\n", _name, arm[index].current_angle, arm[index].NAME);
+
             uint16_t pulse = static_cast<uint16_t>(map(arm[index].current_angle, 0, 180, PULSE_MS_MIN, PULSE_MS_MAX));
-            LOG_ARM_F("[%s] sending pulse %d to servo %s\n", _name, pulse, arm[index].NAME);
-            _pwm.writeMicroseconds(arm[index].extern_module_pin, pulse);
+            constexpr double pulse_length = 1000000.0 / (PULSES_FREQUENCY * 4096);
+            pulse /= pulse_length;
+            _pwm.setPWM(arm[index].extern_module_pin, 0, pulse);
         }
     }
 
@@ -77,8 +80,7 @@ namespace json_parser
         if(!Wire.begin())   
             return false;
         _pwm.begin();
-        _pwm.setOscillatorFrequency(27000000U);
-        _pwm.setPWMFreq(PULSES_FREQUENCY); // Analog servos run at ~50 Hz updates
+        _pwm.setPWMFreq(PULSES_FREQUENCY); 
         for (uint8_t i = 0; i < SERVOS; i++)
             send_angle(i);
 

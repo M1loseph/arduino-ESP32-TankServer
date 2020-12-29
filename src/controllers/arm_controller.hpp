@@ -55,9 +55,9 @@ namespace json_parser
         Adafruit_PWMServoDriver _pwm;
 
         servo_data arm[SERVOS] = {
-            servo_data{"base", 5, 165, 90, 90, 0},
-            servo_data{"shoulder", 40, 150, 90, 90, 3},
-            servo_data{"elbow", 0, 130, 90, 90, 7},
+            servo_data{"base", 5, 175, 90, 90, 0},
+            servo_data{"shoulder", 0, 150, 140, 140, 3},
+            servo_data{"elbow", 0, 130, 120, 120, 7},
             servo_data{"wrist", 70, 180, 90, 90, 8},
             servo_data{"rotation", 0, 180, 90, 90, 12},
             servo_data{"claw", 5, 60, 15, 15, 11},
